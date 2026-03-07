@@ -291,7 +291,7 @@
                 </div>
                 <div class="space-y-4 text-left">
                     <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Contoh: TOEFL 500+" />
-                    <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all transform active:scale-95 text-xs md:text-sm uppercase tracking-widest">Simpan Target</button>
+                    <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-purple-700 transition-all transform active:scale-95 text-xs md:text-sm uppercase tracking-widest">Simpan Target</button>
                 </div>
             </div>
         </div>
@@ -330,9 +330,14 @@
         let store = { matkul: [], jadwal: [], tugas: [], target: [] };
         let listeners = [];
 
-        // --- FITUR EKSPOR EXCEL DENGAN AUTO-WIDTH ---
+        // --- FITUR EKSPOR EXCEL DENGAN AUTO-WIDTH (FIXED) ---
         window.exportToExcel = () => {
-            if (!store.jadwal.length && !store.matkul.length && !store.tugas.length) {
+            if (typeof XLSX === 'undefined') {
+                alert("Library Excel belum siap dimuat. Mohon tunggu beberapa saat atau periksa koneksi internet Anda.");
+                return;
+            }
+
+            if (!store.jadwal.length && !store.matkul.length && !store.tugas.length && !store.target.length) {
                 alert("Tidak ada data untuk diekspor!");
                 return;
             }
@@ -341,60 +346,81 @@
                 // Buat workbook baru
                 const wb = XLSX.utils.book_new();
 
-                // 1. Persiapkan Data Jadwal
-                const dataJadwal = store.jadwal.map(j => ({
-                    "Mata Kuliah": j.matkul,
-                    "SKS": j.sks,
-                    "Dosen": j.dosen,
-                    "Hari": j.hari,
-                    "Waktu": j.waktu,
-                    "Ruangan": j.ruang
-                }));
-
-                // 2. Persiapkan Data Tugas
-                const dataTugas = store.tugas.map(t => ({
-                    "Nama Tugas": t.nama,
-                    "Mata Kuliah": t.matkul,
-                    "Deadline": t.deadline,
-                    "Status": t.status ? "Selesai" : "Belum Selesai"
-                }));
-
-                // Fungsi Internal untuk Menghitung Auto-Width
+                // Fungsi Internal untuk Menghitung Auto-Width secara cerdas
                 const autoWidth = (data) => {
-                    if (data.length === 0) return [];
+                    if (!data || data.length === 0) return [];
                     const keys = Object.keys(data[0]);
                     return keys.map(key => {
                         // Cari baris terpanjang di setiap kolom (termasuk header)
                         const maxLen = Math.max(
-                            key.length, // Panjang karakter header
-                            ...data.map(obj => obj[key]?.toString().length || 0) // Karakter data
+                            key.toString().length,
+                            ...data.map(obj => obj[key] ? obj[key].toString().length : 0)
                         );
-                        return { wch: maxLen + 3 }; // Beri padding sedikit (3 karakter)
+                        return { wch: maxLen + 5 }; // Beri padding tambahan
                     });
                 };
 
-                // Buat Sheet Jadwal & Atur Lebar
-                if (dataJadwal.length > 0) {
+                // 1. Sheet Mata Kuliah
+                if (store.matkul.length > 0) {
+                    const dataMatkul = store.matkul.map(m => ({
+                        "Nama Mata Kuliah": m.nama || "-",
+                        "SKS": m.sks || 0,
+                        "Dosen Pengampu": m.dosen || "-",
+                        "Semester": m.semester || 6
+                    }));
+                    const wsMatkul = XLSX.utils.json_to_sheet(dataMatkul);
+                    wsMatkul["!cols"] = autoWidth(dataMatkul);
+                    XLSX.utils.book_append_sheet(wb, wsMatkul, "Mata Kuliah");
+                }
+
+                // 2. Sheet Jadwal Kuliah
+                if (store.jadwal.length > 0) {
+                    const dataJadwal = store.jadwal.map(j => ({
+                        "Mata Kuliah": j.matkul || "-",
+                        "SKS": j.sks || 0,
+                        "Dosen": j.dosen || "-",
+                        "Hari": j.hari || "-",
+                        "Waktu": j.waktu || "-",
+                        "Ruangan": j.ruang || "-"
+                    }));
                     const wsJadwal = XLSX.utils.json_to_sheet(dataJadwal);
                     wsJadwal["!cols"] = autoWidth(dataJadwal);
                     XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
                 }
 
-                // Buat Sheet Tugas & Atur Lebar
-                if (dataTugas.length > 0) {
+                // 3. Sheet Tugas & Deadline
+                if (store.tugas.length > 0) {
+                    const dataTugas = store.tugas.map(t => ({
+                        "Nama Tugas": t.nama || "-",
+                        "Mata Kuliah": t.matkul || "-",
+                        "Deadline": t.deadline || "-",
+                        "Status": t.status ? "Selesai" : "Belum Selesai"
+                    }));
                     const wsTugas = XLSX.utils.json_to_sheet(dataTugas);
                     wsTugas["!cols"] = autoWidth(dataTugas);
                     XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
                 }
 
+                // 4. Sheet Target Semester
+                if (store.target.length > 0) {
+                    const dataTarget = store.target.map(t => ({
+                        "Target": t.teks || "-",
+                        "Status": t.selesai ? "Tercapai" : "Proses"
+                    }));
+                    const wsTarget = XLSX.utils.json_to_sheet(dataTarget);
+                    wsTarget["!cols"] = autoWidth(dataTarget);
+                    XLSX.utils.book_append_sheet(wb, wsTarget, "Target Semester");
+                }
+
                 // Download File
-                const fileName = `StudyFlow_Export_${new Date().toLocaleDateString('id-ID')}.xlsx`;
+                const dateTag = new Date().toISOString().slice(0, 10);
+                const fileName = `StudyFlow_Data_${dateTag}.xlsx`;
                 XLSX.writeFile(wb, fileName);
                 
                 console.log("Ekspor Excel Berhasil!");
             } catch (error) {
                 console.error("Gagal Ekspor:", error);
-                alert("Terjadi kesalahan saat mengekspor data.");
+                alert("Terjadi kesalahan teknis saat mengekspor data: " + error.message);
             }
         };
 
@@ -441,7 +467,7 @@
         async function initAuth() {
             try {
                 await signInAnonymously(auth);
-                document.getElementById('conn-status').innerText = "Database Siap";
+                document.getElementById('conn-status').innerText = "Cloud Synced";
             } catch (err) {
                 console.error("Firebase init error:", err);
             }
@@ -529,13 +555,13 @@
 
             el.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade">
-                    <div class="lg:col-span-2 space-y-8">
+                    <div class="lg:col-span-2 space-y-8 text-left">
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
                             <h3 class="text-xl font-black mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Jadwal Terbaru</h3>
                             <div class="space-y-4">
                                 ${store.jadwal.slice(0, 3).map(j => `
-                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-white/50 border border-white">
-                                        <div class="flex-1 overflow-hidden text-left">
+                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-white/50 border border-white hover:scale-[1.01] transition-transform">
+                                        <div class="flex-1 overflow-hidden">
                                             <p class="font-black text-gray-800 text-sm md:text-base mobile-truncate">${j.matkul}</p>
                                             <p class="text-xs text-gray-500 font-medium">${j.hari}, ${j.waktu} • ${j.ruang}</p>
                                             <p class="text-[9px] font-black text-purple-400 uppercase mt-1 tracking-widest">${j.dosen || 'Anonim'} • ${j.sks || '0'} SKS</p>
@@ -554,12 +580,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="space-y-8">
+                    <div class="space-y-8 text-left">
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-red-400">
                             <h3 class="text-xl font-black mb-6 text-red-500 flex items-center gap-2"><i data-lucide="alert-circle"></i> Deadline Terdekat</h3>
                             <div class="space-y-4">
                                 ${urgentTasks.slice(0, 3).map(t => `
-                                    <div class="p-4 rounded-xl bg-red-50 border border-red-100 shadow-sm text-left">
+                                    <div class="p-4 rounded-xl bg-red-50 border border-red-100 shadow-sm">
                                         <p class="font-bold text-gray-800 text-sm md:text-base mobile-truncate">${t.nama}</p>
                                         <p class="text-[9px] md:text-[10px] font-black uppercase text-red-400 mt-1 tracking-widest">${t.daysLeft <= 0 ? 'HARI INI' : 'SISA ' + t.daysLeft + ' HARI'}</p>
                                     </div>
@@ -579,8 +605,8 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade">
                     ${store.matkul.map(m => `
-                        <div class="glass-card p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start">
-                            <div class="overflow-hidden text-left">
+                        <div class="glass-card p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left">
+                            <div class="overflow-hidden">
                                 <h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate">${m.nama}</h3>
                                 <p class="text-gray-500 font-medium text-xs md:text-sm truncate">${m.dosen}</p>
                                 <p class="text-[9px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p>
@@ -603,7 +629,7 @@
                         <div class="space-y-4">
                             <h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
                             ${store.jadwal.filter(j => j.hari === hari).map(j => `
-                                <div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all">
+                                <div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left">
                                     <div class="flex-1 overflow-hidden">
                                         <div class="flex justify-between items-start">
                                             <p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate">${j.matkul}</p>
@@ -643,7 +669,7 @@
                         <tbody class="text-sm font-semibold text-gray-600">
                             ${sortedTugas.map(t => `
                                 <tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}">
-                                    <td class="p-6">
+                                    <td class="p-6 text-left">
                                         <p class="font-bold text-gray-800 text-sm">${t.nama}</p>
                                         <span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span>
                                     </td>
@@ -672,7 +698,7 @@
             el.innerHTML = `
                 <div class="max-w-2xl mx-auto py-4 md:py-10 animate-fade">
                     <div class="flex justify-between items-center mb-8 md:mb-10">
-                        <h2 class="text-2xl md:text-4xl font-black tracking-tighter text-gray-800">Target Semester 6</h2>
+                        <h2 class="text-2xl md:text-4xl font-black tracking-tighter text-gray-800 text-left flex-1">Target Semester 6</h2>
                         <button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95"><i data-lucide="plus"></i></button>
                     </div>
                     <div class="space-y-3 md:space-y-4">
