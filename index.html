@@ -62,9 +62,15 @@
             color: white !important;
             box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
         }
+
+        /* Modal Overlay */
+        #modal-overlay {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
-<body class="bg-studyflow text-gray-800 min-h-screen relative">
+<body class="bg-studyflow text-gray-800 min-h-screen relative overflow-x-hidden">
 
     <!-- Overlay tipis untuk menjaga keterbacaan -->
     <div class="fixed inset-0 bg-white/20 pointer-events-none z-0"></div>
@@ -79,17 +85,17 @@
             <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-10 font-medium leading-relaxed">Asisten Digital Semester 6 Anda. Kelola jadwal, tugas, dan target dalam satu tempat.</p>
+            <p class="text-gray-600 mb-10 font-medium leading-relaxed px-4">Kelola jadwal, tugas, dan target semestermu secara otomatis dengan akun Google.</p>
             
             <div class="flex justify-center mb-6">
                 <div id="google-signin-button"></div>
             </div>
             
-            <p class="text-[11px] text-gray-400 uppercase tracking-widest font-bold">Authorized for localhost:5500</p>
+            <p class="text-[11px] text-gray-400 uppercase tracking-widest font-bold">App ID: 1:1034032440737:web:030cffaa62db47b3f997e0</p>
         </div>
     </div>
 
-    <!-- ================= MAIN DASHBOARD VIEW (Hidden until login) ================= -->
+    <!-- ================= MAIN DASHBOARD VIEW ================= -->
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
         
         <!-- Sidebar Desktop -->
@@ -115,9 +121,6 @@
                 <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
                     <i data-lucide="target"></i> Target Semester
                 </button>
-                <button onclick="navigate('statistik')" id="nav-statistik" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
-                    <i data-lucide="bar-chart-3"></i> Statistik
-                </button>
             </nav>
 
             <div class="pt-6 border-t border-purple-100">
@@ -133,9 +136,9 @@
             <!-- Top Header -->
             <header class="flex justify-between items-center mb-8 bg-white/40 p-4 rounded-[2rem] border border-white/50 backdrop-blur-md">
                 <div class="flex items-center gap-4">
-                    <img id="profile-pic" src="" class="w-12 h-12 rounded-full border-2 border-purple-500 p-0.5 shadow-md object-cover" />
+                    <img id="profile-pic" src="" class="w-12 h-12 rounded-full border-2 border-purple-500 p-0.5 shadow-md object-cover" onerror="this.src='https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff'" />
                     <div>
-                        <h2 class="text-sm font-bold text-purple-600 uppercase tracking-widest">Selamat Datang</h2>
+                        <h2 class="text-sm font-bold text-purple-600 uppercase tracking-widest">Dashboard Akademik</h2>
                         <h1 id="profile-name" class="text-xl font-black text-gray-800">Nama Pengguna</h1>
                     </div>
                 </div>
@@ -151,7 +154,7 @@
 
             <!-- Dynamic Section -->
             <div id="content-area" class="animate-fade">
-                <!-- Content will be injected here -->
+                <!-- Konten dinamis dirender via JS -->
             </div>
         </main>
 
@@ -164,34 +167,107 @@
         </nav>
     </div>
 
+    <!-- ================= MODALS ================= -->
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Modal Jadwal -->
+        <div id="modal-jadwal" class="hidden glass-card p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl border-2 border-white animate-fade">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black">Tambah Jadwal Kuliah</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button>
+            </div>
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 uppercase ml-2">Mata Kuliah</label>
+                    <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Pilih Matkul..." />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase ml-2">Hari</label>
+                        <select id="in-j-hari" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400">
+                            <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase ml-2">Waktu</label>
+                        <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="08:00 - 10:00" />
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 uppercase ml-2">Ruang</label>
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: R.203" />
+                </div>
+                <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Jadwal</button>
+            </div>
+        </div>
+
+        <!-- Modal Mata Kuliah -->
+        <div id="modal-matkul" class="hidden glass-card p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl border-2 border-white animate-fade">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black">Tambah Mata Kuliah</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button>
+            </div>
+            <div class="space-y-4 text-left">
+                <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Mata Kuliah" />
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="SKS" />
+                    <input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Dosen" />
+                </div>
+                <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Mata Kuliah</button>
+            </div>
+        </div>
+
+        <!-- Modal Tugas -->
+        <div id="modal-tugas" class="hidden glass-card p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl border-2 border-white animate-fade">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black">Tambah Tugas Baru</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button>
+            </div>
+            <div class="space-y-4 text-left">
+                <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Tugas" />
+                <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Mata Kuliah" />
+                <input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" />
+                <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Tugas</button>
+            </div>
+        </div>
+
+        <!-- Modal Target -->
+        <div id="modal-target" class="hidden glass-card p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl border-2 border-white animate-fade">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black">Tambah Target Semester</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button>
+            </div>
+            <div class="space-y-4 text-left">
+                <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: Lulus TOEFL 500+" />
+                <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Target</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // --- KONFIGURASI & MOCK DATA ---
+        // --- KONFIGURASI ---
         const CLIENT_ID = "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com";
+        const PROJECT_ID = "study-flow-489505";
+        const APP_ID = "1:1034032440737:web:030cffaa62db47b3f997e0";
         
+        // --- STATE DATA ---
         let mataKuliah = [
             { id: 1, nama: 'Metodologi Penelitian', sks: 3, dosen: 'Dr. Ahmad', semester: 6 },
-            { id: 2, nama: 'Manajemen Strategik', sks: 3, dosen: 'Dr. Rina', semester: 6 },
-            { id: 3, nama: 'Kewirausahaan', sks: 2, dosen: 'Dr. Budi', semester: 6 }
+            { id: 2, nama: 'Manajemen Strategik', sks: 3, dosen: 'Dr. Rina', semester: 6 }
         ];
 
         let jadwalKuliah = [
             { id: 1, matkul: 'Manajemen Strategik', hari: 'Senin', waktu: '08:00 - 10:00', ruang: 'R.203' },
-            { id: 2, matkul: 'Metodologi Penelitian', hari: 'Senin', waktu: '13:00 - 15:00', ruang: 'R.105' },
-            { id: 3, matkul: 'Kewirausahaan', hari: 'Rabu', waktu: '10:00 - 12:00', ruang: 'R.401' }
+            { id: 2, matkul: 'Metodologi Penelitian', hari: 'Senin', waktu: '13:00 - 15:00', ruang: 'R.105' }
         ];
 
         let daftarTugas = [
-            { id: 1, nama: 'Review Jurnal', matkul: 'Manajemen Strategik', deadline: '2026-04-08', status: true, prioritas: 'Tinggi' },
-            { id: 2, nama: 'Proposal Penelitian', matkul: 'Metodologi Penelitian', deadline: '2026-04-12', status: false, prioritas: 'Tinggi' },
-            { id: 3, nama: 'Business Plan', matkul: 'Kewirausahaan', deadline: '2026-04-20', status: false, prioritas: 'Sedang' }
+            { id: 1, nama: 'Proposal Penelitian', matkul: 'Metodologi Penelitian', deadline: '2026-04-12', status: false }
         ];
 
         let targetSemester = [
             { id: 1, teks: 'Proposal skripsi selesai', selesai: true },
-            { id: 2, teks: 'TOEFL minimal 500', selesai: false },
-            { id: 3, teks: 'Publikasi jurnal nasional', selesai: false },
-            { id: 4, teks: 'IPK minimal 3.75', selesai: false }
+            { id: 2, teks: 'IPK minimal 3.75', selesai: false }
         ];
 
         // --- AUTH LOGIC ---
@@ -205,10 +281,8 @@
             const data = parseJwt(response.credential);
             document.getElementById('profile-name').innerText = data.name;
             document.getElementById('profile-pic').src = data.picture;
-
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
-            
             navigate('dashboard');
         }
 
@@ -218,21 +292,15 @@
                 callback: handleCredentialResponse,
                 use_fedcm_for_prompt: true 
             });
-
             google.accounts.id.renderButton(
                 document.getElementById("google-signin-button"),
                 { theme: "outline", size: "large", width: 320, shape: "pill", text: "continue_with" }
             );
-
             lucide.createIcons();
         };
 
-        // --- NAVIGATION & VIEWS ---
+        // --- NAVIGATION ---
         function navigate(view) {
-            const content = document.getElementById('content-area');
-            content.innerHTML = ''; // Clear previous
-            
-            // Update Sidebar UI
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('active-nav'));
             const activeNav = document.getElementById('nav-' + view);
             if(activeNav) activeNav.classList.add('active-nav');
@@ -243,247 +311,208 @@
                 case 'jadwal': renderJadwal(); break;
                 case 'tugas': renderTugas(); break;
                 case 'target': renderTarget(); break;
-                case 'statistik': renderStatistik(); break;
             }
             lucide.createIcons();
         }
 
+        // --- CRUD LOGIC ---
+        function openModal(id) {
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            document.querySelectorAll('#modal-overlay > div').forEach(m => m.classList.add('hidden'));
+            document.getElementById('modal-' + id).classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+        }
+
+        function deleteItem(type, id) {
+            if(confirm('Hapus item ini?')) {
+                if(type === 'matkul') mataKuliah = mataKuliah.filter(i => i.id !== id);
+                if(type === 'jadwal') jadwalKuliah = jadwalKuliah.filter(i => i.id !== id);
+                if(type === 'tugas') daftarTugas = daftarTugas.filter(i => i.id !== id);
+                if(type === 'target') targetSemester = targetSemester.filter(i => i.id !== id);
+                navigate(type === 'dashboard' ? 'dashboard' : type);
+            }
+        }
+
+        function saveJadwal() {
+            const matkul = document.getElementById('in-j-matkul').value;
+            const hari = document.getElementById('in-j-hari').value;
+            const waktu = document.getElementById('in-j-waktu').value;
+            const ruang = document.getElementById('in-j-ruang').value;
+            if(!matkul) return;
+            jadwalKuliah.push({ id: Date.now(), matkul, hari, waktu, ruang });
+            closeModal();
+            navigate('jadwal');
+        }
+
+        function saveMatkul() {
+            const nama = document.getElementById('in-m-nama').value;
+            const sks = document.getElementById('in-m-sks').value;
+            const dosen = document.getElementById('in-m-dosen').value;
+            if(!nama) return;
+            mataKuliah.push({ id: Date.now(), nama, sks, dosen, semester: 6 });
+            closeModal();
+            navigate('matkul');
+        }
+
+        function saveTugas() {
+            const nama = document.getElementById('in-t-nama').value;
+            const matkul = document.getElementById('in-t-matkul').value;
+            const deadline = document.getElementById('in-t-deadline').value;
+            if(!nama) return;
+            daftarTugas.push({ id: Date.now(), nama, matkul, deadline, status: false });
+            closeModal();
+            navigate('tugas');
+        }
+
+        function saveTarget() {
+            const teks = document.getElementById('in-tg-teks').value;
+            if(!teks) return;
+            targetSemester.push({ id: Date.now(), teks, selesai: false });
+            closeModal();
+            navigate('target');
+        }
+
+        // --- RENDERING ---
         function renderDashboard() {
             const targetDone = targetSemester.filter(t => t.selesai).length;
-            const targetTotal = targetSemester.length;
-            const progress = Math.round((targetDone / targetTotal) * 100);
+            const progress = targetSemester.length ? Math.round((targetDone / targetSemester.length) * 100) : 0;
 
-            let html = `
+            document.getElementById('content-area').innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-8">
-                        <!-- Jadwal Hari Ini Card -->
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-black flex items-center gap-3 text-purple-700">
-                                    <i data-lucide="calendar-check"></i> Jadwal Hari Ini
-                                </h3>
-                                <span class="bg-purple-100 text-purple-600 px-4 py-1 rounded-full text-xs font-bold">Senin</span>
-                            </div>
+                            <h3 class="text-xl font-black mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Jadwal Hari Ini (Senin)</h3>
                             <div class="space-y-4">
                                 ${jadwalKuliah.filter(j => j.hari === 'Senin').map(j => `
-                                    <div class="flex items-center gap-6 p-4 rounded-3xl bg-white/50 border border-white hover:scale-[1.02] transition-all">
-                                        <div class="w-16 h-16 rounded-2xl bg-purple-600 text-white flex flex-col items-center justify-center font-bold">
-                                            <span class="text-xs">WAKTU</span>
-                                            <span class="text-xs">PAGI</span>
-                                        </div>
+                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-white/50 border border-white">
                                         <div class="flex-1">
                                             <p class="font-black text-gray-800">${j.matkul}</p>
-                                            <div class="flex gap-4 mt-1 text-xs text-gray-500 font-medium">
-                                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3"></i> ${j.waktu}</span>
-                                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3"></i> ${j.ruang}</span>
-                                            </div>
+                                            <p class="text-xs text-gray-500">${j.waktu} • ${j.ruang}</p>
                                         </div>
+                                        <button onclick="deleteItem('jadwal', ${j.id})" class="text-red-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" size="18"></i></button>
                                     </div>
-                                `).join('')}
+                                `).join('') || '<p class="text-gray-400 italic">Tidak ada kuliah hari ini.</p>'}
                             </div>
                         </div>
-
-                        <!-- Target Progress Area -->
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
-                            <h3 class="text-xl font-black mb-6 text-purple-700">Progress Target Semester</h3>
-                            <div class="flex items-end justify-between mb-3">
-                                <p class="text-sm font-bold text-gray-500">${targetDone} dari ${targetTotal} target selesai</p>
-                                <p class="text-3xl font-black text-purple-600">${progress}%</p>
-                            </div>
-                            <div class="w-full bg-purple-100 h-4 rounded-full overflow-hidden mb-6">
-                                <div class="bg-gradient-to-r from-purple-600 to-indigo-500 h-full transition-all duration-1000" style="width: ${progress}%"></div>
-                            </div>
-                            <div class="space-y-3">
-                                ${targetSemester.slice(0, 3).map(t => `
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-5 h-5 rounded-md flex items-center justify-center border-2 ${t.selesai ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-200'}">
-                                            ${t.selesai ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
-                                        </div>
-                                        <span class="text-sm font-semibold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700'}">${t.teks}</span>
-                                    </div>
-                                `).join('')}
+                            <h3 class="text-xl font-black mb-4 text-purple-700">Target Semester (${progress}%)</h3>
+                            <div class="w-full bg-purple-100 h-3 rounded-full overflow-hidden mb-6">
+                                <div class="bg-purple-600 h-full transition-all" style="width: ${progress}%"></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="space-y-8">
-                        <!-- Deadline Card -->
-                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-t-red-400">
-                            <h3 class="text-xl font-black mb-6 flex items-center gap-3 text-red-500">
-                                <i data-lucide="alert-circle"></i> Deadline Terdekat
-                            </h3>
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-red-400">
+                            <h3 class="text-xl font-black mb-6 text-red-500 flex items-center gap-2"><i data-lucide="alert-circle"></i> Deadline</h3>
                             <div class="space-y-4">
-                                ${daftarTugas.filter(t => !t.status).sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).slice(0,2).map(t => `
-                                    <div class="p-5 rounded-3xl bg-red-50 border border-red-100">
-                                        <p class="font-black text-gray-800 mb-1">⚠️ ${t.nama}</p>
-                                        <p class="text-xs text-red-600 font-bold">Matkul: ${t.matkul}</p>
-                                        <p class="text-xs text-red-400 font-medium mt-2">Deadline: ${t.deadline}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                        
-                        <!-- Mini Stats Card -->
-                        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 p-8 rounded-[2.5rem] shadow-2xl text-white">
-                            <h4 class="text-sm font-bold uppercase tracking-widest opacity-80">Total SKS Semester</h4>
-                            <p class="text-5xl font-black mt-2">22</p>
-                            <div class="mt-8 flex justify-between items-center">
-                                <div class="bg-white/20 px-4 py-2 rounded-2xl text-xs font-bold">Semester 6</div>
-                                <i data-lucide="award" class="w-10 h-10 opacity-30"></i>
+                                ${daftarTugas.filter(t => !t.status).map(t => `<p class="text-sm font-bold">⚠️ ${t.nama} (${t.deadline})</p>`).join('') || 'Aman!'}
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            document.getElementById('content-area').innerHTML = html;
         }
 
         function renderMatkul() {
-            let html = `
+            document.getElementById('content-area').innerHTML = `
                 <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-black text-gray-800">Daftar Mata Kuliah</h2>
-                    <button class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 hover:bg-purple-700 transition-all">
-                        <i data-lucide="plus"></i> Tambah Matkul
-                    </button>
+                    <h2 class="text-3xl font-black">Mata Kuliah</h2>
+                    <button onclick="openModal('matkul')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2"><i data-lucide="plus"></i> Tambah Matkul</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${mataKuliah.map(m => `
-                        <div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-l-purple-500">
-                            <h3 class="text-xl font-black mb-1">${m.nama}</h3>
-                            <p class="text-gray-500 font-medium mb-4">${m.dosen}</p>
-                            <div class="flex justify-between items-center mt-4 border-t border-purple-100 pt-4 text-xs font-bold uppercase text-purple-600">
-                                <span>${m.sks} SKS</span>
-                                <span>Semester ${m.semester}</span>
+                        <div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-black">${m.nama}</h3>
+                                <p class="text-gray-500 font-medium">${m.dosen} • ${m.sks} SKS</p>
                             </div>
+                            <button onclick="deleteItem('matkul', ${m.id})" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2"></i></button>
                         </div>
                     `).join('')}
                 </div>
             `;
-            document.getElementById('content-area').innerHTML = html;
         }
 
         function renderJadwal() {
-            let html = `
-                <h2 class="text-3xl font-black text-gray-800 mb-8">Jadwal Mingguan</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            document.getElementById('content-area').innerHTML = `
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-black">Jadwal Mingguan</h2>
+                    <button onclick="openModal('jadwal')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2"><i data-lucide="plus"></i> Tambah Jadwal</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
                     ${['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map(hari => `
                         <div class="space-y-4">
-                            <h3 class="text-lg font-black text-purple-600 flex items-center gap-2">
-                                <i data-lucide="calendar"></i> ${hari}
-                            </h3>
+                            <h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2">${hari}</h3>
                             ${jadwalKuliah.filter(j => j.hari === hari).map(j => `
-                                <div class="glass-card p-5 rounded-3xl shadow-md border border-white hover:border-purple-200 transition-all cursor-pointer">
-                                    <p class="font-bold text-gray-800">${j.matkul}</p>
-                                    <div class="mt-3 space-y-1 text-xs text-gray-400 font-medium">
-                                        <p class="flex items-center gap-2"><i data-lucide="clock" class="w-3"></i> ${j.waktu}</p>
-                                        <p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3"></i> ${j.ruang}</p>
+                                <div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-center">
+                                    <div>
+                                        <p class="font-bold text-gray-800">${j.matkul}</p>
+                                        <p class="text-xs text-gray-400 font-medium">${j.waktu} • ${j.ruang}</p>
                                     </div>
+                                    <button onclick="deleteItem('jadwal', ${j.id})" class="text-red-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><i data-lucide="trash-2" size="18"></i></button>
                                 </div>
-                            `).join('') || '<p class="text-xs text-gray-300 italic px-2">Tidak ada jadwal.</p>'}
+                            `).join('') || '<p class="text-xs text-gray-300 italic">Kosong</p>'}
                         </div>
                     `).join('')}
                 </div>
             `;
-            document.getElementById('content-area').innerHTML = html;
         }
 
         function renderTugas() {
-            let html = `
+            document.getElementById('content-area').innerHTML = `
                 <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-black text-gray-800">Tugas & Deadline</h2>
-                    <button class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2">
-                        <i data-lucide="plus"></i> Tambah Tugas
-                    </button>
+                    <h2 class="text-3xl font-black">Tugas & Deadline</h2>
+                    <button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2"><i data-lucide="plus"></i> Tambah Tugas</button>
                 </div>
                 <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl border border-white">
                     <table class="w-full text-left">
                         <thead class="bg-purple-50 text-purple-700 text-xs font-black uppercase tracking-widest border-b border-purple-100">
-                            <tr>
-                                <th class="p-6">Nama Tugas</th>
-                                <th class="p-6">Mata Kuliah</th>
-                                <th class="p-6">Deadline</th>
-                                <th class="p-6">Status</th>
-                            </tr>
+                            <tr><th class="p-6">Nama</th><th class="p-6">Deadline</th><th class="p-6">Status</th><th class="p-6">Aksi</th></tr>
                         </thead>
                         <tbody class="text-sm font-semibold text-gray-600">
-                            ${daftarTugas.sort((a,b) => a.status - b.status).map(t => `
+                            ${daftarTugas.map(t => `
                                 <tr class="border-b border-purple-50 hover:bg-white/50 transition-all">
-                                    <td class="p-6">${t.nama}</td>
-                                    <td class="p-6 text-xs font-bold text-purple-600">${t.matkul}</td>
+                                    <td class="p-6">${t.nama}<br><span class="text-[10px] text-purple-400">${t.matkul}</span></td>
                                     <td class="p-6">${t.deadline}</td>
-                                    <td class="p-6">
-                                        <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black ${t.status ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
-                                            ${t.status ? 'Selesai' : 'Belum'}
-                                        </span>
-                                    </td>
+                                    <td class="p-6 text-xs font-black ${t.status ? 'text-green-500':'text-red-400'}">${t.status ? 'Selesai':'Belum'}</td>
+                                    <td class="p-6"><button onclick="deleteItem('tugas', ${t.id})" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2" size="18"></i></button></td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 </div>
             `;
-            document.getElementById('content-area').innerHTML = html;
         }
 
         function renderTarget() {
-            let html = `
+            document.getElementById('content-area').innerHTML = `
                 <div class="max-w-2xl mx-auto py-10">
-                    <h2 class="text-4xl font-black text-gray-900 mb-2 text-center">Target Semester 6</h2>
-                    <p class="text-gray-500 text-center mb-12 font-medium">Tetapkan tujuan dan pantau pencapaian akademikmu.</p>
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-4xl font-black">Target Semester</h2>
+                        <button onclick="openModal('target')" class="bg-purple-600 text-white p-3 rounded-2xl shadow-lg"><i data-lucide="plus"></i></button>
+                    </div>
                     <div class="space-y-4">
                         ${targetSemester.map(t => `
-                            <div class="glass-card p-6 rounded-3xl flex items-center justify-between group cursor-pointer hover:shadow-lg transition-all border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'}">
-                                <div class="flex items-center gap-4">
+                            <div class="glass-card p-6 rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'}">
+                                <div class="flex items-center gap-4 cursor-pointer" onclick="t.selesai = !t.selesai; navigate('target')">
                                     <div class="w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white' : 'border-purple-200'}">
                                         ${t.selesai ? '<i data-lucide="check"></i>' : ''}
                                     </div>
                                     <span class="text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700'}">${t.teks}</span>
                                 </div>
-                                <button class="text-gray-300 group-hover:text-red-400 transition-all"><i data-lucide="trash-2" class="w-5"></i></button>
+                                <button onclick="deleteItem('target', ${t.id})" class="text-red-300 group-hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-5"></i></button>
                             </div>
                         `).join('')}
                     </div>
                 </div>
             `;
-            document.getElementById('content-area').innerHTML = html;
         }
 
-        function renderStatistik() {
-            let html = `
-                <h2 class="text-3xl font-black text-gray-800 mb-8">Statistik Belajar</h2>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="glass-card p-8 rounded-[2rem] text-center">
-                        <p class="text-[10px] font-black text-purple-400 uppercase mb-2">Mata Kuliah</p>
-                        <p class="text-4xl font-black text-purple-700">7</p>
-                    </div>
-                    <div class="glass-card p-8 rounded-[2rem] text-center">
-                        <p class="text-[10px] font-black text-emerald-400 uppercase mb-2">Tugas Selesai</p>
-                        <p class="text-4xl font-black text-emerald-600">12</p>
-                    </div>
-                    <div class="glass-card p-8 rounded-[2rem] text-center">
-                        <p class="text-[10px] font-black text-red-400 uppercase mb-2">Belum Selesai</p>
-                        <p class="text-4xl font-black text-red-500">5</p>
-                    </div>
-                    <div class="glass-card p-8 rounded-[2rem] text-center">
-                        <p class="text-[10px] font-black text-blue-400 uppercase mb-2">Target</p>
-                        <p class="text-4xl font-black text-blue-600">2</p>
-                    </div>
-                </div>
-                <div class="glass-card p-10 rounded-[3rem] h-64 flex items-center justify-center border-dashed border-2 border-purple-200">
-                    <p class="text-gray-400 font-bold italic flex items-center gap-2"><i data-lucide="pie-chart"></i> Grafik Aktivitas Belajar (Coming Soon)</p>
-                </div>
-            `;
-            document.getElementById('content-area').innerHTML = html;
-        }
-
-        function exportToExcel() {
-            alert("Mengekspor data ke format .xlsx...");
-            // Logika export simulasi
-        }
-
-        function logout() {
-            window.location.reload();
-        }
+        function exportToExcel() { alert("Mengekspor data ke format .xlsx..."); }
+        function logout() { window.location.reload(); }
     </script>
 </body>
 </html>
