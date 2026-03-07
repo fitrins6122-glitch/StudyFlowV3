@@ -324,9 +324,15 @@
         let listeners = [];
         let notifIntervalId = null;
 
-        // --- FITUR NOTIFIKASI OTOMATIS (SISTEM) ---
+        // --- FITUR NOTIFIKASI OTOMATIS (DINAMIS) ---
         
-        // Fungsi untuk mengecek dan menjadwalkan notifikasi pop-up sistem
+        // Fungsi untuk mengatur waktu notifikasi
+        window.updateNotifTime = (newTime) => {
+            if (!newTime) return;
+            localStorage.setItem('studyflow_notif_time', newTime);
+            showSystemNotification("Waktu Diperbarui", `Pengingat tugas disetel pada pukul ${newTime} WIB.`);
+        };
+
         function checkAndScheduleNotification() {
             if (Notification.permission !== "granted") return;
 
@@ -335,129 +341,96 @@
             const wibTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Jakarta"}));
             const todayStr = wibTime.toISOString().split('T')[0];
             const currentHour = wibTime.getHours();
+            const currentMinute = wibTime.getMinutes();
+            
+            // Ambil waktu target dari storage (bawaan 07:00)
+            const targetTimeStr = localStorage.getItem('studyflow_notif_time') || '07:00';
+            const [targetHour, targetMinute] = targetTimeStr.split(':').map(Number);
             
             const lastNotifDate = localStorage.getItem('studyflow_last_notif_date');
 
-            // Syarat: Jam >= 7 pagi WIB DAN belum dikirim hari ini
-            if (currentHour >= 7 && lastNotifDate !== todayStr) {
+            // Syarat: Waktu sekarang >= Waktu target DAN belum dikirim hari ini
+            // Menggunakan perbandingan total menit untuk presisi lebih baik
+            const currentTotalMinutes = (currentHour * 60) + currentMinute;
+            const targetTotalMinutes = (targetHour * 60) + targetMinute;
+
+            if (currentTotalMinutes >= targetTotalMinutes && lastNotifDate !== todayStr) {
                 const todayTasks = store.tugas.filter(t => t.deadline === todayStr && !t.status);
                 
                 if (todayTasks.length > 0) {
                     todayTasks.forEach(task => {
-                        // Memunculkan Notifikasi Sistem Asli (Browser Pop-up)
                         showSystemNotification("Jangan Lupa! ⚠️", `Tugas [${task.nama}] harus dikumpulkan HARI INI!`);
                     });
-                    // Catat bahwa notifikasi sudah dikirim untuk tanggal ini agar tidak spam
                     localStorage.setItem('studyflow_last_notif_date', todayStr);
                 }
             }
         }
 
         async function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                console.warn("Browser tidak mendukung notifikasi desktop.");
-                return;
-            }
-
+            if (!("Notification" in window)) return;
             try {
-                // Meminta izin secara eksplisit
                 const permission = await Notification.requestPermission();
                 updateNotifUI(permission);
-                
                 if (permission === "granted") {
-                    showSystemNotification("StudyFlow Aktif!", "Anda akan menerima pengingat tugas setiap jam 07:00 WIB.");
+                    const targetTime = localStorage.getItem('studyflow_notif_time') || '07:00';
+                    showSystemNotification("StudyFlow Aktif!", `Pengingat tugas aktif setiap pukul ${targetTime} WIB.`);
                     checkAndScheduleNotification();
                 }
             } catch (err) {
-                console.error("Gagal meminta izin notifikasi:", err);
+                console.error(err);
             }
         }
 
-        // Fungsi cadangan jika tombol diklik manual
         window.manualRequestNotif = () => {
             requestNotificationPermission();
         };
 
         function showSystemNotification(title, body) {
             if (Notification.permission === "granted") {
-                // Membuat objek notifikasi sistem asli
                 const n = new Notification(title, {
                     body: body,
                     icon: NOTIF_ICON,
                     badge: NOTIF_ICON,
-                    silent: false, // Membunyikan suara jika pengaturan sistem mengizinkan
-                    requireInteraction: true // Notifikasi tetap ada sampai diklik/tutup user
+                    requireInteraction: true 
                 });
-
-                // Menangani klik pada notifikasi
-                n.onclick = (e) => {
-                    e.preventDefault();
-                    window.focus();
-                    navigate('tugas');
-                };
+                n.onclick = (e) => { e.preventDefault(); window.focus(); navigate('tugas'); };
             }
         }
 
         function updateNotifUI(status) {
             const btn = document.getElementById('btn-enable-notif');
-            if (!btn) return;
-            if (status === 'granted') {
-                btn.classList.add('text-purple-600', 'bg-purple-50');
-                btn.title = "Notifikasi Aktif";
-            } else {
-                btn.classList.remove('text-purple-600', 'bg-purple-50');
-            }
+            if (btn && status === 'granted') btn.classList.add('text-purple-600', 'bg-purple-50');
         }
 
-        // Jalankan scheduler pemeriksaan waktu setiap menit
         function startNotifScheduler() {
             if (notifIntervalId) clearInterval(notifIntervalId);
-            // Cek langsung saat start
             checkAndScheduleNotification();
-            // Lalu cek tiap 60 detik
-            notifIntervalId = setInterval(checkAndScheduleNotification, 60000);
+            notifIntervalId = setInterval(checkAndScheduleNotification, 60000); 
         }
 
-        // --- FITUR EKSPOR EXCEL ---
+        // --- FITUR LAIN (EXCEL, FONT, DLL) ---
         window.exportToExcel = () => {
-            if (typeof XLSX === 'undefined') return alert("Library Excel sedang dimuat...");
-            if (!store.jadwal.length && !store.matkul.length && !store.tugas.length) return alert("Tidak ada data!");
-
+            if (typeof XLSX === 'undefined') return;
             const wb = XLSX.utils.book_new();
-            const autoWidth = (data) => {
-                if (!data.length) return [];
-                const keys = Object.keys(data[0]);
-                return keys.map(k => ({ wch: Math.max(k.length, ...data.map(o => o[k]?.toString().length || 0)) + 5 }));
-            };
-
+            const autoWidth = (data) => data.length ? Object.keys(data[0]).map(k => ({ wch: Math.max(k.length, ...data.map(o => o[k]?.toString().length || 0)) + 5 })) : [];
             const sheets = [
-                { name: "Mata Kuliah", data: store.matkul.map(m => ({ "Nama": m.nama, "SKS": m.sks, "Dosen": m.dosen })) },
+                { name: "Matkul", data: store.matkul.map(m => ({ "Nama": m.nama, "SKS": m.sks, "Dosen": m.dosen })) },
                 { name: "Jadwal", data: store.jadwal.map(j => ({ "Matkul": j.matkul, "Hari": j.hari, "Jam": j.waktu, "Ruang": j.ruang })) },
                 { name: "Tugas", data: store.tugas.map(t => ({ "Nama": t.nama, "Deadline": t.deadline, "Status": t.status ? "Selesai" : "Belum" })) }
             ];
-
-            sheets.forEach(s => {
-                if (s.data.length) {
-                    const ws = XLSX.utils.json_to_sheet(s.data);
-                    ws["!cols"] = autoWidth(s.data);
-                    XLSX.utils.book_append_sheet(wb, ws, s.name);
-                }
-            });
-
+            sheets.forEach(s => { if (s.data.length) { const ws = XLSX.utils.json_to_sheet(s.data); ws["!cols"] = autoWidth(s.data); XLSX.utils.book_append_sheet(wb, ws, s.name); } });
             XLSX.writeFile(wb, `StudyFlow_Export_${new Date().toISOString().slice(0, 10)}.xlsx`);
         };
 
-        // --- ATUR FONT ---
         window.setFontSize = (size) => {
-            const root = document.querySelector(':root');
             const sizes = { small: '14px', medium: '16px', large: '18px' };
-            root.style.setProperty('--base-font-size', sizes[size]);
+            document.querySelector(':root').style.setProperty('--base-font-size', sizes[size]);
             document.querySelectorAll('[id^="btn-font-"]').forEach(btn => btn.classList.remove('font-opt-active'));
             document.getElementById(`btn-font-${size}`).classList.add('font-opt-active');
             localStorage.setItem('studyflow_fontsize', size);
         };
 
-        // --- AUTH & DATA ---
+        // --- AUTH & CORE ---
         function parseJwt(token) {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -470,15 +443,7 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('loading-screen').classList.add('hidden');
-            
-            // OTOMATIS MINTA IZIN NOTIFIKASI SAAT BERHASIL MASUK
-            if (Notification.permission === 'default') {
-                // Gunakan delay kecil agar UI Dashboard sempat dimuat
-                setTimeout(requestNotificationPermission, 1500); 
-            } else {
-                updateNotifUI(Notification.permission);
-            }
-
+            if (Notification.permission === 'default') setTimeout(requestNotificationPermission, 2000);
             initDataListeners();
             navigate('dashboard');
             startNotifScheduler(); 
@@ -490,26 +455,20 @@
             enterApp(data);
         };
 
-        async function initAuth() {
-            try { await signInAnonymously(auth); } catch (err) { console.error(err); }
-        }
+        async function initAuth() { try { await signInAnonymously(auth); } catch (err) { console.error(err); } }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserId = user.uid;
                 const savedUser = localStorage.getItem('studyflow_user_session');
                 if (savedUser) enterApp(JSON.parse(savedUser));
-                else {
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('login-view').classList.remove('hidden');
-                }
+                else { document.getElementById('loading-screen').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); }
             }
         });
 
         function initDataListeners() {
             if (!currentUserId) return;
-            const collections = ['matkul', 'jadwal', 'tugas', 'target'];
-            collections.forEach(colName => {
+            ['matkul', 'jadwal', 'tugas', 'target'].forEach(colName => {
                 const q = collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, colName);
                 onSnapshot(q, (snapshot) => {
                     store[colName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -519,11 +478,7 @@
             });
         }
 
-        // --- NAVIGATION & VIEWS ---
-        window.navigate = (view) => {
-            activeTab = view;
-            renderUI();
-        };
+        window.navigate = (view) => { activeTab = view; renderUI(); };
 
         function renderUI() {
             const container = document.getElementById('content-area');
@@ -531,18 +486,15 @@
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('active-nav'));
             const activeNav = document.getElementById('nav-' + activeTab);
             if(activeNav) activeNav.classList.add('active-nav');
-            const views = { dashboard: renderDashboard, matkul: renderMatkul, jadwal: renderJadwal, tugas: renderTugas, target: renderTarget };
-            if (views[activeTab]) views[activeTab](container);
+            if (activeTab === 'dashboard') renderDashboard(container);
+            else if (activeTab === 'matkul') renderMatkul(container);
+            else if (activeTab === 'jadwal') renderJadwal(container);
+            else if (activeTab === 'tugas') renderTugas(container);
+            else if (activeTab === 'target') renderTarget(container);
             lucide.createIcons();
         }
 
-        function calculateDaysLeft(deadlineStr) {
-            if (!deadlineStr) return 999;
-            const deadline = new Date(deadlineStr);
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            return Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
-        }
+        function calculateDaysLeft(deadlineStr) { if (!deadlineStr) return 999; const deadline = new Date(deadlineStr); const today = new Date(); today.setHours(0,0,0,0); return Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)); }
 
         function renderDashboard(el) {
             const targetDone = store.target.filter(t => t.selesai).length;
@@ -550,15 +502,18 @@
             const now = new Date();
             const todayStr = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Jakarta"})).toISOString().split('T')[0];
             const todayTasks = store.tugas.filter(t => t.deadline === todayStr && !t.status);
+            
+            // Ambil waktu notif saat ini untuk input
+            const currentNotifTime = localStorage.getItem('studyflow_notif_time') || '07:00';
 
             el.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade">
                     <div class="lg:col-span-2 space-y-8">
-                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
-                            <h3 class="text-xl font-black mb-6 text-purple-700 flex items-center gap-2 text-left"><i data-lucide="calendar"></i> Tugas Hari Ini</h3>
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl text-left">
+                            <h3 class="text-xl font-black mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Tugas Hari Ini</h3>
                             <div class="space-y-4">
                                 ${todayTasks.map(t => `
-                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-purple-50 border border-purple-100 text-left">
+                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-purple-50 border border-purple-100">
                                         <div class="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
                                             <i data-lucide="alert-circle" size="20"></i>
                                         </div>
@@ -567,7 +522,7 @@
                                             <p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">DEADLINE HARI INI</p>
                                         </div>
                                     </div>
-                                `).join('') || '<p class="text-gray-400 italic text-sm py-4 text-left">Tidak ada deadline mendesak hari ini.</p>'}
+                                `).join('') || '<p class="text-gray-400 italic text-sm py-4">Tidak ada deadline mendesak hari ini.</p>'}
                             </div>
                         </div>
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl text-left">
@@ -584,16 +539,22 @@
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-purple-400 text-left">
                             <h3 class="text-xl font-black mb-6 text-purple-500 flex items-center gap-2"><i data-lucide="clock"></i> Pengingat Otomatis</h3>
                             <div class="p-5 rounded-3xl bg-white border border-gray-100 shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Status Notifikasi Sistem</p>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase mb-3 tracking-widest">Waktu Pengingat (WIB)</p>
+                                
+                                <div class="flex items-center gap-2 mb-6">
+                                    <input type="time" onchange="updateNotifTime(this.value)" value="${currentNotifTime}" class="bg-purple-50 border border-purple-100 text-purple-700 font-bold px-4 py-2 rounded-xl focus:ring-2 focus:ring-purple-400 outline-none w-full cursor-pointer transition-all" />
+                                </div>
+
+                                <p class="text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Status Izin</p>
                                 <div class="flex items-center gap-2 mb-4">
                                     <div class="w-2 h-2 rounded-full ${Notification.permission === 'granted' ? 'bg-green-500' : 'bg-orange-400'}"></div>
                                     <p class="text-sm font-black ${Notification.permission === 'granted' ? 'text-green-500' : 'text-orange-400'}">
-                                        ${Notification.permission === 'granted' ? 'AKTIF (Sistem)' : 'BELUM DIIZINKAN'}
+                                        ${Notification.permission === 'granted' ? 'AKTIF' : 'BELUM DIIZINKAN'}
                                     </p>
                                 </div>
-                                <p class="text-[10px] text-gray-500 leading-relaxed mb-4">Pengingat muncul di pemberitahuan perangkat Anda setiap jam <b>07.00 WIB</b> jika ada tugas hari ini.</p>
+                                <p class="text-[10px] text-gray-500 leading-relaxed mb-4">Notifikasi akan muncul di perangkat Anda pada waktu yang disetel jika terdapat tugas hari ini.</p>
                                 ${Notification.permission !== 'granted' ? `
-                                    <button onclick="manualRequestNotif()" class="w-full bg-purple-600 text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">Berikan Izin Notif</button>
+                                    <button onclick="manualRequestNotif()" class="w-full bg-purple-600 text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">Berikan Izin</button>
                                 ` : ''}
                             </div>
                         </div>
@@ -602,13 +563,12 @@
             `;
         }
 
-        // Fungsi Render Lainnya (Matkul, Jadwal, Tugas, Target)
-        function renderMatkul(el) { el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight">Daftar Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade">${store.matkul.map(m => `<div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left"><div><h3 class="text-xl font-black text-gray-800 truncate">${m.nama}</h3><p class="text-gray-500 text-sm">${m.dosen}</p><p class="text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2"></i></button></div>`).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Belum ada data mata kuliah.</div>'}</div>`; }
-        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight text-left text-gray-800">Jadwal Mingguan</h2><button onclick="openModal('jadwal')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left pb-10">${hariList.map(hari => `<div class="space-y-4"><h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left"><div class="flex-1 overflow-hidden"><div class="flex justify-between items-start"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base truncate">${j.matkul}</p><span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg border border-purple-100 flex-shrink-0 ml-2">${j.sks} SKS</span></div><p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p><div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider"><span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span><span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span></div></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2 text-left">Kosong.</p>'}</div>`).join('')}</div>`; }
-        function renderTugas(el) { const sortedTugas = [...store.tugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; }); el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button></div><div class="glass-card rounded-[2rem] overflow-x-auto shadow-xl border border-white animate-fade"><table class="w-full text-left min-w-[600px]"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6">Tugas</th><th class="p-6 text-center">Sisa Waktu</th><th class="p-6">Status</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sortedTugas.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span></td><td class="p-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 0 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}</span></td><td class="p-6 text-xs text-center"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors mx-auto"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="18"></i><span class="uppercase text-[10px] font-black tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span></button></td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="4" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}</tbody></table></div>`; }
+        function renderMatkul(el) { el.innerHTML = `<div class="flex justify-between items-center mb-8 text-left"><h2 class="text-3xl font-black tracking-tight text-gray-800">Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade">${store.matkul.map(m => `<div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left"><div><h3 class="text-xl font-black text-gray-800 truncate">${m.nama}</h3><p class="text-gray-500 text-sm">${m.dosen}</p><p class="text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2"></i></button></div>`).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Belum ada data mata kuliah.</div>'}</div>`; }
+        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex justify-between items-center mb-8 text-left"><h2 class="text-3xl font-black tracking-tight text-gray-800">Jadwal Mingguan</h2><button onclick="openModal('jadwal')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left pb-10">${hariList.map(hari => `<div class="space-y-4"><h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left"><div class="flex-1 overflow-hidden"><div class="flex justify-between items-start"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base truncate">${j.matkul}</p><span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg border border-purple-100 flex-shrink-0 ml-2">${j.sks} SKS</span></div><p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p><div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider"><span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span><span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span></div></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Kosong.</p>'}</div>`).join('')}</div>`; }
+        function renderTugas(el) { const sortedTugas = [...store.tugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; }); el.innerHTML = `<div class="flex justify-between items-center mb-8 text-left"><h2 class="text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button></div><div class="glass-card rounded-[2rem] overflow-x-auto shadow-xl border border-white animate-fade"><table class="w-full text-left min-w-[600px]"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6 text-left">Tugas</th><th class="p-6 text-center">Sisa Waktu</th><th class="p-6">Status</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sortedTugas.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span></td><td class="p-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 0 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}</span></td><td class="p-6 text-xs text-center"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors mx-auto"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="18"></i><span class="uppercase text-[10px] font-black tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span></button></td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="4" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}</tbody></table></div>`; }
         function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 animate-fade text-left"><div class="flex justify-between items-center mb-10"><h2 class="text-4xl font-black tracking-tighter text-gray-800 flex-1 text-left">Target Semester 6</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left">${store.target.map(t => `<div class="glass-card p-6 rounded-2xl md:rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all"><div class="flex items-center gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0">${t.selesai ? '<i data-lucide="check" size="16"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-5"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10 text-sm text-left">Target belum dibuat.</p>'}</div></div>`; }
 
-        // --- MODAL & CRUD HANDLERS ---
+        // --- CRUD & MODALS ---
         window.openModal = (id) => { document.getElementById('modal-overlay').classList.remove('hidden'); document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); document.getElementById('modal-' + id).classList.remove('hidden'); };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
         window.saveJadwal = async () => { const matkul = document.getElementById('in-j-matkul').value; const sks = document.getElementById('in-j-sks').value; const dosen = document.getElementById('in-j-dosen').value; const hari = document.getElementById('in-j-hari').value; const waktu = document.getElementById('in-j-waktu').value; const ruang = document.getElementById('in-j-ruang').value; if(!matkul || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: parseInt(sks) || 0, dosen, hari, waktu, ruang, createdAt: serverTimestamp() }); closeModal(); };
@@ -616,7 +576,7 @@
         window.saveTugas = async () => { const nama = document.getElementById('in-t-nama').value; const matkul = document.getElementById('in-t-matkul').value; const deadline = document.getElementById('in-t-deadline').value; if(!nama || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama, matkul, deadline, status: false, createdAt: serverTimestamp() }); closeModal(); };
         window.saveTarget = async () => { const teks = document.getElementById('in-tg-teks').value; if(!teks || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks, selesai: false, createdAt: serverTimestamp() }); closeModal(); };
         window.toggleStatus = async (col, docId, currentStatus) => { const field = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [field]: !currentStatus }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini selamanya?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
         window.logout = () => { localStorage.removeItem('studyflow_user_session'); window.location.reload(); };
 
         initAuth();
@@ -626,8 +586,12 @@
             google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: window.handleCredentialResponse, use_fedcm_for_prompt: true });
             google.accounts.id.renderButton(document.getElementById("google-signin-button"), { theme: "outline", size: "large", width: 280, shape: "pill" });
             lucide.createIcons();
+            
+            // Set notif UI status
+            updateNotifUI(Notification.permission);
         };
         window.setFontSize = setFontSize;
+        window.updateNotifTime = updateNotifTime;
     </script>
 </body>
 </html>
