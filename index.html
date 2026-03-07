@@ -244,14 +244,14 @@
         // --- INISIALISASI FIREBASE ---
         async function initFirebase() {
             try {
-                // Konfigurasi Firebase dari pengguna
+                // Konfigurasi Firebase dari pengguna (Diupdate dengan App ID & Sender ID)
                 const firebaseConfig = {
-                    apiKey: "AIzaSy...", // Ganti dengan API Key lengkap jika ingin dipakai di luar Canvas
+                    apiKey: "AIzaSy...", // Ganti dengan API Key lengkap (tersedia di tab Project settings > General)
                     authDomain: "studyflow-7afba.firebaseapp.com",
                     projectId: "studyflow-7afba",
                     storageBucket: "studyflow-7afba.appspot.com",
-                    messagingSenderId: "...", // Ganti dengan Sender ID Anda
-                    appId: "..." // Ganti dengan App ID Anda
+                    messagingSenderId: "1034032440737", // Terekstrak otomatis dari App ID
+                    appId: "1:1034032440737:web:030cffaa62db47b3f997e0" // Sesuai dengan yang Anda berikan
                 };
 
                 const app = initializeApp(firebaseConfig);
