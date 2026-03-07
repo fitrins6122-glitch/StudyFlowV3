@@ -122,13 +122,13 @@
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
+            <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-4 text-sm md:text-base text-center">Asisten akademik cerdas untuk manajemen jadwal, tugas, dan target semester 6 Anda.</p>
             
             <div class="flex justify-center mb-6 overflow-hidden rounded-xl">
                 <div id="google-signin-button"></div>
             </div>
             
-            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold">Sinkronisasi Cloud...</p>
+            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold text-center">Sinkronisasi Cloud...</p>
         </div>
     </div>
 
@@ -181,8 +181,8 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-3">
-                    <!-- Tombol Aktifkan Notifikasi -->
-                    <button id="btn-enable-notif" onclick="requestNotificationPermission()" class="bg-white p-2 md:p-3 rounded-lg md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all focus:outline-none" title="Aktifkan Notifikasi">
+                    <!-- Tombol Status Notifikasi -->
+                    <button id="btn-enable-notif" onclick="requestNotificationPermission()" class="bg-white p-2 md:p-3 rounded-lg md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all focus:outline-none" title="Izin Notifikasi">
                         <i data-lucide="bell-ring" size="18"></i>
                     </button>
 
@@ -241,7 +241,7 @@
                         <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Jam (08:00 - 10:00)" />
                     </div>
                     <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Ruangan" />
-                    <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest">Simpan Jadwal</button>
+                    <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest text-center">Simpan Jadwal</button>
                 </div>
             </div>
 
@@ -252,12 +252,12 @@
                     <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 p-1 transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Nama Mata Kuliah" />
+                    <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Nama Mata Kuliah" />
                     <div class="grid grid-cols-2 gap-3">
                         <input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="SKS" />
                         <input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Dosen Pengampu" />
                     </div>
-                    <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest">Simpan Mata Kuliah</button>
+                    <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest text-center">Simpan Mata Kuliah</button>
                 </div>
             </div>
 
@@ -268,10 +268,10 @@
                     <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 p-1 transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4">
-                    <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Nama Tugas" />
-                    <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Mata Kuliah" />
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Nama Tugas" />
+                    <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Mata Kuliah" />
                     <input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" />
-                    <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest">Simpan Tugas</button>
+                    <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-3.5 md:py-4 rounded-xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest text-center">Simpan Tugas</button>
                 </div>
             </div>
 
@@ -282,8 +282,8 @@
                     <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 p-1 transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none text-sm" placeholder="Contoh: TOEFL 500+" />
-                    <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest">Simpan Target</button>
+                    <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Contoh: TOEFL 500+" />
+                    <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-purple-700 transition-all text-xs md:text-sm uppercase tracking-widest text-center">Simpan Target</button>
                 </div>
             </div>
         </div>
@@ -322,45 +322,72 @@
         let activeTab = 'dashboard';
         let store = { matkul: [], jadwal: [], tugas: [], target: [] };
         let listeners = [];
-        let hasNotifiedToday = false;
+        let notifIntervalId = null;
 
-        // --- FITUR NOTIFIKASI OTOMATIS ---
+        // --- FITUR NOTIFIKASI OTOMATIS (PERBAIKAN) ---
+        
+        // Fungsi untuk mengecek dan menjadwalkan notifikasi
+        function checkAndScheduleNotification() {
+            if (Notification.permission !== "granted") return;
+
+            const now = new Date();
+            // WIB adalah UTC+7
+            const wibTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Jakarta"}));
+            const todayStr = wibTime.toISOString().split('T')[0];
+            const currentHour = wibTime.getHours();
+            
+            const lastNotifDate = localStorage.getItem('studyflow_last_notif_date');
+
+            // Syarat: Jam >= 7 pagi WIB DAN belum dikirim hari ini
+            if (currentHour >= 7 && lastNotifDate !== todayStr) {
+                const todayTasks = store.tugas.filter(t => t.deadline === todayStr && !t.status);
+                
+                if (todayTasks.length > 0) {
+                    todayTasks.forEach(task => {
+                        showNotification("Jangan Lupa! ⚠️", `Tugas [${task.nama}] harus dikumpulkan HARI INI!`);
+                    });
+                    // Catat bahwa notifikasi sudah dikirim untuk tanggal ini
+                    localStorage.setItem('studyflow_last_notif_date', todayStr);
+                }
+            }
+        }
+
         window.requestNotificationPermission = async () => {
             if (!("Notification" in window)) {
-                alert("Browser Anda tidak mendukung notifikasi desktop.");
+                console.log("Browser tidak mendukung notifikasi.");
                 return;
             }
 
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
-                document.getElementById('btn-enable-notif').classList.add('text-purple-600', 'bg-purple-50');
-                showNotification("Akses Diberikan!", "StudyFlow akan mengingatkan tugasmu setiap hari.");
-                checkDeadlinesForNotification(); // Jalankan scan pertama
-            } else {
-                alert("Izin ditolak. Anda tidak akan menerima pengingat otomatis.");
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === "granted") {
+                    document.getElementById('btn-enable-notif').classList.add('text-purple-600', 'bg-purple-50');
+                    showNotification("Notifikasi Aktif!", "StudyFlow akan mengingatkanmu setiap jam 07:00 WIB.");
+                    checkAndScheduleNotification();
+                }
+            } catch (err) {
+                console.error("Gagal meminta izin notifikasi:", err);
             }
         };
 
         function showNotification(title, body) {
-            new Notification(title, {
-                body: body,
-                icon: NOTIF_ICON,
-                badge: NOTIF_ICON
-            });
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: NOTIF_ICON,
+                    badge: NOTIF_ICON,
+                    silent: false,
+                    requireInteraction: true
+                });
+            } catch (e) {
+                console.log("Gagal menampilkan notifikasi sistem.");
+            }
         }
 
-        function checkDeadlinesForNotification() {
-            if (Notification.permission !== "granted" || hasNotifiedToday) return;
-
-            const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
-            const todayTasks = store.tugas.filter(t => t.deadline === today && !t.status);
-
-            if (todayTasks.length > 0) {
-                todayTasks.forEach(task => {
-                    showNotification("Jangan Lupa! ⚠️", `Tugas [${task.nama}] harus dikumpulkan HARI INI!`);
-                });
-                hasNotifiedToday = true; // Hindari spam notif dalam satu sesi
-            }
+        // Jalankan scheduler pemeriksaan waktu setiap menit
+        function startNotifScheduler() {
+            if (notifIntervalId) clearInterval(notifIntervalId);
+            notifIntervalId = setInterval(checkAndScheduleNotification, 60000); // Cek tiap 60 detik
         }
 
         // --- FITUR EKSPOR EXCEL ---
@@ -415,8 +442,15 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('loading-screen').classList.add('hidden');
+            
+            // OTOMATIS MINTA IZIN NOTIFIKASI SAAT MASUK
+            if (Notification.permission === 'default') {
+                setTimeout(requestNotificationPermission, 2000); // Beri jeda 2 detik agar UX lebih mulus
+            }
+
             initDataListeners();
             navigate('dashboard');
+            startNotifScheduler(); // Mulai timer pengecekan jam 7 pagi
         }
 
         window.handleCredentialResponse = async (response) => {
@@ -449,7 +483,7 @@
                 onSnapshot(q, (snapshot) => {
                     store[colName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderUI();
-                    if (colName === 'tugas') checkDeadlinesForNotification(); // Scan notif tiap data tugas update
+                    if (colName === 'tugas') checkAndScheduleNotification(); // Cek ulang notif jika ada data tugas masuk
                 });
             });
         }
@@ -463,19 +497,10 @@
         function renderUI() {
             const container = document.getElementById('content-area');
             if (!container) return;
-
             document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('active-nav'));
             const activeNav = document.getElementById('nav-' + activeTab);
             if(activeNav) activeNav.classList.add('active-nav');
-
-            const views = {
-                dashboard: renderDashboard,
-                matkul: renderMatkul,
-                jadwal: renderJadwal,
-                tugas: renderTugas,
-                target: renderTarget
-            };
-
+            const views = { dashboard: renderDashboard, matkul: renderMatkul, jadwal: renderJadwal, tugas: renderTugas, target: renderTarget };
             if (views[activeTab]) views[activeTab](container);
             lucide.createIcons();
         }
@@ -491,8 +516,9 @@
         function renderDashboard(el) {
             const targetDone = store.target.filter(t => t.selesai).length;
             const progress = store.target.length ? Math.round((targetDone / store.target.length) * 100) : 0;
-            const today = new Date().toISOString().split('T')[0];
-            const todayTasks = store.tugas.filter(t => t.deadline === today && !t.status);
+            const now = new Date();
+            const todayStr = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Jakarta"})).toISOString().split('T')[0];
+            const todayTasks = store.tugas.filter(t => t.deadline === todayStr && !t.status);
 
             el.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade">
@@ -502,7 +528,7 @@
                             <div class="space-y-4">
                                 ${todayTasks.map(t => `
                                     <div class="flex items-center gap-4 p-4 rounded-3xl bg-purple-50 border border-purple-100">
-                                        <div class="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center">
+                                        <div class="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center shadow-md">
                                             <i data-lucide="alert-circle" size="20"></i>
                                         </div>
                                         <div class="flex-1 overflow-hidden">
@@ -510,7 +536,7 @@
                                             <p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">DEADLINE HARI INI</p>
                                         </div>
                                     </div>
-                                `).join('') || '<p class="text-gray-400 italic text-sm py-4">Tidak ada deadline mendesak hari ini.</p>'}
+                                `).join('') || '<p class="text-gray-400 italic text-sm py-4">Tidak ada deadline mendesak untuk hari ini.</p>'}
                             </div>
                         </div>
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
@@ -525,14 +551,18 @@
                     </div>
                     <div class="space-y-8">
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-purple-400">
-                            <h3 class="text-xl font-black mb-6 text-purple-500 flex items-center gap-2"><i data-lucide="clock"></i> Status Notifikasi</h3>
-                            <div class="p-5 rounded-3xl bg-white border border-gray-100 shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Izin Browser</p>
-                                <p class="text-sm font-black ${Notification.permission === 'granted' ? 'text-green-500' : 'text-orange-400'}">
-                                    ${Notification.permission === 'granted' ? 'AKTIF (Siap Beraksi)' : 'BELUM AKTIF'}
-                                </p>
+                            <h3 class="text-xl font-black mb-6 text-purple-500 flex items-center gap-2"><i data-lucide="clock"></i> Pengingat Otomatis</h3>
+                            <div class="p-5 rounded-3xl bg-white border border-gray-100 shadow-sm text-left">
+                                <p class="text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Izin Browser</p>
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-2 h-2 rounded-full ${Notification.permission === 'granted' ? 'bg-green-500' : 'bg-orange-400'}"></div>
+                                    <p class="text-sm font-black ${Notification.permission === 'granted' ? 'text-green-500' : 'text-orange-400'}">
+                                        ${Notification.permission === 'granted' ? 'AKTIF' : 'NON-AKTIF'}
+                                    </p>
+                                </div>
+                                <p class="text-[10px] text-gray-500 leading-relaxed mb-4">Sistem akan mengirim notifikasi setiap jam <b>07.00 WIB</b> jika terdapat tugas yang jatuh tempo hari ini.</p>
                                 ${Notification.permission !== 'granted' ? `
-                                    <button onclick="requestNotificationPermission()" class="mt-4 w-full bg-purple-600 text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-100">Aktifkan Sekarang</button>
+                                    <button onclick="requestNotificationPermission()" class="w-full bg-purple-600 text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-100 active:scale-95 transition-all">Aktifkan Sekarang</button>
                                 ` : ''}
                             </div>
                         </div>
@@ -541,13 +571,13 @@
             `;
         }
 
-        // View lainnya (Matkul, Jadwal, Tugas, Target) tetap sama fungsinya dengan CRUD Firebase
-        function renderMatkul(el) { el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight">Daftar Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade">${store.matkul.map(m => `<div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start"><div><h3 class="text-xl font-black text-gray-800">${m.nama}</h3><p class="text-gray-500 text-sm">${m.dosen}</p><p class="text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2"></i></button></div>`).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Kosong</div>'}</div>`; }
-        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight">Jadwal Mingguan</h2><button onclick="openModal('jadwal')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">${hariList.map(hari => `<div class="space-y-4"><h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left"><div class="flex-1 overflow-hidden"><div class="flex justify-between items-start"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base truncate">${j.matkul}</p><span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg border border-purple-100">${j.sks} SKS</span></div><p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p><div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider"><span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span><span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span></div></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Kosong.</p>'}</div>`).join('')}</div>`; }
-        function renderTugas(el) { const sortedTugas = [...store.tugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; }); el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button></div><div class="glass-card rounded-[2rem] overflow-x-auto shadow-xl border border-white animate-fade"><table class="w-full text-left min-w-[600px]"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6">Tugas</th><th class="p-6 text-center">Sisa Waktu</th><th class="p-6">Status</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sortedTugas.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span></td><td class="p-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 0 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}</span></td><td class="p-6 text-xs"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="18"></i><span class="uppercase text-[10px] font-black tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span></button></td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="4" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}</tbody></table></div>`; }
-        function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 animate-fade text-left"><div class="flex justify-between items-center mb-10"><h2 class="text-4xl font-black tracking-tighter text-gray-800 flex-1">Target Semester 6</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left">${store.target.map(t => `<div class="glass-card p-6 rounded-2xl md:rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all"><div class="flex items-center gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0">${t.selesai ? '<i data-lucide="check" size="16"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-5"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10">Belum ada target.</p>'}</div></div>`; }
+        // Fungsi Render Lainnya (Matkul, Jadwal, Tugas, Target)
+        function renderMatkul(el) { el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight">Daftar Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade">${store.matkul.map(m => `<div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left"><div><h3 class="text-xl font-black text-gray-800">${m.nama}</h3><p class="text-gray-500 text-sm">${m.dosen}</p><p class="text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2"></i></button></div>`).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Belum ada data mata kuliah.</div>'}</div>`; }
+        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight text-left">Jadwal Mingguan</h2><button onclick="openModal('jadwal')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left pb-10">${hariList.map(hari => `<div class="space-y-4"><h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left"><div class="flex-1 overflow-hidden"><div class="flex justify-between items-start"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base truncate">${j.matkul}</p><span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg border border-purple-100">${j.sks} SKS</span></div><p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p><div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider"><span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span><span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span></div></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Kosong.</p>'}</div>`).join('')}</div>`; }
+        function renderTugas(el) { const sortedTugas = [...store.tugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; }); el.innerHTML = `<div class="flex justify-between items-center mb-8"><h2 class="text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button></div><div class="glass-card rounded-[2rem] overflow-x-auto shadow-xl border border-white animate-fade"><table class="w-full text-left min-w-[600px]"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6">Tugas</th><th class="p-6 text-center">Sisa Waktu</th><th class="p-6">Status</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sortedTugas.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span></td><td class="p-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 0 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}</span></td><td class="p-6 text-xs text-center"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors mx-auto"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="18"></i><span class="uppercase text-[10px] font-black tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span></button></td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="4" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}</tbody></table></div>`; }
+        function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 animate-fade text-left"><div class="flex justify-between items-center mb-10"><h2 class="text-4xl font-black tracking-tighter text-gray-800 flex-1">Target Semester 6</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left">${store.target.map(t => `<div class="glass-card p-6 rounded-2xl md:rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all"><div class="flex items-center gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-100' : 'border-purple-100 bg-white'} flex-shrink-0">${t.selesai ? '<i data-lucide="check" size="16"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-5"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10 text-sm">Target belum dibuat.</p>'}</div></div>`; }
 
-        // --- CRUD ACTIONS ---
+        // --- MODAL & CRUD HANDLERS ---
         window.openModal = (id) => { document.getElementById('modal-overlay').classList.remove('hidden'); document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); document.getElementById('modal-' + id).classList.remove('hidden'); };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
         window.saveJadwal = async () => { const matkul = document.getElementById('in-j-matkul').value; const sks = document.getElementById('in-j-sks').value; const dosen = document.getElementById('in-j-dosen').value; const hari = document.getElementById('in-j-hari').value; const waktu = document.getElementById('in-j-waktu').value; const ruang = document.getElementById('in-j-ruang').value; if(!matkul || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: parseInt(sks) || 0, dosen, hari, waktu, ruang, createdAt: serverTimestamp() }); closeModal(); };
@@ -555,7 +585,7 @@
         window.saveTugas = async () => { const nama = document.getElementById('in-t-nama').value; const matkul = document.getElementById('in-t-matkul').value; const deadline = document.getElementById('in-t-deadline').value; if(!nama || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama, matkul, deadline, status: false, createdAt: serverTimestamp() }); closeModal(); };
         window.saveTarget = async () => { const teks = document.getElementById('in-tg-teks').value; if(!teks || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks, selesai: false, createdAt: serverTimestamp() }); closeModal(); };
         window.toggleStatus = async (col, docId, currentStatus) => { const field = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [field]: !currentStatus }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini selamanya?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
         window.logout = () => { localStorage.removeItem('studyflow_user_session'); window.location.reload(); };
 
         initAuth();
