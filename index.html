@@ -78,8 +78,8 @@
 
         /* Font Size Options Active State */
         .font-opt-active {
-            background-color: #7C3AED;
-            color: white;
+            background-color: #7C3AED !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -98,7 +98,7 @@
             <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-10 font-medium leading-relaxed px-4">Kelola jadwal, tugas, dan target semestermu secara otomatis dengan sinkronisasi Cloud Firebase.</p>
+            <p class="text-gray-600 mb-10 font-medium leading-relaxed px-4 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis dengan sinkronisasi Cloud Firebase.</p>
             
             <div class="flex justify-center mb-6">
                 <div id="google-signin-button"></div>
@@ -112,60 +112,68 @@
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
         
         <!-- Sidebar Desktop -->
-        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6">
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
             <div class="flex items-center gap-3 mb-10 px-2">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-10 h-10 rounded-xl object-cover shadow-md" />
                 <h1 class="text-2xl font-black text-purple-700 tracking-tight text-base">StudyFlow</h1>
             </div>
 
             <nav class="flex-1 space-y-2">
-                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav">
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav text-sm">
                     <i data-lucide="layout-grid"></i> Dashboard
                 </button>
-                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
                     <i data-lucide="book-open"></i> Mata Kuliah
                 </button>
-                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
                     <i data-lucide="calendar"></i> Jadwal Kuliah
                 </button>
-                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
                     <i data-lucide="check-square"></i> Tugas & Deadline
                 </button>
-                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
                     <i data-lucide="target"></i> Target Semester
                 </button>
             </nav>
 
             <div class="pt-6 border-t border-purple-100">
-                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold">
+                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
                     <i data-lucide="log-out"></i> Logout
                 </button>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-4 lg:p-10 pb-32 lg:pb-10 max-w-7xl mx-auto w-full overflow-y-auto h-screen">
+        <main class="flex-1 p-4 lg:p-10 pb-32 lg:pb-10 max-w-7xl mx-auto w-full overflow-y-auto h-screen relative z-10">
             
             <!-- Top Header -->
-            <header class="flex justify-between items-center mb-8 bg-white/40 p-4 rounded-[2rem] border border-white/50 backdrop-blur-md">
+            <header class="flex justify-between items-center mb-8 bg-white/40 p-4 rounded-[2rem] border border-white/50 backdrop-blur-md sticky top-0 z-50">
                 <div class="flex items-center gap-4">
-                    <img id="profile-pic" src="" class="w-12 h-12 rounded-full border-2 border-purple-500 p-0.5 shadow-md object-cover" onerror="this.src='https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff'" />
-                    <div>
-                        <h2 class="text-xs font-bold text-purple-600 uppercase tracking-widest uppercase">Akademik Planner</h2>
-                        <h1 id="profile-name" class="text-xl font-black text-gray-800 tracking-tight">Memuat profil...</h1>
+                    <img id="profile-pic" src="" class="w-12 h-12 rounded-full border-2 border-purple-500 p-0.5 shadow-md object-cover flex-shrink-0" onerror="this.src='https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff'" />
+                    <div class="hidden sm:block">
+                        <h2 class="text-[10px] font-bold text-purple-600 uppercase tracking-widest uppercase">Akademik Planner</h2>
+                        <h1 id="profile-name" class="text-lg font-black text-gray-800 tracking-tight">Memuat profil...</h1>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <!-- Dropdown Atur Font -->
+                
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- Dropdown Atur Font (Fixed Z-Index and Obstruction) -->
                     <div class="relative group">
-                        <button class="bg-white p-3 rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all">
+                        <button class="bg-white p-3 rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all focus:outline-none" title="Atur Tampilan">
                             <i data-lucide="type"></i>
                         </button>
                         <!-- Menu Font -->
-                        <div class="absolute right-0 top-full mt-2 hidden group-hover:block glass-card rounded-2xl p-2 w-32 shadow-xl z-[60] border border-purple-100">
-                            <button onclick="setFontSize('small')" id="btn-font-small" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all">Kecil</button>
-                            <button onclick="setFontSize('medium')" id="btn-font-medium" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all font-opt-active">Sedang</button>
-                            <button onclick="setFontSize('large')" id="btn-font-large" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all">Besar</button>
+                        <div class="absolute right-0 top-full mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible glass-card rounded-2xl p-2 w-36 shadow-2xl z-[100] border border-purple-100 transition-all duration-200">
+                            <p class="text-[9px] font-black text-purple-400 uppercase px-3 py-1 mb-1 tracking-widest">Ukuran Font</p>
+                            <button onclick="setFontSize('small')" id="btn-font-small" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all flex items-center justify-between mb-1">
+                                Kecil <span class="text-[10px] opacity-50">14px</span>
+                            </button>
+                            <button onclick="setFontSize('medium')" id="btn-font-medium" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all flex items-center justify-between mb-1 font-opt-active">
+                                Sedang <span class="text-[10px] opacity-50">16px</span>
+                            </button>
+                            <button onclick="setFontSize('large')" id="btn-font-large" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all flex items-center justify-between">
+                                Besar <span class="text-[10px] opacity-50">18px</span>
+                            </button>
                         </div>
                     </div>
 
@@ -179,7 +187,7 @@
             </header>
 
             <!-- Content Area -->
-            <div id="content-area" class="animate-fade"></div>
+            <div id="content-area" class="animate-fade relative z-0"></div>
         </main>
 
         <!-- Bottom Nav Mobile -->
@@ -201,36 +209,36 @@
             </div>
             <div class="space-y-4 text-left">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Mata Kuliah</label>
-                    <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: Metodologi Penelitian" />
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">Mata Kuliah</label>
+                    <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Contoh: Metodologi Penelitian" />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">SKS</label>
-                        <input type="number" id="in-j-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="SKS" />
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">SKS</label>
+                        <input type="number" id="in-j-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="SKS" />
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Dosen Pengampu</label>
-                        <input type="text" id="in-j-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Dosen" />
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">Dosen</label>
+                        <input type="text" id="in-j-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Nama Dosen" />
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Hari</label>
-                        <select id="in-j-hari" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">Hari</label>
+                        <select id="in-j-hari" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm">
                             <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Waktu</label>
-                        <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="08:00 - 10:00" />
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">Waktu</label>
+                        <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="08:00 - 10:00" />
                     </div>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Ruangan</label>
-                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: R.203" />
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 tracking-widest">Ruangan</label>
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Contoh: R.203" />
                 </div>
-                <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Jadwal</button>
+                <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95 text-sm uppercase tracking-widest">Simpan Jadwal</button>
             </div>
         </div>
 
@@ -241,12 +249,12 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-all"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-4 text-left">
-                <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Mata Kuliah" />
+                <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Nama Mata Kuliah" />
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="SKS" />
-                    <input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Dosen Pengampu" />
+                    <input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="SKS" />
+                    <input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Dosen Pengampu" />
                 </div>
-                <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Mata Kuliah</button>
+                <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95 text-sm uppercase tracking-widest">Simpan Mata Kuliah</button>
             </div>
         </div>
 
@@ -257,10 +265,10 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-all"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-4 text-left">
-                <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Tugas" />
-                <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Pilih Mata Kuliah" />
-                <input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" />
-                <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Tugas</button>
+                <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Nama Tugas" />
+                <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Pilih Mata Kuliah" />
+                <input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" />
+                <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95 text-sm uppercase tracking-widest">Simpan Tugas</button>
             </div>
         </div>
 
@@ -271,8 +279,8 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-all"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-4 text-left">
-                <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: Lulus Sidang Skripsi" />
-                <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Target</button>
+                <input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Contoh: Lulus Sidang Skripsi" />
+                <button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95 text-sm uppercase tracking-widest">Simpan Target</button>
             </div>
         </div>
     </div>
@@ -317,8 +325,11 @@
             root.style.setProperty('--base-font-size', sizes[size]);
 
             // Update UI Button
-            document.querySelectorAll('[id^="btn-font-"]').forEach(btn => btn.classList.remove('font-opt-active'));
-            document.getElementById(`btn-font-${size}`).classList.add('font-opt-active');
+            document.querySelectorAll('[id^="btn-font-"]').forEach(btn => {
+                btn.classList.remove('font-opt-active');
+            });
+            const activeBtn = document.getElementById(`btn-font-${size}`);
+            if (activeBtn) activeBtn.classList.add('font-opt-active');
         };
 
         // --- AUTHENTICATION ---
@@ -421,17 +432,17 @@
                                 ${store.jadwal.slice(0, 3).map(j => `
                                     <div class="flex items-center gap-4 p-4 rounded-3xl bg-white/50 border border-white">
                                         <div class="flex-1">
-                                            <p class="font-black text-gray-800">${j.matkul}</p>
+                                            <p class="font-black text-gray-800 text-sm md:text-base">${j.matkul}</p>
                                             <p class="text-xs text-gray-500 font-medium">${j.hari}, ${j.waktu} • ${j.ruang}</p>
-                                            <p class="text-[9px] font-black text-purple-400 uppercase mt-1 text-xs">${j.dosen || 'No Lecturer'} • ${j.sks || '0'} SKS</p>
+                                            <p class="text-[10px] font-black text-purple-400 uppercase mt-1 tracking-widest">${j.dosen || 'Tanpa Dosen'} • ${j.sks || '0'} SKS</p>
                                         </div>
                                     </div>
-                                `).join('') || '<p class="text-gray-400 italic">Belum ada jadwal kuliah.</p>'}
+                                `).join('') || '<p class="text-gray-400 italic text-sm">Belum ada jadwal kuliah.</p>'}
                             </div>
                         </div>
                         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
                             <div class="flex justify-between items-end mb-4">
-                                <h3 class="text-xl font-black text-purple-700 text-lg">Target Semester</h3>
+                                <h3 class="text-xl font-black text-purple-700 text-base md:text-lg">Target Semester</h3>
                                 <p class="text-2xl font-black text-purple-600">${progress}%</p>
                             </div>
                             <div class="w-full bg-purple-100 h-4 rounded-full overflow-hidden">
@@ -448,7 +459,7 @@
                                         <p class="font-bold text-gray-800 text-sm">${t.nama}</p>
                                         <p class="text-[10px] font-black uppercase text-red-400 mt-1">${t.daysLeft <= 0 ? 'HARI INI / LEWAT' : 'SISA ' + t.daysLeft + ' HARI'}</p>
                                     </div>
-                                `).join('') || '<p class="text-gray-400">Semua aman!</p>'}
+                                `).join('') || '<p class="text-gray-400 text-sm">Semua aman!</p>'}
                             </div>
                         </div>
                     </div>
@@ -465,12 +476,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade">
                     ${store.matkul.map(m => `
                         <div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start">
-                            <div>
-                                <h3 class="text-xl font-black text-gray-800 text-base">${m.nama}</h3>
-                                <p class="text-gray-500 font-medium text-sm">${m.dosen}</p>
-                                <p class="text-[10px] font-black text-purple-400 uppercase mt-2">${m.sks} SKS • SEMESTER 6</p>
+                            <div class="overflow-hidden">
+                                <h3 class="text-xl font-black text-gray-800 text-base md:text-lg truncate">${m.nama}</h3>
+                                <p class="text-gray-500 font-medium text-xs md:text-sm truncate">${m.dosen}</p>
+                                <p class="text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p>
                             </div>
-                            <button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2"></i></button>
+                            <button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2"></i></button>
                         </div>
                     `).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Kosong</div>'}
                 </div>
@@ -487,15 +498,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade text-left">
                     ${hariList.map(hari => `
                         <div class="space-y-4">
-                            <h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 text-base"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
+                            <h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 text-base uppercase tracking-widest"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
                             ${store.jadwal.filter(j => j.hari === hari).map(j => `
                                 <div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all">
-                                    <div class="flex-1">
+                                    <div class="flex-1 overflow-hidden">
                                         <div class="flex justify-between items-start">
-                                            <p class="font-bold text-gray-800 leading-tight text-sm">${j.matkul}</p>
-                                            <span class="text-[10px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-lg text-[8px]">${j.sks} SKS</span>
+                                            <p class="font-bold text-gray-800 leading-tight text-sm md:text-base truncate">${j.matkul}</p>
+                                            <span class="text-[10px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-lg text-[8px] ml-2 flex-shrink-0">${j.sks} SKS</span>
                                         </div>
-                                        <p class="text-xs text-gray-500 font-semibold mt-1 italic text-[10px]">${j.dosen}</p>
+                                        <p class="text-xs text-gray-500 font-semibold mt-1 italic text-[10px] truncate">${j.dosen}</p>
                                         <div class="flex items-center gap-4 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-wider text-[8px]">
                                             <span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
                                             <span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span>
@@ -524,8 +535,8 @@
                     <h2 class="text-3xl font-black tracking-tight text-xl">Tugas & Deadline</h2>
                     <button onclick="openModal('tugas')" class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button>
                 </div>
-                <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl border border-white animate-fade">
-                    <table class="w-full text-left">
+                <div class="glass-card rounded-[2.5rem] overflow-x-auto shadow-xl border border-white animate-fade">
+                    <table class="w-full text-left min-w-[600px]">
                         <thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100">
                             <tr>
                                 <th class="p-6">Tugas & Matkul</th>
@@ -544,21 +555,21 @@
                                     </td>
                                     <td class="p-6 text-gray-400 font-medium text-xs">${t.deadline}</td>
                                     <td class="p-6">
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 3 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px]">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 3 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">
                                             ${t.daysLeft <= 0 ? 'SEKARANG / LEWAT' : t.daysLeft + ' HARI LAGI'}
                                         </span>
                                     </td>
                                     <td class="p-6 text-xs">
                                         <button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors">
                                             <i data-lucide="${t.status ? 'check-circle' : 'circle'}"></i>
-                                            <span class="uppercase text-[10px] font-black text-[8px]">${t.status ? 'Selesai' : 'Belum'}</span>
+                                            <span class="uppercase text-[10px] font-black text-[8px] tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span>
                                         </button>
                                     </td>
                                     <td class="p-6 text-center">
                                         <button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button>
                                     </td>
                                 </tr>
-                            `).join('') || '<tr><td colspan="5" class="p-20 text-center text-gray-300">Belum ada tugas.</td></tr>'}
+                            `).join('') || '<tr><td colspan="5" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}
                         </tbody>
                     </table>
                 </div>
@@ -575,7 +586,7 @@
                     <div class="space-y-4">
                         ${store.target.map(t => `
                             <div class="glass-card p-6 rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all">
-                                <div class="flex items-center gap-4 cursor-pointer" onclick="toggleStatus('target', '${t.id}', ${t.selesai})">
+                                <div class="flex items-center gap-4 cursor-pointer flex-1" onclick="toggleStatus('target', '${t.id}', ${t.selesai})">
                                     <div class="w-10 h-10 rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-100' : 'border-purple-100 bg-white'}">
                                         ${t.selesai ? '<i data-lucide="check"></i>' : ''}
                                     </div>
@@ -583,7 +594,7 @@
                                 </div>
                                 <button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-5"></i></button>
                             </div>
-                        `).join('') || '<p class="text-center text-gray-400 py-10">Belum ada target yang dibuat.</p>'}
+                        `).join('') || '<p class="text-center text-gray-400 py-10 text-sm italic">Belum ada target yang dibuat.</p>'}
                     </div>
                 </div>
             `;
@@ -651,7 +662,7 @@
         };
 
         window.deleteItem = async (col, docId) => {
-            if(confirm('Hapus data ini?')) {
+            if(confirm('Hapus data ini selamanya?')) {
                 await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId));
             }
         };
@@ -674,6 +685,9 @@
                 { theme: "outline", size: "large", width: 320, shape: "pill" }
             );
             lucide.createIcons();
+            
+            // Set default font size active
+            window.setFontSize('medium');
         };
 
         // Export global function
