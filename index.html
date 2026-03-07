@@ -55,7 +55,7 @@
             border-right: 1px solid rgba(124, 58, 237, 0.1);
         }
 
-        /* Background Dinamis */
+        /* Background Dinamis dengan Gambar AI */
         .bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png');
             background-size: cover;
@@ -101,13 +101,9 @@
             accent-color: #7C3AED;
         }
 
+        /* Safe area for mobile bottoms */
         .pb-safe {
             padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .font-opt-active {
-            background-color: #7C3AED !important;
-            color: white !important;
         }
     </style>
 </head>
@@ -117,7 +113,7 @@
     <div id="loading-screen" class="fixed inset-0 flex items-center justify-center">
         <div class="text-center p-6">
             <div class="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-purple-600 font-bold animate-pulse text-sm">Menyelaraskan Sesi...</p>
+            <p class="text-purple-600 font-bold animate-pulse text-sm">Menyiapkan StudyFlow...</p>
         </div>
     </div>
 
@@ -147,33 +143,33 @@
     <!-- ================= MAIN DASHBOARD VIEW ================= -->
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
         
-        <!-- Sidebar Desktop -->
+        <!-- Sidebar Desktop (Hidden on Mobile) -->
         <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
             <div class="flex items-center gap-3 mb-10 px-2 text-left">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-10 h-10 rounded-xl object-cover shadow-md" />
                 <h1 class="text-2xl font-black text-purple-700 tracking-tight">StudyFlow</h1>
             </div>
 
-            <nav class="flex-1 space-y-2 text-left">
-                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav text-sm">
+            <nav class="flex-1 space-y-2">
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav text-sm text-left">
                     <i data-lucide="layout-grid"></i> Dashboard
                 </button>
-                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left">
                     <i data-lucide="book-open"></i> Mata Kuliah
                 </button>
-                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left">
                     <i data-lucide="calendar"></i> Jadwal Kuliah
                 </button>
-                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left">
                     <i data-lucide="check-square"></i> Tugas & Deadline
                 </button>
-                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm">
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left">
                     <i data-lucide="target"></i> Target Semester
                 </button>
             </nav>
 
-            <div class="pt-6 border-t border-purple-100 text-left">
-                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
+            <div class="pt-6 border-t border-purple-100">
+                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm text-left">
                     <i data-lucide="log-out"></i> Logout
                 </button>
             </div>
@@ -206,11 +202,6 @@
                                 <span class="text-[10px] font-bold text-gray-400">42</span>
                             </div>
                             <p id="font-value-display" class="text-center font-black text-purple-600 text-lg mt-2">16px</p>
-                            <div class="mt-4 flex gap-1 justify-between">
-                                <button onclick="setFontSize('small')" id="btn-font-small" class="flex-1 py-1 text-[8px] font-bold rounded-lg border border-purple-100 bg-white">KECIL</button>
-                                <button onclick="setFontSize('medium')" id="btn-font-medium" class="flex-1 py-1 text-[8px] font-bold rounded-lg border border-purple-100 bg-white">NORMAL</button>
-                                <button onclick="setFontSize('large')" id="btn-font-large" class="flex-1 py-1 text-[8px] font-bold rounded-lg border border-purple-100 bg-white">BESAR</button>
-                            </div>
                         </div>
                     </div>
 
@@ -228,9 +219,9 @@
         </main>
 
         <!-- Bottom Nav Mobile -->
-        <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-16 glass-card rounded-[1.5rem] shadow-2xl flex items-center justify-around px-2 z-[100] border-2 border-white/60 pb-safe text-center">
+        <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-16 glass-card rounded-[1.5rem] shadow-2xl flex items-center justify-around px-2 z-[100] border-2 border-white/60 pb-safe">
             <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-all duration-300">
-                <i data-lucide="layout-grid" size="20"></i><span class="text-[8px] font-bold uppercase tracking-widest">Dash</span>
+                <i data-lucide="layout-grid" size="20"></i><span class="text-[8px] font-bold uppercase tracking-widest">Dashboard</span>
             </button>
             <button onclick="navigate('matkul')" id="m-nav-matkul" class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-all duration-300">
                 <i data-lucide="book-open" size="20"></i><span class="text-[8px] font-bold uppercase tracking-widest">Matkul</span>
@@ -250,31 +241,36 @@
     <!-- ================= MODALS ================= -->
     <div id="modal-overlay" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div id="modal-content-wrapper" class="w-full max-w-md animate-fade text-left">
-            <!-- Modal Jadwal -->
             <div id="modal-jadwal" class="hidden glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white">
                 <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Tambah Jadwal</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
                     <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm" placeholder="Mata Kuliah" />
                     <div class="grid grid-cols-2 gap-3"><input type="number" id="in-j-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="SKS" /><input type="text" id="in-j-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Dosen" /></div>
-                    <div class="grid grid-cols-2 gap-3"><select id="in-j-hari" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option></select><input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Jam (e.g. 08:00 - 10:00)" /></div>
+                    <div class="grid grid-cols-2 gap-3"><select id="in-j-hari" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option></select><input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="08:00 - 10:00" /></div>
                     <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Ruangan" />
                     <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button>
                 </div>
             </div>
-            <!-- Modal Matkul -->
             <div id="modal-matkul" class="hidden glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white">
-                <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Mata Kuliah Baru</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4"><input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Nama Mata Kuliah" /><div class="grid grid-cols-2 gap-3"><input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="SKS" /><input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Dosen" /></div><button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg text-center">Simpan</button></div>
+                <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Mata Kuliah</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
+                <div class="space-y-4 text-left">
+                    <input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Nama Mata Kuliah" />
+                    <div class="grid grid-cols-2 gap-3"><input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="SKS" /><input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Dosen" /></div>
+                    <button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button>
+                </div>
             </div>
-            <!-- Modal Tugas -->
             <div id="modal-tugas" class="hidden glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white">
-                <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Tambah Tugas</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4"><input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Nama Tugas" /><input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Mata Kuliah" /><input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" /><button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div>
+                <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Tugas</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
+                <div class="space-y-4">
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Nama Tugas" />
+                    <input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Mata Kuliah" />
+                    <input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" />
+                    <button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button>
+                </div>
             </div>
-            <!-- Modal Target -->
             <div id="modal-target" class="hidden glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white">
                 <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Target</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4 text-left"><input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Contoh: TOEFL 500+" /><button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg text-center">Simpan</button></div>
+                <div class="space-y-4 text-left"><input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm" placeholder="Contoh: TOEFL 500+" /><button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div>
             </div>
         </div>
     </div>
@@ -285,7 +281,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG ---
         const firebaseConfig = { apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY", authDomain: "studyflow-7afba.firebaseapp.com", projectId: "studyflow-7afba", storageBucket: "studyflow-7afba.firebasestorage.app", messagingSenderId: "1034032440737", appId: "1:1034032440737:web:030cffaa62db47b3f997e0" };
         const GOOGLE_CLIENT_ID = "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com";
         const APP_ID_ROOT = 'studyflow-planner';
@@ -298,30 +293,20 @@
         let activeTab = 'dashboard';
         let store = { matkul: [], jadwal: [], tugas: [], target: [] };
 
-        // --- FIXED: Definisi Fungsi agar Global ---
-        window.initAuth = async function() {
-            try {
-                await signInAnonymously(auth);
-                console.log("Firebase Auth Initialized.");
-            } catch (err) {
-                console.error("Auth init error:", err);
-            }
-        };
+        async function initAuth() {
+            try { await signInAnonymously(auth); } catch (err) { console.error(err); }
+        }
 
-        window.updateFontSizeSlider = function(val) {
+        window.updateFontSizeSlider = (val) => {
             const root = document.querySelector(':root');
             root.style.setProperty('--base-font-size', val + 'px');
-            const display = document.getElementById('font-value-display');
-            if(display) display.innerText = val + 'px';
+            document.getElementById('font-value-display').innerText = val + 'px';
             localStorage.setItem('studyflow_fontsize_val', val);
         };
 
-        window.setFontSize = function(size) {
-            const sizes = { small: '14', medium: '16', large: '20' };
-            window.updateFontSizeSlider(sizes[size]);
-            // Update slider position
-            const slider = document.getElementById('font-slider');
-            if(slider) slider.value = sizes[size];
+        window.setFontSize = (size) => {
+            const sizes = { small: '14px', medium: '16px', large: '18px' };
+            window.updateFontSizeSlider(sizes[size].replace('px',''));
         };
 
         window.updateNotifTime = (field, value) => {
@@ -343,10 +328,7 @@
             if (nowTime >= targetTime && lastNotif !== today) {
                 const tasks = store.tugas.filter(t => t.deadline === today && !t.status);
                 if (tasks.length > 0) {
-                    new Notification("StudyFlow", { 
-                        body: `Kamu punya ${tasks.length} deadline tugas hari ini!`, 
-                        icon: 'https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png' 
-                    });
+                    new Notification("StudyFlow", { body: `Kamu ada ${tasks.length} deadline hari ini!`, icon: 'https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png' });
                     localStorage.setItem('studyflow_last_notif_date', today);
                 }
             }
@@ -354,10 +336,9 @@
 
         window.manualRequestNotif = async () => {
             const p = await Notification.requestPermission();
-            if(p === 'granted') new Notification("Notifikasi Aktif!", { body: "Pengingat StudyFlow telah diaktifkan." });
+            if(p === 'granted') new Notification("Berhasil!", { body: "Notifikasi sistem diaktifkan." });
         };
 
-        // --- CORE CORE CORE ---
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(atob(b).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }
 
         function enterApp(u) {
@@ -366,9 +347,7 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('loading-screen').classList.add('hidden');
-            
             if (Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 2000);
-            
             initDataListeners();
             navigate('dashboard');
             setInterval(checkAndNotify, 30000);
@@ -389,7 +368,7 @@
                     document.getElementById('loading-screen').classList.add('hidden'); 
                     document.getElementById('login-view').classList.remove('hidden'); 
                 }
-            } else { window.initAuth(); }
+            } else { initAuth(); }
         });
 
         function initDataListeners() {
@@ -412,9 +391,11 @@
             const c = document.getElementById('content-area');
             if (!c) return;
             
+            // Nav Desktop
             document.querySelectorAll('aside button').forEach(b => b.classList.remove('active-nav'));
-            const n = document.getElementById('nav-' + activeTab); if(n) n.classList.add('active-nav');
+            const activeNav = document.getElementById('nav-' + activeTab); if(activeNav) activeNav.classList.add('active-nav');
             
+            // Nav Mobile
             document.querySelectorAll('nav.lg\\:hidden button').forEach(b => b.classList.remove('active-nav-mobile'));
             const activeNavM = document.getElementById('m-nav-' + activeTab); if(activeNavM) activeNavM.classList.add('active-nav-mobile');
 
@@ -429,8 +410,7 @@
         function renderDashboard(el) {
             const done = store.target.filter(t => t.selesai).length;
             const prog = store.target.length ? Math.round((done / store.target.length) * 100) : 0;
-            const wib = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"}));
-            const today = wib.toISOString().split('T')[0];
+            const today = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"})).toISOString().split('T')[0];
             const tasks = store.tugas.filter(t => t.deadline === today && !t.status);
             const savedTime = localStorage.getItem('studyflow_notif_time') || '07:00';
             const [savedH, savedM] = savedTime.split(':');
@@ -441,18 +421,18 @@
                         <div class="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl">
                             <h3 class="text-base md:text-xl font-black mb-4 md:mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Tugas Hari Ini</h3>
                             <div class="space-y-3">
-                                ${tasks.map(t => `<div class="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 shadow-sm"><div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="alert-circle" size="20"></i></div><div class="flex-1 overflow-hidden text-left"><p class="font-black text-gray-800 text-sm md:text-base truncate">${t.nama}</p><p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">DEADLINE HARI INI</p></div></div>`).join('') || '<p class="text-gray-400 italic text-sm py-2">Tidak ada deadline hari ini.</p>'}
+                                ${tasks.map(t => `<div class="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 border border-purple-100"><div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"><i data-lucide="alert-circle" size="20"></i></div><div class="flex-1 overflow-hidden"><p class="font-black text-gray-800 text-sm md:text-base truncate">${t.nama}</p><p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">DEADLINE HARI INI</p></div></div>`).join('') || '<p class="text-gray-400 italic text-sm py-2">Tidak ada deadline mendesak hari ini.</p>'}
                             </div>
                         </div>
                         <div class="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl text-left">
-                            <div class="flex justify-between items-end mb-4"><h3 class="text-base md:text-xl font-black text-purple-700">Progres Semester</h3><p class="text-xl md:text-2xl font-black text-purple-600">${prog}%</p></div>
+                            <div class="flex justify-between items-end mb-4"><h3 class="text-base md:text-xl font-black text-purple-700">Progress Semester</h3><p class="text-xl md:text-2xl font-black text-purple-600">${prog}%</p></div>
                             <div class="w-full bg-purple-100 h-3 md:h-4 rounded-full overflow-hidden shadow-inner"><div class="bg-gradient-to-r from-purple-600 to-indigo-500 h-full transition-all duration-1000" style="width: ${prog}%"></div></div>
                         </div>
                     </div>
                     <div class="space-y-6">
                         <div class="glass-card p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-t-4 border-purple-400">
                             <h3 class="text-lg font-black mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="clock"></i> Waktu Notif</h3>
-                            <div class="bg-purple-50/50 p-4 rounded-2xl mb-4 text-center">
+                            <div class="bg-purple-50/50 p-4 rounded-2xl mb-4">
                                 <div class="flex items-center justify-center gap-3">
                                     <select onchange="updateNotifTime('hour', this.value)" class="bg-white border-2 border-purple-100 text-purple-700 font-black p-2 rounded-xl text-lg w-16 text-center shadow-sm">
                                         ${Array.from({length:24}, (_,i)=>`<option value="${i}" ${parseInt(savedH)===i?'selected':''}>${String(i).padStart(2,'0')}</option>`).join('')}
@@ -462,23 +442,133 @@
                                         ${Array.from({length:60}, (_,i)=>`<option value="${i}" ${parseInt(savedM)===i?'selected':''}>${String(i).padStart(2,'0')}</option>`).join('')}
                                     </select>
                                 </div>
-                                <p class="text-[9px] text-purple-400 mt-3 font-bold uppercase tracking-widest">Zona Waktu WIB</p>
                             </div>
+                            <p class="text-[10px] text-gray-400 leading-relaxed text-center font-bold uppercase tracking-widest">Format WIB (GMT+7)</p>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function renderMatkul(el) { el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"><h2 class="text-2xl md:text-3xl font-black text-gray-800">Daftar Matkul</h2><button onclick="openModal('matkul')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">${store.matkul.map(m => `<div class="glass-card p-5 md:p-6 rounded-[1.5rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left"><div class="overflow-hidden"><h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate">${m.nama}</h3><p class="text-gray-500 text-xs truncate">${m.dosen}</p><p class="text-[9px] font-black text-purple-400 uppercase mt-2">${m.sks} SKS</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10 w-full col-span-full italic">Belum ada mata kuliah.</p>'}</div>`; }
-        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-16">${hariList.map(hari => `<div class="space-y-4"><h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white flex justify-between items-start text-left"><div class="flex-1 overflow-hidden"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate">${j.matkul}</p><p class="text-[10px] text-gray-400 font-bold uppercase mt-2">${j.waktu} • ${j.ruang}</p></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 transition-all ml-2 p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Kosong.</p>'}</div>`).join('')}</div>`; }
-        function renderTugas(el) { 
-            const sorted = [...store.tugas].sort((a,b)=>a.status?1:-1);
-            el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div>
-            <div class="md:hidden space-y-4 pb-16">${sorted.map(t => `<div class="glass-card p-4 rounded-2xl border flex flex-col gap-3 ${t.status ? 'opacity-60 bg-gray-50' : 'border-white'}"><div class="flex justify-between items-start text-left"><div class="flex items-center gap-3"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'}"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="22"></i></button><div><p class="font-bold text-gray-800 text-sm mobile-truncate">${t.nama}</p><p class="text-[9px] font-black text-purple-400 uppercase tracking-tight">${t.matkul}</p></div></div><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 p-1"><i data-lucide="trash-2" size="16"></i></button></div><div class="flex items-center justify-between mt-1 px-1"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${t.deadline}</p></div></div>`).join('') || '<p class="text-center py-10 text-gray-400 italic">Kosong.</p>'}</div>
-            <div class="hidden md:block glass-card rounded-[2rem] overflow-hidden shadow-xl border border-white"><div class="overflow-x-auto"><table class="w-full text-left min-w-[600px]"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6">Tugas</th><th class="p-6 text-center">Deadline</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sorted.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><div class="flex items-center gap-4"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'}"><i data-lucide="${t.status ? 'check-circle' : 'circle'}"></i></button><div><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px]">${t.matkul}</span></div></div></td><td class="p-6 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">${t.deadline}</td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center italic text-gray-400">Kosong.</td></tr>'}</tbody></table></div></div>`;
+        function renderMatkul(el) {
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800">Mata Kuliah</h2>
+                    <button onclick="openModal('matkul')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade pb-10">
+                    ${store.matkul.map(m => `
+                        <div class="glass-card p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left">
+                            <div class="overflow-hidden">
+                                <h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate">${m.nama}</h3>
+                                <p class="text-gray-500 font-medium text-xs md:text-sm truncate">${m.dosen}</p>
+                                <p class="text-[9px] md:text-[10px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p>
+                            </div>
+                            <button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button>
+                        </div>
+                    `).join('') || '<div class="col-span-full py-20 text-center text-gray-400 text-sm">Belum ada mata kuliah.</div>'}
+                </div>`;
         }
-        function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 pb-20"><div class="flex justify-between items-center mb-8 md:mb-10 text-left"><h2 class="text-2xl md:text-4xl font-black text-gray-800 flex-1">Target Semester</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl shadow-lg hover:rotate-90 transition-all flex items-center justify-center"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left">${store.target.map(t => `<div class="glass-card p-5 md:p-6 rounded-2xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all"><div class="flex items-center gap-3 md:gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0">${t.selesai ? '<i data-lucide="check" size="18"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 hover:text-red-500 transition-all p-2 ml-2"><i data-lucide="trash-2" size="18"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10">Belum ada target.</p>'}</div></div>`; }
+
+        function renderJadwal(el) {
+            const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800 text-left">Jadwal Kuliah</h2>
+                    <button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-16">
+                    ${hariList.map(hari => `
+                        <div class="space-y-4">
+                            <h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
+                            ${store.jadwal.filter(j => j.hari === hari).map(j => `
+                                <div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all text-left">
+                                    <div class="flex-1 overflow-hidden">
+                                        <div class="flex justify-between items-start">
+                                            <p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate">${j.matkul}</p>
+                                            <span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg ml-2 flex-shrink-0 border border-purple-100">${j.sks} SKS</span>
+                                        </div>
+                                        <p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p>
+                                        <div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                            <span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="deleteItem('jadwal', '${j.id}')" class="lg:opacity-0 group-hover:opacity-100 text-red-200 hover:text-red-500 transition-all ml-2 p-1"><i data-lucide="trash-2" size="16"></i></button>
+                                </div>
+                            `).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Kosong.</p>'}
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
+        function renderTugas(el) {
+            const sorted = [...store.tugas].sort((a,b)=>a.status?1:-1);
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade text-left">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2>
+                    <button onclick="openModal('tugas')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button>
+                </div>
+                
+                <!-- MOBILE CARDS VIEW (Visible on small screens) -->
+                <div class="md:hidden space-y-4 animate-fade pb-16">
+                    ${sorted.map(t => `
+                        <div class="glass-card p-4 rounded-2xl border-white border flex flex-col gap-3 shadow-sm ${t.status ? 'opacity-60 bg-gray-50' : ''}">
+                            <div class="flex justify-between items-start text-left">
+                                <div class="overflow-hidden flex items-center gap-3">
+                                    <button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'} flex-shrink-0 transition-transform active:scale-90"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="22"></i></button>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-sm mobile-truncate">${t.nama}</p>
+                                        <p class="text-[9px] font-black text-purple-400 uppercase tracking-tight truncate">${t.matkul}</p>
+                                    </div>
+                                </div>
+                                <button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 p-1"><i data-lucide="trash-2" size="16"></i></button>
+                            </div>
+                            <div class="flex items-center justify-between mt-1 px-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${t.deadline}</p>
+                                <span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 px-2 py-0.5 rounded-lg">${t.status ? 'Selesai' : 'Sedang Berjalan'}</span>
+                            </div>
+                        </div>
+                    `).join('') || '<p class="text-center text-gray-400 py-10 text-sm">Belum ada tugas.</p>'}
+                </div>
+
+                <!-- DESKTOP TABLE VIEW (Hidden on small screens) -->
+                <div class="hidden md:block glass-card rounded-[2rem] overflow-hidden shadow-xl border border-white animate-fade">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left min-w-[600px]">
+                            <thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100">
+                                <tr><th class="p-6">Tugas</th><th class="p-6 text-center">Deadline</th><th class="p-6 text-center">Aksi</th></tr>
+                            </thead>
+                            <tbody class="text-sm font-semibold text-gray-600">
+                                ${sorted.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}"><td class="p-6 text-left"><div class="flex items-center gap-4"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'} transition-all active:scale-90"><i data-lucide="${t.status ? 'check-circle' : 'circle'}"></i></button><div><p class="font-bold text-gray-800 text-sm">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span></div></div></td><td class="p-6 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">${t.deadline}</td><td class="p-6 text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="3" class="p-20 text-center text-gray-300 text-sm italic">Belum ada tugas.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+        }
+
+        function renderTarget(el) {
+            el.innerHTML = `
+                <div class="max-w-2xl mx-auto py-4 animate-fade text-left pb-20">
+                    <div class="flex justify-between items-center mb-8 md:mb-10 text-left">
+                        <h2 class="text-2xl md:text-4xl font-black tracking-tighter text-gray-800 flex-1">Target Semester</h2>
+                        <button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95 flex items-center justify-center"><i data-lucide="plus"></i></button>
+                    </div>
+                    <div class="space-y-4">
+                        ${store.target.map(t => `
+                            <div class="glass-card p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all shadow-sm">
+                                <div class="flex items-center gap-3 md:gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})">
+                                    <div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0">
+                                        ${t.selesai ? '<i data-lucide="check" size="18"></i>' : ''}
+                                    </div>
+                                    <span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span>
+                                </div>
+                                <button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-5"></i></button>
+                            </div>
+                        `).join('') || '<p class="text-center text-gray-400 py-10 text-sm">Belum ada target semester.</p>'}
+                    </div>
+                </div>`;
+        }
 
         window.openModal = (id) => { document.getElementById('modal-overlay').classList.remove('hidden'); document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); document.getElementById('modal-' + id).classList.remove('hidden'); };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
@@ -487,13 +577,17 @@
         window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; const m = document.getElementById('in-t-matkul').value; const dl = document.getElementById('in-t-deadline').value; if(!n || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: m, deadline: dl, status: false, createdAt: serverTimestamp() }); closeModal(); };
         window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, createdAt: serverTimestamp() }); closeModal(); };
         window.toggleStatus = async (col, docId, status) => { const f = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [f]: !status }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus data?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini selamanya?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
         window.logout = () => { localStorage.removeItem('studyflow_user_session'); window.location.reload(); };
         window.exportToExcel = () => { alert("Menyiapkan file XLSX..."); };
 
+        window.updateFontSizeSlider = updateFontSizeSlider;
+        window.setFontSize = setFontSize;
+        window.updateNotifTime = updateNotifTime;
+        window.manualRequestNotif = manualRequestNotif;
         window.navigate = navigate;
 
-        window.initAuth();
+        initAuth();
         window.onload = () => {
             const val = localStorage.getItem('studyflow_fontsize_val') || '16';
             window.updateFontSizeSlider(val);
