@@ -174,14 +174,36 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-all"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-4 text-left">
-                <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Mata Kuliah" />
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="in-j-hari" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400">
-                        <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
-                    </select>
-                    <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="08:00 - 10:00" />
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Mata Kuliah</label>
+                    <input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: Metodologi Penelitian" />
                 </div>
-                <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Ruangan (Contoh: R.203)" />
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">SKS</label>
+                        <input type="number" id="in-j-sks" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="SKS" />
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Dosen Pengampu</label>
+                        <input type="text" id="in-j-dosen" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Nama Dosen" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Hari</label>
+                        <select id="in-j-hari" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400">
+                            <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Waktu</label>
+                        <input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="08:00 - 10:00" />
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2">Ruangan</label>
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-2xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400" placeholder="Contoh: R.203" />
+                </div>
                 <button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Jadwal</button>
             </div>
         </div>
@@ -364,6 +386,7 @@
                                         <div class="flex-1">
                                             <p class="font-black text-gray-800">${j.matkul}</p>
                                             <p class="text-xs text-gray-500 font-medium">${j.hari}, ${j.waktu} • ${j.ruang}</p>
+                                            <p class="text-[9px] font-black text-purple-400 uppercase mt-1">${j.dosen || 'No Lecturer'} • ${j.sks || '0'} SKS</p>
                                         </div>
                                     </div>
                                 `).join('') || '<p class="text-gray-400 italic">Belum ada jadwal kuliah.</p>'}
@@ -429,12 +452,19 @@
                         <div class="space-y-4">
                             <h3 class="text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
                             ${store.jadwal.filter(j => j.hari === hari).map(j => `
-                                <div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-center hover:border-purple-200 transition-all">
-                                    <div>
-                                        <p class="font-bold text-gray-800">${j.matkul}</p>
-                                        <p class="text-xs text-gray-400 font-medium">${j.waktu} • ${j.ruang}</p>
+                                <div class="glass-card p-5 rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <p class="font-bold text-gray-800 leading-tight">${j.matkul}</p>
+                                            <span class="text-[10px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-lg">${j.sks} SKS</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 font-semibold mt-1 italic">${j.dosen}</p>
+                                        <div class="flex items-center gap-4 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                            <span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span>
+                                        </div>
                                     </div>
-                                    <button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><i data-lucide="trash-2" size="18"></i></button>
+                                    <button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all ml-2"><i data-lucide="trash-2" size="16"></i></button>
                                 </div>
                             `).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Tidak ada kuliah.</p>'}
                         </div>
@@ -533,12 +563,16 @@
 
         window.saveJadwal = async () => {
             const matkul = document.getElementById('in-j-matkul').value;
+            const sks = document.getElementById('in-j-sks').value;
+            const dosen = document.getElementById('in-j-dosen').value;
             const hari = document.getElementById('in-j-hari').value;
             const waktu = document.getElementById('in-j-waktu').value;
             const ruang = document.getElementById('in-j-ruang').value;
+            
             if(!matkul || !currentUserId) return;
+            
             await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), {
-                matkul, hari, waktu, ruang, createdAt: serverTimestamp()
+                matkul, sks, dosen, hari, waktu, ruang, createdAt: serverTimestamp()
             });
             closeModal();
         };
