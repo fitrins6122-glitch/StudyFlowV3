@@ -114,7 +114,7 @@
     <div class="fixed inset-0 bg-white/20 pointer-events-none z-0"></div>
 
     <!-- ================= VIEW LOGIN ================= -->
-    <div id="login-view" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4">
+    <div id="login-view" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 text-center">
         <div class="glass-card p-8 md:p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center animate-fade">
             <div class="mb-6 text-center">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-20 h-20 md:w-24 md:h-24 rounded-3xl mx-auto shadow-xl border-4 border-white object-cover transform -rotate-2" />
@@ -132,20 +132,20 @@
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
         
         <!-- Sidebar Desktop -->
-        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40 text-left">
             <div class="flex items-center gap-3 mb-10 px-2 text-left">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-10 h-10 rounded-xl object-cover shadow-md" />
                 <h1 class="text-2xl font-black text-purple-700 tracking-tight">StudyFlow</h1>
             </div>
             <nav class="flex-1 space-y-2 text-left">
-                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav text-sm"><i data-lucide="layout-grid"></i> Dashboard</button>
-                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm"><i data-lucide="book-open"></i> Mata Kuliah</button>
-                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm"><i data-lucide="calendar"></i> Jadwal Kuliah</button>
-                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm"><i data-lucide="check-square"></i> Tugas & Deadline</button>
-                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm"><i data-lucide="target"></i> Target Semester</button>
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav text-sm text-left"><i data-lucide="layout-grid"></i> Dashboard</button>
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left"><i data-lucide="book-open"></i> Mata Kuliah</button>
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left"><i data-lucide="calendar"></i> Jadwal Kuliah</button>
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left"><i data-lucide="check-square"></i> Tugas & Deadline</button>
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 text-sm text-left"><i data-lucide="target"></i> Target Semester</button>
             </nav>
             <div class="pt-6 border-t border-purple-100 text-left">
-                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm"><i data-lucide="log-out"></i> Logout</button>
+                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm text-left"><i data-lucide="log-out"></i> Logout</button>
             </div>
         </aside>
 
@@ -171,15 +171,15 @@
                             </div>
                         </div>
                     </div>
-                    <button id="btn-enable-notif" onclick="manualRequestNotif()" class="bg-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600"><i data-lucide="bell" size="18"></i></button>
+                    <button id="btn-enable-notif" onclick="manualRequestNotif()" class="bg-white p-2 md:p-3 rounded-xl md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all"><i data-lucide="bell" size="18"></i></button>
                     <button onclick="exportToExcel()" class="bg-purple-600 text-white px-3 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-1.5 md:gap-2 shadow-lg shadow-purple-200 hover:scale-105 text-[10px] md:text-sm transition-all"><i data-lucide="download" size="16"></i> <span class="hidden sm:inline">Export</span></button>
                 </div>
             </header>
-            <div id="content-area" class="animate-fade relative z-0"></div>
+            <div id="content-area" class="animate-fade relative z-0 text-left"></div>
         </main>
 
         <!-- Bottom Nav Mobile -->
-        <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-16 glass-card rounded-[1.5rem] shadow-2xl flex items-center justify-around px-2 z-[100] border-2 border-white/60 pb-safe">
+        <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-16 glass-card rounded-[1.5rem] shadow-2xl flex items-center justify-around px-2 z-[100] border-2 border-white/60 pb-safe text-center">
             <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-all duration-300"><i data-lucide="layout-grid" size="20"></i><span class="text-[8px] font-bold uppercase">Dash</span></button>
             <button onclick="navigate('matkul')" id="m-nav-matkul" class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-all duration-300"><i data-lucide="book-open" size="20"></i><span class="text-[8px] font-bold uppercase">Matkul</span></button>
             <button onclick="navigate('jadwal')" id="m-nav-jadwal" class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-all duration-300"><i data-lucide="calendar" size="20"></i><span class="text-[8px] font-bold uppercase">Jadwal</span></button>
@@ -191,7 +191,6 @@
     <!-- ================= MODALS ================= -->
     <div id="modal-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4">
         <div id="modal-content-wrapper" class="w-full max-w-md animate-fade text-left">
-            <!-- Modal Content (Jadwal, Matkul, Tugas, Target) - Dinamis di render via JS -->
             <div id="modal-body"></div>
         </div>
     </div>
@@ -199,8 +198,8 @@
     <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- KONFIGURASI FIREBASE ---
         const firebaseConfig = { apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY", authDomain: "studyflow-7afba.firebaseapp.com", projectId: "studyflow-7afba", storageBucket: "studyflow-7afba.firebasestorage.app", messagingSenderId: "1034032440737", appId: "1:1034032440737:web:030cffaa62db47b3f997e0" };
@@ -211,15 +210,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUserId = null; // Ini akan berisi Google ID (sub) untuk sinkronisasi
+        let currentUserId = null; // Ini akan berisi ID sinkron
         let activeTab = 'dashboard';
         let store = { matkul: [], jadwal: [], tugas: [], target: [] };
 
         // --- GLOBAL FUNCTIONS BINDING ---
-        window.initAuth = async function() {
-            try { await signInAnonymously(auth); } catch (err) { console.error(err); }
-        };
-
         window.setFontSize = function(size) {
             const root = document.querySelector(':root');
             const sizes = { small: '14', medium: '16', large: '20' };
@@ -249,7 +244,7 @@
             if (nowTime >= targetTime && lastNotif !== today) {
                 const tasks = store.tugas.filter(t => t.deadline === today && !t.status);
                 if (tasks.length > 0) {
-                    new Notification("StudyFlow: Deadline!", { body: `Ada ${tasks.length} tugas hari ini. Cek sekarang!`, icon: 'https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png' });
+                    new Notification("StudyFlow: Sync", { body: `Ada ${tasks.length} deadline tugas hari ini. Cek sekarang!`, icon: 'https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png' });
                     localStorage.setItem('studyflow_last_notif_date', today);
                 }
             }
@@ -257,14 +252,14 @@
 
         window.manualRequestNotif = async () => {
             const p = await Notification.requestPermission();
-            if(p === 'granted') new Notification("Sudah Aktif!", { body: "Pengingat otomatis berhasil diaktifkan." });
+            if(p === 'granted') new Notification("Status Notifikasi", { body: "Notifikasi sistem telah diaktifkan." });
         };
 
-        // --- AUTH & DATA SYNC LOGIC ---
+        // --- AUTH & SYNC LOGIC ---
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(atob(b).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''))); }
 
-        function enterApp(userData) {
-            // SINKRONISASI KRITIKAL: Gunakan ID unik Google (sub) bukan UID Firebase anonim
+        async function enterApp(userData) {
+            // SINKRONISASI KUNCI: Gunakan ID Unik Akun (sub) agar PC dan HP menggunakan folder database yang sama
             currentUserId = userData.sub; 
             
             document.getElementById('profile-name').innerText = userData.name;
@@ -280,31 +275,40 @@
             setInterval(checkAndNotify, 30000);
         }
 
-        window.handleCredentialResponse = async (r) => { 
-            const d = parseJwt(r.credential); 
-            localStorage.setItem('studyflow_user_session', JSON.stringify(d)); 
-            enterApp(d); 
+        window.handleCredentialResponse = async (response) => {
+            try {
+                const data = parseJwt(response.credential);
+                localStorage.setItem('studyflow_user_session', JSON.stringify(data));
+                
+                // Sinkronkan ke Firebase Auth menggunakan Google Credential
+                const credential = GoogleAuthProvider.credential(response.credential);
+                await signInWithCredential(auth, credential);
+                
+                enterApp(data);
+            } catch (err) {
+                console.error("Login Error:", err);
+            }
         };
 
-        onAuthStateChanged(auth, (u) => {
+        onAuthStateChanged(auth, async (u) => {
             const s = localStorage.getItem('studyflow_user_session');
             if (s) {
-                enterApp(JSON.parse(s));
+                const userData = JSON.parse(s);
+                enterApp(userData);
             } else {
                 document.getElementById('loading-screen').classList.add('hidden'); 
                 document.getElementById('login-view').classList.remove('hidden'); 
-                window.initAuth();
             }
         });
 
         function initDataListeners() {
             if (!currentUserId) return;
-            // Setiap perangkat dengan Google ID yang sama akan mendengarkan koleksi yang sama
+            // Dengarkan koleksi berdasarkan ID Akun yang sinkron
             ['matkul', 'jadwal', 'tugas', 'target'].forEach(col => {
                 onSnapshot(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col), (s) => {
                     store[col] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderUI();
-                });
+                }, (err) => console.error(`Sync error on ${col}:`, err));
             });
         }
 
@@ -342,7 +346,7 @@
                         <div class="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl text-left">
                             <h3 class="text-base md:text-xl font-black mb-4 md:mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Tugas Hari Ini</h3>
                             <div class="space-y-3">
-                                ${tasks.map(t => `<div class="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 text-left"><div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"><i data-lucide="alert-circle" size="20"></i></div><div class="flex-1 overflow-hidden text-left"><p class="font-black text-gray-800 text-sm md:text-base truncate">${t.nama}</p><p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">DEADLINE HARI INI</p></div></div>`).join('') || '<p class="text-gray-400 italic text-sm py-2">Tidak ada deadline mendesak hari ini.</p>'}
+                                ${tasks.map(t => `<div class="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 text-left"><div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"><i data-lucide="alert-circle" size="20"></i></div><div class="flex-1 overflow-hidden text-left text-left text-left text-left"><p class="font-black text-gray-800 text-sm md:text-base truncate text-left">${t.nama}</p><p class="text-[10px] font-black text-purple-500 uppercase tracking-widest text-left">DEADLINE HARI INI</p></div></div>`).join('') || '<p class="text-gray-400 italic text-sm py-2">Tidak ada deadline hari ini.</p>'}
                             </div>
                         </div>
                         <div class="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl text-left">
@@ -371,58 +375,51 @@
             `;
         }
 
-        // --- RENDER LAIN (SEDERHANA UNTUK MOBILE) ---
-        function renderMatkul(el) { el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Mata Kuliah</h2><button onclick="openModal('matkul')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-10 text-left">${store.matkul.map(m => `<div class="glass-card p-5 md:p-6 rounded-[1.5rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left text-left"><div class="overflow-hidden text-left"><h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate text-left">${m.nama}</h3><p class="text-gray-500 text-xs truncate text-left">${m.dosen}</p><p class="text-[9px] font-black text-purple-400 uppercase mt-2 text-left">${m.sks} SKS</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2"></i></button></div>`).join('') || '<p class="text-center py-10 w-full col-span-full text-gray-400">Belum ada mata kuliah.</p>'}</div>`; }
-        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left text-left">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-16">${hariList.map(hari => `<div class="space-y-4 text-left"><h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm text-left"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white flex justify-between items-start text-left"><div class="flex-1 overflow-hidden text-left"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate text-left">${j.matkul}</p><p class="text-[10px] text-gray-400 font-bold uppercase mt-2 text-left">${j.waktu} • ${j.ruang}</p></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 transition-all ml-2 p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2 text-left">Kosong.</p>'}</div>`).join('')}</div>`; }
-        function renderTugas(el) { 
-            const sorted = [...store.tugas].sort((a,b)=>a.status?1:-1);
-            el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div>
-            <div class="md:hidden space-y-4 pb-16 text-left">${sorted.map(t => `<div class="glass-card p-4 rounded-2xl border flex flex-col gap-3 ${t.status ? 'opacity-60 bg-gray-50' : 'border-white'} text-left text-left"><div class="flex justify-between items-start text-left"><div class="flex items-center gap-3 text-left"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'}"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="22"></i></button><div><p class="font-bold text-gray-800 text-sm mobile-truncate text-left">${t.nama}</p><p class="text-[9px] font-black text-purple-400 uppercase tracking-tight text-left">${t.matkul}</p></div></div><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 p-1"><i data-lucide="trash-2" size="16"></i></button></div><div class="flex items-center justify-between mt-1 px-1 text-left"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">${t.deadline}</p></div></div>`).join('') || '<p class="text-center py-10 text-gray-400">Kosong.</p>'}</div>
-            <div class="hidden md:block glass-card rounded-[2rem] overflow-hidden shadow-xl border border-white text-left"><div class="overflow-x-auto text-left"><table class="w-full text-left min-w-[600px] text-left"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6 text-left">Tugas</th><th class="p-6 text-center">Deadline</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sorted.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''} text-left text-left"><td class="p-6 text-left"><div class="flex items-center gap-4 text-left"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'} transition-all active:scale-90"><i data-lucide="${t.status ? 'check-circle' : 'circle'}"></i></button><div><p class="font-bold text-gray-800 text-sm text-left">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] text-left">${t.matkul}</span></div></div></td><td class="p-6 text-center text-xs font-bold text-gray-400 uppercase tracking-widest text-center text-center">${t.deadline}</td><td class="p-6 text-center text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2 text-center"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center italic text-gray-400">Kosong.</td></tr>'}</tbody></table></div></div>`;
-        }
-        function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 pb-20 text-left text-left"><div class="flex justify-between items-center mb-8 md:mb-10 text-left"><h2 class="text-2xl md:text-4xl font-black text-gray-800 flex-1 text-left text-left">Target Semester</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl shadow-lg hover:rotate-90 transition-all active:scale-95 flex items-center justify-center"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left text-left">${store.target.map(t => `<div class="glass-card p-5 md:p-6 rounded-2xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} shadow-sm transition-all text-left text-left"><div class="flex items-center gap-3 md:gap-4 cursor-pointer flex-1 text-left text-left text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0 text-left text-left">${t.selesai ? '<i data-lucide="check" size="18"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'} text-left text-left">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2 ml-2 text-left text-left"><i data-lucide="trash-2" size="18"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10 italic">Target belum ditentukan.</p>'}</div></div>`; }
-
-        // --- HANDLERS (MODAL) ---
+        // --- RENDER MODAL ---
         window.openModal = (id) => { 
             const overlay = document.getElementById('modal-overlay');
-            const body = document.getElementById('modal-body');
             overlay.classList.remove('hidden');
+            const body = document.getElementById('modal-body');
             
-            // Render modal body sesuai ID agar terikat ke scope module
-            if(id === 'jadwal') body.innerHTML = document.getElementById('modal-jadwal').outerHTML.replace('hidden', '');
-            if(id === 'matkul') body.innerHTML = document.getElementById('modal-matkul').outerHTML.replace('hidden', '');
-            if(id === 'tugas') body.innerHTML = document.getElementById('modal-tugas').outerHTML.replace('hidden', '');
-            if(id === 'target') body.innerHTML = document.getElementById('modal-target').outerHTML.replace('hidden', '');
+            const htmls = {
+                jadwal: `<div class="glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white text-left animate-fade"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Tambah Jadwal</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div><div class="space-y-4"><input type="text" id="in-j-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 outline-none focus:ring-2 focus:ring-purple-400 text-sm text-left" placeholder="Mata Kuliah" /><div class="grid grid-cols-2 gap-3"><input type="number" id="in-j-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="SKS" /><input type="text" id="in-j-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Dosen" /></div><div class="grid grid-cols-2 gap-3 text-left"><select id="in-j-hari" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option></select><input type="text" id="in-j-waktu" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Jam" /></div><input type="text" id="in-j-ruang" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Ruangan" /><button onclick="saveJadwal()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div></div>`,
+                matkul: `<div class="glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white text-left animate-fade"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700 text-left">Mata Kuliah Baru</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div><div class="space-y-4 text-left"><input type="text" id="in-m-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Nama Mata Kuliah" /><div class="grid grid-cols-2 gap-3 text-left text-left"><input type="number" id="in-m-sks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="SKS" /><input type="text" id="in-m-dosen" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Dosen" /></div><button onclick="saveMatkul()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div></div>`,
+                tugas: `<div class="glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white text-left animate-fade"><div class="flex justify-between items-center mb-6 text-left"><h3 class="text-xl font-black text-purple-700">Tambah Tugas</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div><div class="space-y-4 text-left text-left"><input type="text" id="in-t-nama" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Nama Tugas" /><input type="text" id="in-t-matkul" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Mata Kuliah" /><input type="date" id="in-t-deadline" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" /><button onclick="saveTugas()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div></div>`,
+                target: `<div class="glass-card p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border-2 border-white text-left animate-fade"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black text-purple-700">Target</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button></div><div class="space-y-4 text-left"><input type="text" id="in-tg-teks" class="w-full px-5 py-3 rounded-xl bg-white/50 border border-purple-100 text-sm text-left" placeholder="Contoh: TOEFL 500+" /><button onclick="saveTarget()" class="w-full bg-purple-600 text-white py-3.5 rounded-xl font-black shadow-lg">Simpan</button></div></div>`
+            };
             
-            // Re-bind click listener karena outerHTML menghilangkan event listener inline JS dinamis
-            body.querySelectorAll('button').forEach(btn => {
-                if(btn.innerText.includes('Simpan')) btn.onclick = window[`save${id.charAt(0).toUpperCase() + id.slice(1)}`];
-                if(btn.querySelector('i[data-lucide="x"]') || btn.getAttribute('onclick')?.includes('closeModal')) btn.onclick = window.closeModal;
-            });
+            body.innerHTML = htmls[id];
             lucide.createIcons();
         };
 
         window.closeModal = () => { document.getElementById('modal-overlay').classList.add('hidden'); };
-
         window.saveJadwal = async () => { const m = document.querySelector('#modal-body #in-j-matkul').value; const s = document.querySelector('#modal-body #in-j-sks').value; const d = document.querySelector('#modal-body #in-j-dosen').value; const h = document.querySelector('#modal-body #in-j-hari').value; const w = document.querySelector('#modal-body #in-j-waktu').value; const r = document.querySelector('#modal-body #in-j-ruang').value; if(!m || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul: m, sks: parseInt(s) || 0, dosen: d, hari: h, waktu: w, ruang: r, createdAt: serverTimestamp() }); closeModal(); };
         window.saveMatkul = async () => { const n = document.querySelector('#modal-body #in-m-nama').value; const s = document.querySelector('#modal-body #in-m-sks').value; const d = document.querySelector('#modal-body #in-m-dosen').value; if(!n || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: parseInt(s) || 0, dosen: d, semester: 6, createdAt: serverTimestamp() }); closeModal(); };
         window.saveTugas = async () => { const n = document.querySelector('#modal-body #in-t-nama').value; const m = document.querySelector('#modal-body #in-t-matkul').value; const dl = document.querySelector('#modal-body #in-t-deadline').value; if(!n || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: m, deadline: dl, status: false, createdAt: serverTimestamp() }); closeModal(); };
         window.saveTarget = async () => { const t = document.querySelector('#modal-body #in-tg-teks').value; if(!t || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, createdAt: serverTimestamp() }); closeModal(); };
         window.toggleStatus = async (col, docId, status) => { const f = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [f]: !status }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini selamanya?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus data?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
         window.logout = () => { localStorage.removeItem('studyflow_user_session'); window.location.reload(); };
-        window.exportToExcel = () => { alert("Ekspor Excel sedang disiapkan..."); };
+        window.exportToExcel = () => { alert("Ekspor XLSX sedang diproses..."); };
 
-        // Bind helpers to window
-        window.navigate = navigate;
+        // --- RENDER FUNCTIONS ---
+        function renderMatkul(el) { el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Mata Kuliah</h2><button onclick="openModal('matkul')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pb-10 text-left">${store.matkul.map(m => `<div class="glass-card p-5 md:p-6 rounded-[1.5rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start text-left"><div class="overflow-hidden text-left"><h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate text-left">${m.nama}</h3><p class="text-gray-500 text-xs truncate text-left">${m.dosen}</p><p class="text-[9px] font-black text-purple-400 uppercase mt-2 text-left">${m.sks} SKS</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2"></i></button></div>`).join('') || '<p class="text-center py-10 w-full col-span-full italic text-gray-400">Belum ada mata kuliah.</p>'}</div>`; }
+        function renderJadwal(el) { const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']; el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-16">${hariList.map(hari => `<div class="space-y-4 text-left"><h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm text-left"><i data-lucide="calendar" size="16"></i> ${hari}</h3>${store.jadwal.filter(j => j.hari === hari).map(j => `<div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white flex justify-between items-start text-left"><div class="flex-1 overflow-hidden text-left"><p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate text-left text-left">${j.matkul}</p><p class="text-[10px] text-gray-400 font-bold uppercase mt-2 text-left">${j.waktu} • ${j.ruang}</p></div><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 transition-all ml-2 p-1"><i data-lucide="trash-2" size="16"></i></button></div>`).join('') || '<p class="text-[10px] text-gray-300 italic px-2 text-left">Kosong.</p>'}</div>`).join('')}</div>`; }
+        function renderTugas(el) { 
+            const sorted = [...store.tugas].sort((a,b)=>a.status?1:-1);
+            el.innerHTML = `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 text-left"><h2 class="text-2xl md:text-3xl font-black text-gray-800 text-left">Tugas & Deadline</h2><button onclick="openModal('tugas')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-sm transition-all active:scale-95"><i data-lucide="plus"></i> Tambah</button></div>
+            <div class="md:hidden space-y-4 pb-16 text-left">${sorted.map(t => `<div class="glass-card p-4 rounded-2xl border flex flex-col gap-3 ${t.status ? 'opacity-60 bg-gray-50' : 'border-white'} text-left text-left text-left"><div class="flex justify-between items-start text-left text-left"><div class="flex items-center gap-3 text-left text-left"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'}"><i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="22"></i></button><div><p class="font-bold text-gray-800 text-sm mobile-truncate text-left text-left">${t.nama}</p><p class="text-[9px] font-black text-purple-400 uppercase tracking-tight text-left">${t.matkul}</p></div></div><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 p-1"><i data-lucide="trash-2" size="16"></i></button></div><div class="flex items-center justify-between mt-1 px-1 text-left text-left"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">${t.deadline}</p></div></div>`).join('') || '<p class="text-center py-10 text-gray-400">Kosong.</p>'}</div>
+            <div class="hidden md:block glass-card rounded-[2rem] overflow-hidden shadow-xl border border-white text-left text-left"><div class="overflow-x-auto text-left text-left"><table class="w-full text-left min-w-[600px] text-left text-left"><thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100"><tr><th class="p-6">Tugas</th><th class="p-6 text-center">Deadline</th><th class="p-6 text-center">Aksi</th></tr></thead><tbody class="text-sm font-semibold text-gray-600">${sorted.map(t => `<tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''} text-left text-left text-left"><td class="p-6 text-left"><div class="flex items-center gap-4 text-left text-left text-left text-left"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="${t.status ? 'text-green-500' : 'text-gray-300'} transition-all active:scale-90"><i data-lucide="${t.status ? 'check-circle' : 'circle'}"></i></button><div><p class="font-bold text-gray-800 text-sm text-left text-left text-left">${t.nama}</p><span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] text-left">${t.matkul}</span></div></div></td><td class="p-6 text-center text-xs font-bold text-gray-400 uppercase tracking-widest text-center text-center text-center text-center">${t.deadline}</td><td class="p-6 text-center text-center text-center text-center text-center"><button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors ml-2 text-center"><i data-lucide="trash-2" size="18"></i></button></td></tr>`).join('') || '<tr><td colspan="3" class="p-10 text-center italic text-gray-400">Kosong.</td></tr>'}</tbody></table></div></div>`;
+        }
+        function renderTarget(el) { el.innerHTML = `<div class="max-w-2xl mx-auto py-4 pb-20 text-left text-left text-left"><div class="flex justify-between items-center mb-8 md:mb-10 text-left text-left text-left text-left"><h2 class="text-2xl md:text-4xl font-black text-gray-800 flex-1 text-left text-left text-left text-left">Target Semester</h2><button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl shadow-lg hover:rotate-90 transition-all active:scale-95 flex items-center justify-center"><i data-lucide="plus"></i></button></div><div class="space-y-4 text-left text-left text-left text-left">${store.target.map(t => `<div class="glass-card p-5 md:p-6 rounded-2xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} shadow-sm transition-all text-left text-left text-left text-left"><div class="flex items-center gap-3 md:gap-4 cursor-pointer flex-1 text-left text-left text-left text-left text-left text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><div class="w-10 h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg' : 'border-purple-100 bg-white'} flex-shrink-0 text-left text-left text-left text-left text-left text-left">${t.selesai ? '<i data-lucide="check" size="18"></i>' : ''}</div><span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'} text-left text-left text-left text-left text-left text-left text-left">${t.teks}</span></div><button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2 ml-2 text-left text-left text-left text-left text-left text-left text-left text-left"><i data-lucide="trash-2" size="18"></i></button></div>`).join('') || '<p class="text-center text-gray-400 py-10 italic">Target belum ditentukan.</p>'}</div></div>`; }
 
-        window.initAuth().then(() => {
+        window.onload = () => {
             const sizeKey = localStorage.getItem('studyflow_fontsize_key') || 'medium';
             window.setFontSize(sizeKey);
             google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: window.handleCredentialResponse, use_fedcm_for_prompt: true });
             google.accounts.id.renderButton(document.getElementById("google-signin-button"), { theme: "outline", size: "large", width: 280, shape: "pill" });
             lucide.createIcons();
-        });
+        };
     </script>
 </body>
 </html>
