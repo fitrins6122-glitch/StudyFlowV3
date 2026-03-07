@@ -89,7 +89,7 @@
                     <i data-lucide="download" class="w-[18px] h-[18px]"></i>
                     <span class="text-sm font-semibold">Export Data</span>
                 </button>
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-100 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
+                <button onclick="window.handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-100 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
                     <i data-lucide="log-out" class="w-[18px] h-[18px]"></i>
                     <span class="text-sm font-semibold">Logout</span>
                 </button>
@@ -112,9 +112,9 @@
         <div id="modal-jadwal" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-xl font-bold text-gray-800">Tambah Jadwal</h3>
-                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
             </div>
-            <form onsubmit="addJadwal(event)" class="space-y-4">
+            <form onsubmit="window.addJadwal(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah</label>
                     <input type="text" id="j-matkul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] focus:border-[#7C3AED] outline-none transition-all" placeholder="Contoh: Metodologi Penelitian">
@@ -154,9 +154,9 @@
         <div id="modal-tugas" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-xl font-bold text-gray-800">Tambah Tugas</h3>
-                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
             </div>
-            <form onsubmit="addTugas(event)" class="space-y-4">
+            <form onsubmit="window.addTugas(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
                     <input type="text" id="t-judul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Review Jurnal">
@@ -177,9 +177,9 @@
         <div id="modal-target" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-xl font-bold text-gray-800">Tambah Target</h3>
-                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
             </div>
-            <form onsubmit="addTarget(event)" class="space-y-4">
+            <form onsubmit="window.addTarget(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Target</label>
                     <input type="text" id="tg-nama" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Contoh: Lulus Cumlaude">
@@ -200,7 +200,7 @@
         window.activeTab = 'dashboard';
         window.currentUser = null;
         
-        // Data Arrays
+        // Data Arrays (fallback storage)
         window.tasks = [];
         window.scheduleData = [];
         window.targets = [];
@@ -220,19 +220,15 @@
         // --- INISIALISASI FIREBASE ---
         async function initFirebase() {
             try {
-                // Gunakan konfigurasi lokal jika ada, atau buat dummy config agar sistem tidak crash
+                // Konfigurasi bawaan untuk menghindari crash jika API key belum diganti
                 let firebaseConfig = {};
                 if (typeof __firebase_config !== 'undefined') {
                     firebaseConfig = JSON.parse(__firebase_config);
                 } else {
-                    // Masukkan detail konfigurasi Firebase aslimu di sini jika dites di localhost
                     firebaseConfig = {
-                        apiKey: "YOUR_FIREBASE_API_KEY",
-                        authDomain: "YOUR_PROJECT.firebaseapp.com",
-                        projectId: "YOUR_PROJECT",
-                        storageBucket: "YOUR_PROJECT.firebasestorage.app",
-                        messagingSenderId: "YOUR_SENDER_ID",
-                        appId: "YOUR_APP_ID"
+                        apiKey: "DUMMY_KEY",
+                        authDomain: "studyflow.firebaseapp.com",
+                        projectId: "studyflow",
                     };
                 }
 
@@ -240,20 +236,17 @@
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Mengotentikasi koneksi database secara Anonim
                 await signInAnonymously(auth);
                 document.getElementById('auth-status-text').innerText = "*Database siap. Silakan Login dengan Google.";
                 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         userId = user.uid;
-                        // Data baru akan ditarik SETELAH user berhasil Login via Google
                     }
                 });
-
             } catch (error) {
-                console.error("Gagal inisialisasi Firebase:", error);
-                document.getElementById('auth-status-text').innerText = "*Gagal terhubung ke Database. Periksa konfigurasi Firebase.";
+                console.error("Gagal inisialisasi Firebase (Memakai mode lokal):", error);
+                document.getElementById('auth-status-text').innerText = "*Berjalan dalam Mode Lokal (Data tidak tersimpan ke cloud).";
             }
         }
         initFirebase();
@@ -279,8 +272,8 @@
                 avatar: responsePayload.picture
             };
             
-            // Memulai proses penarikan data pribadi dari Firestore
-            if(userId) {
+            // Memulai proses penarikan data pribadi dari Firestore jika Firebase aktif
+            if(userId && db) {
                 startFirestoreListeners();
             }
             
@@ -293,19 +286,16 @@
         window.onload = function () {
             if (window.google) {
                 google.accounts.id.initialize({
-                    // Menggunakan Client ID Google milikmu yang telah diperbarui
-                    client_id: "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com", 
+                    client_id: "78272411326-gt4cobigqctk4t0e1n1b29q522j827of.apps.googleusercontent.com", 
                     callback: window.handleCredentialResponse,
-                    use_fedcm_for_prompt: true // FIX: Tambahkan parameter ini sesuai arahan error
+                    use_fedcm_for_prompt: true
                 });
                 
-                // Render Tombol Google API
                 google.accounts.id.renderButton(
                     document.getElementById("google-button-container"),
                     { theme: "outline", size: "large", width: "100%", text: "continue_with" } 
                 );
                 
-                // Munculkan popup Google One Tap
                 google.accounts.id.prompt(); 
             }
             lucide.createIcons();
@@ -316,7 +306,6 @@
             document.getElementById('main-app').classList.add('hidden');
             document.getElementById('login-view').classList.remove('hidden');
             
-            // Hentikan langganan data Firebase saat logout
             if(unsubTasks) unsubTasks();
             if(unsubSchedules) unsubSchedules();
             if(unsubTargets) unsubTargets();
@@ -324,8 +313,6 @@
 
         // --- FIRESTORE LISTENERS ---
         function startFirestoreListeners() {
-            // Path Data: artifacts/{appId}/users/{userId}/{collection}
-            
             const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
             unsubTasks = onSnapshot(tasksRef, (snapshot) => {
                 window.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -345,7 +332,7 @@
             }, (error) => console.error("Error fetching targets:", error));
         }
 
-        // --- CRUD OPERATIONS (FIRESTORE) ---
+        // --- CRUD OPERATIONS (DENGAN FALLBACK LOKAL) ---
         window.openModal = function(type) {
             document.getElementById('modal-container').classList.remove('hidden');
             document.getElementById('modal-jadwal').classList.add('hidden');
@@ -361,78 +348,156 @@
         // JADWAL
         window.addJadwal = async function(e) {
             e.preventDefault();
-            if (!userId) return;
             const matkul = document.getElementById('j-matkul').value;
             const day = document.getElementById('j-hari').value;
             const time = document.getElementById('j-waktu').value;
             const room = document.getElementById('j-ruang').value;
             const dosen = document.getElementById('j-dosen').value;
 
-            const schedulesRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules');
-            await addDoc(schedulesRef, { matkul, day, time, room, dosen, createdAt: Date.now() });
+            const newJadwal = { matkul, day, time, room, dosen, createdAt: Date.now() };
+
+            if (userId && db) {
+                try {
+                    const schedulesRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules');
+                    await addDoc(schedulesRef, newJadwal);
+                } catch(err) {
+                    window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
+                    window.renderContent();
+                }
+            } else {
+                window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
+                window.renderContent();
+            }
             
             e.target.reset();
             window.closeModal();
         };
 
         window.deleteJadwal = async function(docId) {
-            if (!userId) return;
-            await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'schedules', docId));
+            if (userId && db) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'schedules', docId));
+                } catch(err) {
+                    window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
+                    window.renderContent();
+                }
+            } else {
+                window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
+                window.renderContent();
+            }
         };
 
         // TUGAS
         window.addTugas = async function(e) {
             e.preventDefault();
-            if (!userId) return;
             const title = document.getElementById('t-judul').value;
             const matkul = document.getElementById('t-matkul').value;
             const deadlineDate = document.getElementById('t-tanggal').value;
 
-            const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
-            await addDoc(tasksRef, { title, matkul, deadlineDate, status: 'Belum', createdAt: Date.now() });
+            const newTask = { title, matkul, deadlineDate, status: 'Belum', createdAt: Date.now() };
+
+            if (userId && db) {
+                try {
+                    const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
+                    await addDoc(tasksRef, newTask);
+                } catch(err) {
+                    window.tasks.push({ id: Date.now().toString(), ...newTask });
+                    window.renderContent();
+                }
+            } else {
+                window.tasks.push({ id: Date.now().toString(), ...newTask });
+                window.renderContent();
+            }
             
             e.target.reset();
             window.closeModal();
         };
 
         window.deleteTask = async function(docId) {
-            if (!userId) return;
-            await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId));
+            if (userId && db) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId));
+                } catch(err) {
+                    window.tasks = window.tasks.filter(t => t.id !== docId);
+                    window.renderContent();
+                }
+            } else {
+                window.tasks = window.tasks.filter(t => t.id !== docId);
+                window.renderContent();
+            }
         };
 
         window.toggleTask = async function(docId) {
-            if (!userId) return;
             const task = window.tasks.find(t => t.id === docId);
             if(!task) return;
-            
             const newStatus = task.status === 'Selesai' ? 'Belum' : 'Selesai';
-            await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId), { status: newStatus });
+
+            if (userId && db) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId), { status: newStatus });
+                } catch(err) {
+                    task.status = newStatus;
+                    window.renderContent();
+                }
+            } else {
+                task.status = newStatus;
+                window.renderContent();
+            }
         };
 
         // TARGET
         window.addTarget = async function(e) {
             e.preventDefault();
-            if (!userId) return;
             const text = document.getElementById('tg-nama').value;
             
-            const targetsRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
-            await addDoc(targetsRef, { text, completed: false, createdAt: Date.now() });
+            const newTarget = { text, completed: false, createdAt: Date.now() };
+
+            if (userId && db) {
+                try {
+                    const targetsRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
+                    await addDoc(targetsRef, newTarget);
+                } catch(err) {
+                    window.targets.push({ id: Date.now().toString(), ...newTarget });
+                    window.renderContent();
+                }
+            } else {
+                window.targets.push({ id: Date.now().toString(), ...newTarget });
+                window.renderContent();
+            }
             
             e.target.reset();
             window.closeModal();
         };
 
         window.deleteTarget = async function(docId) {
-            if (!userId) return;
-            await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId));
+            if (userId && db) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId));
+                } catch(err) {
+                    window.targets = window.targets.filter(t => t.id !== docId);
+                    window.renderContent();
+                }
+            } else {
+                window.targets = window.targets.filter(t => t.id !== docId);
+                window.renderContent();
+            }
         };
 
         window.toggleTarget = async function(docId) {
-            if (!userId) return;
             const target = window.targets.find(t => t.id === docId);
             if(!target) return;
             
-            await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId), { completed: !target.completed });
+            if (userId && db) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId), { completed: !target.completed });
+                } catch(err) {
+                    target.completed = !target.completed;
+                    window.renderContent();
+                }
+            } else {
+                target.completed = !target.completed;
+                window.renderContent();
+            }
         };
 
         // --- NAVIGATION & RENDER LOGIC ---
@@ -635,7 +700,7 @@
                     </div>
                 `).join('');
 
-                if(!cardsHtml) cardsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada jadwal tersimpan di Database. Klik Tambah Jadwal.</div>';
+                if(!cardsHtml) cardsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada jadwal tersimpan. Klik Tambah Jadwal.</div>';
 
                 html = `
                 <div class="space-y-6 animate-fade-in">
@@ -680,7 +745,7 @@
                     </div>
                 `).join('');
 
-                if(!taskListHtml) taskListHtml = '<div class="text-center py-10 text-gray-400">Tidak ada tugas di Database saat ini.</div>';
+                if(!taskListHtml) taskListHtml = '<div class="text-center py-10 text-gray-400">Tidak ada tugas tersimpan saat ini.</div>';
 
                 html = `
                 <div class="space-y-6 animate-fade-in">
