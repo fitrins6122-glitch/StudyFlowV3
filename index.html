@@ -4,872 +4,450 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Izin keamanan FedCM untuk Google Sign-In -->
+    <!-- KEAMANAN: Izin FedCM agar Google Login tidak error di browser modern -->
     <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
     
-    <title>Purple Study Planner</title>
+    <title>StudyFlow - Dashboard Akademik Modern</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Dependencies: Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Identity Services (OAuth 2.0) -->
+    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
-        /* Custom Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideInRight { from { transform: translateX(2rem); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        .animate-slide-in { animation: slideInRight 0.3s ease-out forwards; }
-        .animate-zoom-in { animation: zoomIn 0.3s ease-out forwards; }
-        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
-        
-        /* Hide scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #C4B5FD; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #A78BFA; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        /* Animasi Kustom */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #A78BFA; border-radius: 10px; }
     </style>
 </head>
-<body class="font-sans text-gray-800 bg-[#F8F7FF] selection:bg-[#C4B5FD] selection:text-[#7C3AED] min-h-screen flex relative overflow-x-hidden">
+<body class="bg-[#F3F0FF] text-gray-800 min-h-screen overflow-x-hidden relative">
 
-    <!-- Artistic Background -->
-    <div class="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none" style="background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png')">
-        <div class="absolute inset-0 bg-white/30 backdrop-blur-[2px]"></div>
+    <!-- Latar Belakang Artistik Generatif -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-purple-200 rounded-full blur-[120px] opacity-60"></div>
+        <div class="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-200 rounded-full blur-[120px] opacity-60"></div>
+        <div class="absolute inset-0 bg-cover bg-center opacity-[0.05]" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png')"></div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2"></div>
+    <!-- Container Utama Notifikasi Toast -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3"></div>
 
-    <!-- ================= LOGIN VIEW ================= -->
-    <div id="login-view" class="fixed inset-0 z-40 flex items-center justify-center p-4">
-        <div class="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white w-full max-w-md relative animate-zoom-in min-h-[400px] flex flex-col justify-center transition-all duration-300">
+    <!-- ================= VIEW LOGIN ================= -->
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="glass-card p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center animate-slide-up border-2 border-white">
+            <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 rounded-3xl mx-auto shadow-xl mb-6 transform -rotate-3 hover:rotate-0 transition-all duration-500 object-cover border-4 border-white" />
             
-            <div id="login-main" class="text-center animate-fade-in">
-                <!-- LOGO DIPERBESAR -->
-                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-32 h-32 rounded-3xl mx-auto shadow-lg mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-300 object-cover border-4 border-white" />
-                <h1 class="text-3xl font-extrabold text-gray-800 mb-2">
-                    Study<span class="text-[#7C3AED]">Flow</span>
-                </h1>
-                <p class="text-gray-500 mb-8 font-medium text-sm">Masuk untuk mengatur jadwal dan capai target semestermu.</p>
-                
-                <!-- Container untuk Tombol Login Google Asli -->
-                <div id="google-button-container" class="w-full flex justify-center min-h-[44px]"></div>
-                
-                <p id="auth-status-text" class="text-xs text-gray-400 mt-4">*Sistem keamanan Firebase Database sedang disiapkan...</p>
-            </div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">
+                Study<span class="text-purple-600">Flow</span>
+            </h1>
+            <p class="text-gray-500 mb-10 font-medium px-4 leading-relaxed">Kelola tugas kuliah dan raih target semestermu dalam satu genggaman.</p>
+            
+            <!-- Tombol Google Sign-In -->
+            <div id="google-button-container" class="flex justify-center min-h-[50px] transition-transform hover:scale-[1.02]"></div>
+            
+            <p id="auth-status" class="text-[10px] text-purple-400 mt-8 uppercase tracking-widest font-bold">Menghubungkan ke Cloud...</p>
         </div>
     </div>
 
-    <!-- ================= MAIN APP VIEW (Hidden initially) ================= -->
-    <div id="main-app" class="hidden w-full flex relative z-10">
+    <!-- ================= VIEW DASHBOARD (Hidden by Default) ================= -->
+    <div id="main-app" class="hidden flex min-h-screen relative z-10">
         
-        <!-- Sidebar (Desktop) -->
-        <aside class="hidden md:flex flex-col w-64 bg-white/70 backdrop-blur-2xl border-r border-white/50 h-screen sticky top-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20">
-            <div class="p-6">
-                <!-- LOGO SIDEBAR -->
-                <div class="flex items-center gap-3 mb-1">
-                    <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="Logo" class="w-12 h-12 rounded-xl object-cover shadow-sm border-2 border-white" />
-                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7C3AED] to-[#A78BFA]">
-                        StudyFlow
-                    </h1>
-                </div>
-                <p class="text-sm text-gray-500 mt-1 pl-1">Semester 6 Planner</p>
+        <!-- Sidebar Desktop -->
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-card border-r border-purple-100 p-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-10">
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="Logo" class="w-10 h-10 rounded-xl shadow-md border-2 border-white object-cover" />
+                <h1 class="text-2xl font-black text-purple-700 tracking-tight">StudyFlow</h1>
             </div>
-            
-            <nav class="flex-1 px-4 space-y-2" id="desktop-nav"></nav>
 
-            <div class="p-4 space-y-3">
-                <button class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-[#F8F7FF] text-[#7C3AED] rounded-lg hover:bg-[#EEDCFF] transition-colors">
-                    <i data-lucide="download" class="w-[18px] h-[18px]"></i>
-                    <span class="text-sm font-semibold">Export Data</span>
+            <nav class="flex-1 space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold group">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i> Dashboard
                 </button>
-                <button onclick="window.handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-100 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
-                    <i data-lucide="log-out" class="w-[18px] h-[18px]"></i>
-                    <span class="text-sm font-semibold">Logout</span>
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold group">
+                    <i data-lucide="calendar" class="w-5 h-5"></i> Jadwal Kuliah
+                </button>
+                <button onclick="switchTab('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold group">
+                    <i data-lucide="check-circle-2" class="w-5 h-5"></i> Daftar Tugas
+                </button>
+                <button onclick="switchTab('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold group">
+                    <i data-lucide="target" class="w-5 h-5"></i> Target Semester
+                </button>
+            </nav>
+
+            <div class="pt-6 border-t border-purple-100">
+                <button onclick="handleLogout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Logout
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-h-screen">
-            <main id="content-area" class="flex-1 p-4 md:p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full animate-fade-in"></main>
-        </div>
+        <!-- Main Content -->
+        <main class="flex-1 p-4 lg:p-10 pb-32 lg:pb-10 max-w-7xl mx-auto w-full">
+            
+            <!-- Header Mobile & User Info -->
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 id="greeting-text" class="text-2xl lg:text-3xl font-black text-gray-800">Halo, Mahasiswa! 👋</h2>
+                    <p class="text-gray-500 text-sm font-medium">Hari ini adalah waktu yang tepat untuk produktif.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <img id="user-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full border-4 border-white shadow-lg" onerror="this.src='https://ui-avatars.com/api/?background=A78BFA&color=fff&name=User'" />
+                </div>
+            </header>
 
-        <!-- Bottom Navigation (Mobile) -->
-        <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-2xl border-t border-white/50 flex justify-around p-3 pb-safe z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]"></nav>
+            <div id="content-area" class="animate-fade-in">
+                <!-- Konten dinamis dirender via JS -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation Mobile -->
+        <nav class="lg:hidden fixed bottom-6 left-6 right-6 h-20 glass-card rounded-[2rem] shadow-2xl border-2 border-white flex items-center justify-around px-4 z-[90]">
+            <button onclick="switchTab('dashboard')" class="p-3 rounded-2xl transition-all"><i data-lucide="layout-grid"></i></button>
+            <button onclick="switchTab('jadwal')" class="p-3 rounded-2xl transition-all"><i data-lucide="calendar"></i></button>
+            <button onclick="switchTab('tugas')" class="p-3 rounded-2xl transition-all"><i data-lucide="check-circle-2"></i></button>
+            <button onclick="switchTab('target')" class="p-3 rounded-2xl transition-all"><i data-lucide="target"></i></button>
+            <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500"><i data-lucide="log-out"></i></button>
+        </nav>
     </div>
 
-    <!-- ================= MODALS (POPUP FORM TAMBAH) ================= -->
-    <div id="modal-container" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
-        
-        <!-- Modal Tambah Jadwal -->
-        <div id="modal-jadwal" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-bold text-gray-800">Tambah Jadwal</h3>
-                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+    <!-- ================= MODALS ================= -->
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[100] bg-black/20 backdrop-blur-md flex items-center justify-center p-4 transition-opacity">
+        <!-- Modal Content (Target) -->
+        <div id="modal-target" class="hidden glass-card p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl animate-slide-up border-2 border-white">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black">Tambah Target Baru</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x"></i></button>
             </div>
-            <form onsubmit="window.addJadwal(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah</label>
-                    <input type="text" id="j-matkul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] focus:border-[#7C3AED] outline-none transition-all" placeholder="Contoh: Metodologi Penelitian">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
-                        <select id="j-hari" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] focus:border-[#7C3AED] outline-none bg-white">
-                            <option value="Senin">Senin</option>
-                            <option value="Selasa">Selasa</option>
-                            <option value="Rabu">Rabu</option>
-                            <option value="Kamis">Kamis</option>
-                            <option value="Jumat">Jumat</option>
-                            <option value="Sabtu">Sabtu</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
-                        <input type="text" id="j-waktu" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="08:00 - 10:00">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan</label>
-                        <input type="text" id="j-ruang" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="R.105">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Dosen</label>
-                        <input type="text" id="j-dosen" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Nama Dosen">
-                    </div>
-                </div>
-                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Jadwal</button>
+            <form onsubmit="handleSaveTarget(event)" class="space-y-4">
+                <input type="text" id="input-target-name" required placeholder="Contoh: Lulus IPK 3.8" class="w-full px-6 py-4 rounded-2xl bg-white/50 border border-purple-100 focus:ring-4 focus:ring-purple-200 outline-none transition-all font-medium" />
+                <button type="submit" class="w-full bg-purple-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-all transform active:scale-95">Simpan Target</button>
             </form>
         </div>
-
-        <!-- Modal Tambah Tugas -->
-        <div id="modal-tugas" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-bold text-gray-800">Tambah Tugas</h3>
-                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
-            </div>
-            <form onsubmit="window.addTugas(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
-                    <input type="text" id="t-judul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Review Jurnal">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah</label>
-                    <input type="text" id="t-matkul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Kewirausahaan">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Deadline</label>
-                    <input type="date" id="t-tanggal" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none">
-                </div>
-                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Tugas</button>
-            </form>
-        </div>
-
-        <!-- Modal Tambah Target -->
-        <div id="modal-target" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-bold text-gray-800">Tambah Target</h3>
-                <button type="button" onclick="window.closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
-            </div>
-            <form onsubmit="window.addTarget(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Target</label>
-                    <input type="text" id="tg-nama" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Contoh: Lulus Cumlaude">
-                </div>
-                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Target</button>
-            </form>
-        </div>
-
     </div>
 
-    <!-- ================= JAVASCRIPT LOGIC (FIREBASE MODULE) ================= -->
+    <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- SISTEM NOTIFIKASI TOAST (PENGGANTI ALERT) ---
-        window.showToast = function(message, isError = false) {
-            const toast = document.createElement('div');
-            toast.className = `px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-xl transform transition-all duration-300 translate-y-10 opacity-0 flex items-center gap-2 ${isError ? 'bg-red-500' : 'bg-emerald-500'}`;
-            toast.innerHTML = `<i data-lucide="${isError ? 'alert-circle' : 'check-circle'}" class="w-4 h-4"></i> ${message}`;
-            
-            document.getElementById('toast-container').appendChild(toast);
-            lucide.createIcons({root: toast});
-            
-            // Animasi masuk
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            });
-
-            // Hapus otomatis
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        // --- KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY",
+            authDomain: "studyflow-7afba.firebaseapp.com",
+            projectId: "studyflow-7afba",
+            storageBucket: "studyflow-7afba.firebasestorage.app",
+            messagingSenderId: "1034032440737",
+            appId: "1:1034032440737:web:030cffaa62db47b3f997e0",
+            measurementId: "G-FHQC3GCFW0"
         };
 
-        // --- STATE & VARIABEL GLOBAL ---
-        window.activeTab = 'dashboard';
-        window.currentUser = null;
-        
-        // Data Arrays (fallback storage)
-        window.tasks = [];
-        window.scheduleData = [];
-        window.targets = [];
-
-        // Identitas Aplikasi
+        // Init Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
         const APP_ID = 'studyflow-planner';
-        let db, auth, userId;
-        let unsubTasks, unsubSchedules, unsubTargets;
 
-        const navItems = [
-            { id: 'dashboard', icon: 'home', label: 'Dashboard' },
-            { id: 'jadwal', icon: 'calendar', label: 'Jadwal Kuliah' },
-            { id: 'tugas', icon: 'check-square', label: 'Daftar Tugas' },
-            { id: 'target', icon: 'target', label: 'Target Semester' },
-        ];
+        // State Global
+        let userId = null;
+        let userData = null;
+        let activeTab = 'dashboard';
+        let store = { targets: [], tasks: [], schedules: [] };
+        let listeners = [];
 
-        // --- INISIALISASI FIREBASE ---
-        async function initFirebase() {
-            try {
-                // Konfigurasi Firebase dari pengguna (Diupdate dengan App ID & Sender ID)
-                const firebaseConfig = {
-                    apiKey: "AIzaSy...", // Ganti dengan API Key lengkap (tersedia di tab Project settings > General)
-                    authDomain: "studyflow-7afba.firebaseapp.com",
-                    projectId: "studyflow-7afba",
-                    storageBucket: "studyflow-7afba.appspot.com",
-                    messagingSenderId: "1034032440737", // Terekstrak otomatis dari App ID
-                    appId: "1:1034032440737:web:030cffaa62db47b3f997e0" // Sesuai dengan yang Anda berikan
-                };
-
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                await signInAnonymously(auth);
-                document.getElementById('auth-status-text').innerText = "*Database siap. Silakan Login dengan Google.";
-                
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                    }
-                });
-            } catch (error) {
-                console.error("Gagal inisialisasi Firebase (Memakai mode lokal):", error);
-                document.getElementById('auth-status-text').innerText = "*Berjalan dalam Mode Lokal (Data tidak tersimpan ke cloud).";
-            }
-        }
-        initFirebase();
-
-        // --- GOOGLE OAUTH 2.0 ASLI ---
+        // --- AUTHENTICATION LOGIC ---
+        
+        // Dekode Token Google JWT
         function parseJwt(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
-        window.handleCredentialResponse = function(response) {
-            const responsePayload = parseJwt(response.credential);
-            
-            // Menyimpan Data Profil Google User
-            window.currentUser = {
-                name: responsePayload.name,
-                firstName: responsePayload.given_name || responsePayload.name.split(' ')[0],
-                email: responsePayload.email,
-                avatar: responsePayload.picture
+        // Callback Google Sign-In
+        window.handleCredentialResponse = async (response) => {
+            const payload = parseJwt(response.credential);
+            userData = {
+                name: payload.name,
+                firstName: payload.given_name,
+                email: payload.email,
+                avatar: payload.picture
             };
+
+            // Update UI User
+            document.getElementById('user-avatar').src = userData.avatar;
+            document.getElementById('greeting-text').innerText = `Halo, ${userData.firstName}! 👋`;
             
-            // Memulai proses penarikan data pribadi dari Firestore jika Firebase aktif
-            if(userId && db) {
-                startFirestoreListeners();
-            }
-            
-            // Mengganti view ke dashboard
+            // Masuk ke Dashboard
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            window.switchTab('dashboard');
-            window.showToast(`Selamat datang, ${window.currentUser.firstName}!`);
+            
+            initFirestoreData();
+            showToast(`Berhasil masuk sebagai ${userData.name}`);
         };
 
-        window.onload = function () {
-            if (window.google) {
-                google.accounts.id.initialize({
-                    client_id: "78272411326-gt4cobigqctk4t0e1n1b29q522j827of.apps.googleusercontent.com", 
-                    callback: window.handleCredentialResponse,
-                    use_fedcm_for_prompt: true
-                });
-                
-                google.accounts.id.renderButton(
-                    document.getElementById("google-button-container"),
-                    { theme: "outline", size: "large", width: "100%", text: "continue_with" } 
-                );
-                
-                google.accounts.id.prompt(); 
-            }
+        // Inisialisasi Google One Tap & Button
+        window.onload = () => {
+            google.accounts.id.initialize({
+                client_id: "78272411326-gt4cobigqctk4t0e1n1b29q522j827of.apps.googleusercontent.com",
+                callback: window.handleCredentialResponse,
+                use_fedcm_for_prompt: true
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("google-button-container"),
+                { theme: "outline", size: "large", width: "320", shape: "pill", text: "continue_with" }
+            );
+            google.accounts.id.prompt();
             lucide.createIcons();
         };
 
-        window.handleLogout = function() {
-            window.currentUser = null;
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('login-view').classList.remove('hidden');
-            window.showToast('Berhasil logout.');
-            
-            if(unsubTasks) unsubTasks();
-            if(unsubSchedules) unsubSchedules();
-            if(unsubTargets) unsubTargets();
+        // Firebase Auth Monitor
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                await signInAnonymously(auth);
+                document.getElementById('auth-status').innerText = "Siap Digunakan";
+            } else {
+                userId = user.uid;
+            }
+        });
+
+        window.handleLogout = () => {
+            listeners.forEach(unsub => unsub());
+            window.location.reload();
         };
 
-        // --- FIRESTORE LISTENERS ---
-        function startFirestoreListeners() {
-            // Menggunakan struktur path yang aman untuk multi-user
-            const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
-            unsubTasks = onSnapshot(tasksRef, (snapshot) => {
-                window.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentUser) window.renderContent();
-            }, (error) => console.error("Error fetching tasks:", error));
+        // --- FIRESTORE DATA LOGIC (RULE 1 & 2) ---
+        
+        function initFirestoreData() {
+            if (!userId) return;
 
-            const schedulesRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules');
-            unsubSchedules = onSnapshot(schedulesRef, (snapshot) => {
-                window.scheduleData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentUser) window.renderContent();
-            }, (error) => console.error("Error fetching schedules:", error));
+            // Clear previous listeners
+            listeners.forEach(unsub => unsub());
 
-            const targetsRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
-            unsubTargets = onSnapshot(targetsRef, (snapshot) => {
-                window.targets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentUser) window.renderContent();
-            }, (error) => console.error("Error fetching targets:", error));
+            const paths = {
+                targets: collection(db, 'artifacts', APP_ID, 'users', userId, 'targets'),
+                tasks: collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks'),
+                schedules: collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules')
+            };
+
+            // Setup Real-time Listeners
+            Object.entries(paths).forEach(([key, colRef]) => {
+                const unsub = onSnapshot(colRef, (snapshot) => {
+                    store[key] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderUI();
+                }, (err) => console.error(`Error ${key}:`, err));
+                listeners.push(unsub);
+            });
         }
 
-        // --- CRUD OPERATIONS ---
-        window.openModal = function(type) {
-            document.getElementById('modal-container').classList.remove('hidden');
-            document.getElementById('modal-jadwal').classList.add('hidden');
-            document.getElementById('modal-tugas').classList.add('hidden');
-            document.getElementById('modal-target').classList.add('hidden');
+        // --- UI RENDERING ---
+
+        window.switchTab = (tab) => {
+            activeTab = tab;
+            renderUI();
+        };
+
+        function renderUI() {
+            const container = document.getElementById('content-area');
+            updateNavUI();
+
+            if (activeTab === 'dashboard') {
+                const doneTargets = store.targets.filter(t => t.completed).length;
+                const progress = store.targets.length ? Math.round((doneTargets / store.targets.length) * 100) : 0;
+                
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Card Progres Utama -->
+                        <div class="lg:col-span-2 glass-card p-8 rounded-[2.5rem] border-2 border-white shadow-xl relative overflow-hidden group">
+                            <div class="relative z-10">
+                                <h3 class="text-xl font-black mb-1">Capaian Target</h3>
+                                <p class="text-gray-500 text-sm mb-6">${doneTargets} dari ${store.targets.length} target selesai</p>
+                                
+                                <div class="flex items-end gap-4 mb-4">
+                                    <span class="text-6xl font-black text-purple-600">${progress}%</span>
+                                    <span class="text-purple-400 font-bold mb-2">Selesai</span>
+                                </div>
+                                
+                                <div class="w-full bg-purple-100 h-4 rounded-full overflow-hidden">
+                                    <div class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full transition-all duration-1000" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            <i data-lucide="award" class="absolute top-6 right-6 w-24 h-24 text-purple-500/10 group-hover:scale-110 transition-transform"></i>
+                        </div>
+
+                        <!-- Card Statistik Singkat -->
+                        <div class="space-y-4">
+                            <div class="glass-card p-6 rounded-3xl border-2 border-white flex items-center gap-5">
+                                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
+                                    <i data-lucide="book-open"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">SKS Semester</p>
+                                    <p class="text-2xl font-black">22 SKS</p>
+                                </div>
+                            </div>
+                            <div class="glass-card p-6 rounded-3xl border-2 border-white flex items-center gap-5">
+                                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500">
+                                    <i data-lucide="check-square"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Tugas Aktif</p>
+                                    <p class="text-2xl font-black">${store.tasks.filter(t => t.status !== 'Selesai').length}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daftar Deadline Terdekat -->
+                        <div class="lg:col-span-3">
+                            <h3 class="text-xl font-black mb-6 flex items-center gap-2">
+                                <i data-lucide="alert-circle" class="text-red-500"></i> Tugas Prioritas
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${store.tasks.filter(t => t.status !== 'Selesai').slice(0, 3).map(t => `
+                                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-purple-50 hover:shadow-md transition-all">
+                                        <p class="font-bold mb-1">${t.title}</p>
+                                        <div class="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                                            <i data-lucide="clock" class="w-3 h-3"></i> Deadline: ${t.deadlineDate}
+                                        </div>
+                                    </div>
+                                `).join('') || '<p class="text-gray-400 italic">Tidak ada tugas mendesak.</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (activeTab === 'target') {
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black">Target Semester 6</h2>
+                        <button onclick="openModal('target')" class="bg-purple-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-purple-100 flex items-center gap-2">
+                            <i data-lucide="plus"></i> Tambah Target
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${store.targets.map(t => `
+                            <div class="glass-card p-6 rounded-3xl flex items-center justify-between group border-2 ${t.completed ? 'border-purple-200 bg-purple-50/30' : 'border-white'}">
+                                <div class="flex items-center gap-4 cursor-pointer flex-1" onclick="handleToggleTarget('${t.id}', ${t.completed})">
+                                    <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${t.completed ? 'bg-purple-600 border-purple-600 text-white' : 'border-gray-200 bg-white'}">
+                                        ${t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
+                                    </div>
+                                    <span class="font-bold text-lg ${t.completed ? 'line-through text-gray-400' : 'text-gray-700'}">${t.text}</span>
+                                </div>
+                                <button onclick="handleDelete('targets', '${t.id}')" class="p-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        `).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Belum ada target yang dibuat.</div>'}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="py-20 text-center text-gray-400">Halaman <b>${activeTab}</b> sedang dalam sinkronisasi.</div>`;
+            }
+            
+            lucide.createIcons();
+        }
+
+        function updateNavUI() {
+            const tabs = ['dashboard', 'jadwal', 'tugas', 'target'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`nav-${t}`);
+                if (!el) return;
+                if (activeTab === t) {
+                    el.classList.add('bg-purple-600', 'text-white', 'shadow-xl', 'shadow-purple-200');
+                    el.classList.remove('text-gray-600', 'hover:bg-purple-50');
+                } else {
+                    el.classList.remove('bg-purple-600', 'text-white', 'shadow-xl', 'shadow-purple-200');
+                    el.classList.add('text-gray-600', 'hover:bg-purple-50');
+                }
+            });
+        }
+
+        // --- ACTIONS ---
+
+        window.openModal = (type) => {
+            document.getElementById('modal-overlay').classList.remove('hidden');
             document.getElementById(`modal-${type}`).classList.remove('hidden');
         };
 
-        window.closeModal = function() {
-            document.getElementById('modal-container').classList.add('hidden');
+        window.closeModal = () => {
+            document.getElementById('modal-overlay').classList.add('hidden');
+            const modals = ['target'];
+            modals.forEach(m => document.getElementById(`modal-${m}`).classList.add('hidden'));
         };
 
-        // JADWAL
-        window.addJadwal = async function(e) {
+        window.handleSaveTarget = async (e) => {
             e.preventDefault();
-            const matkul = document.getElementById('j-matkul').value;
-            const day = document.getElementById('j-hari').value;
-            const time = document.getElementById('j-waktu').value;
-            const room = document.getElementById('j-ruang').value;
-            const dosen = document.getElementById('j-dosen').value;
+            const text = document.getElementById('input-target-name').value;
+            if (!text || !userId) return;
 
-            if(!matkul) return window.showToast("Mata kuliah wajib diisi!", true);
-
-            const newJadwal = { matkul, day, time, room, dosen, createdAt: Date.now() };
-
-            if (userId && db) {
-                try {
-                    const schedulesRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules');
-                    await addDoc(schedulesRef, newJadwal);
-                    window.showToast("Jadwal berhasil disimpan!");
-                } catch(error) {
-                    console.error("Error simpan jadwal: ", error);
-                    window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
-                    window.renderContent();
-                    window.showToast("Disimpan ke memori lokal (Cloud gagal)", true);
-                }
-            } else {
-                window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
-                window.renderContent();
-                window.showToast("Disimpan ke memori lokal.");
-            }
-            
-            e.target.reset();
-            window.closeModal();
-        };
-
-        window.deleteJadwal = async function(docId) {
-            if (userId && db) {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'schedules', docId));
-                    window.showToast("Jadwal dihapus!");
-                } catch(err) {
-                    window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
-                    window.renderContent();
-                }
-            } else {
-                window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
-                window.renderContent();
-                window.showToast("Jadwal dihapus dari lokal!");
+            try {
+                const colRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
+                await addDoc(colRef, {
+                    text,
+                    completed: false,
+                    createdAt: serverTimestamp()
+                });
+                e.target.reset();
+                closeModal();
+                showToast("Target berhasil disimpan!");
+            } catch (err) {
+                showToast("Gagal menyimpan data", true);
             }
         };
 
-        // TUGAS
-        window.addTugas = async function(e) {
-            e.preventDefault();
-            const title = document.getElementById('t-judul').value;
-            const matkul = document.getElementById('t-matkul').value;
-            const deadlineDate = document.getElementById('t-tanggal').value;
-
-            if(!title) return window.showToast("Judul tugas wajib diisi!", true);
-
-            const newTask = { title, matkul, deadlineDate, status: 'Belum', createdAt: Date.now() };
-
-            if (userId && db) {
-                try {
-                    const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
-                    await addDoc(tasksRef, newTask);
-                    window.showToast("Tugas berhasil ditambahkan!");
-                } catch(error) {
-                    console.error("Error simpan tugas: ", error);
-                    window.tasks.push({ id: Date.now().toString(), ...newTask });
-                    window.renderContent();
-                    window.showToast("Disimpan ke memori lokal (Cloud gagal)", true);
-                }
-            } else {
-                window.tasks.push({ id: Date.now().toString(), ...newTask });
-                window.renderContent();
-                window.showToast("Tugas disimpan ke lokal.");
-            }
-            
-            e.target.reset();
-            window.closeModal();
-        };
-
-        window.deleteTask = async function(docId) {
-            if (userId && db) {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId));
-                    window.showToast("Tugas dihapus!");
-                } catch(err) {
-                    window.tasks = window.tasks.filter(t => t.id !== docId);
-                    window.renderContent();
-                }
-            } else {
-                window.tasks = window.tasks.filter(t => t.id !== docId);
-                window.renderContent();
-                window.showToast("Tugas dihapus dari lokal!");
+        window.handleToggleTarget = async (id, currentStatus) => {
+            try {
+                const docRef = doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', id);
+                await updateDoc(docRef, { completed: !currentStatus });
+            } catch (err) {
+                showToast("Gagal memperbarui target", true);
             }
         };
 
-        window.toggleTask = async function(docId) {
-            const task = window.tasks.find(t => t.id === docId);
-            if(!task) return;
-            const newStatus = task.status === 'Selesai' ? 'Belum' : 'Selesai';
-
-            if (userId && db) {
-                try {
-                    await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId), { status: newStatus });
-                } catch(err) {
-                    task.status = newStatus;
-                    window.renderContent();
-                }
-            } else {
-                task.status = newStatus;
-                window.renderContent();
+        window.handleDelete = async (col, id) => {
+            try {
+                const docRef = doc(db, 'artifacts', APP_ID, 'users', userId, col, id);
+                await deleteDoc(docRef);
+                showToast("Data berhasil dihapus");
+            } catch (err) {
+                showToast("Gagal menghapus data", true);
             }
         };
 
-        // TARGET
-        window.addTarget = async function(e) {
-            e.preventDefault();
-            const text = document.getElementById('tg-nama').value;
-            
-            // Validasi seperti kode snippet dari Anda
-            if (!text) {
-                window.showToast("Nama target tidak boleh kosong!", true);
-                return;
-            }
-            
-            const newTarget = { text, completed: false, timestamp: serverTimestamp(), userId: window.currentUser?.email };
-
-            if (userId && db) {
-                try {
-                    const targetsRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
-                    await addDoc(targetsRef, newTarget);
-                    window.showToast("Data target berhasil disimpan!");
-                } catch(error) {
-                    console.error("Error simpan data target: ", error);
-                    window.showToast("Gagal menyimpan data ke cloud. Cek console log.", true);
-                    
-                    // Fallback memori lokal
-                    window.targets.push({ id: Date.now().toString(), text, completed: false });
-                    window.renderContent();
-                }
-            } else {
-                window.targets.push({ id: Date.now().toString(), text, completed: false });
-                window.renderContent();
-                window.showToast("Disimpan ke memori lokal.");
-            }
-            
-            e.target.reset();
-            window.closeModal();
-        };
-
-        window.deleteTarget = async function(docId) {
-            if (userId && db) {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId));
-                    window.showToast("Target dihapus!");
-                } catch(err) {
-                    window.targets = window.targets.filter(t => t.id !== docId);
-                    window.renderContent();
-                }
-            } else {
-                window.targets = window.targets.filter(t => t.id !== docId);
-                window.renderContent();
-                window.showToast("Target dihapus dari lokal!");
-            }
-        };
-
-        window.toggleTarget = async function(docId) {
-            const target = window.targets.find(t => t.id === docId);
-            if(!target) return;
-            
-            if (userId && db) {
-                try {
-                    await updateDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId), { completed: !target.completed });
-                } catch(err) {
-                    target.completed = !target.completed;
-                    window.renderContent();
-                }
-            } else {
-                target.completed = !target.completed;
-                window.renderContent();
-            }
-        };
-
-        // --- NAVIGATION & RENDER LOGIC ---
-        window.switchTab = function(tabId) {
-            window.activeTab = tabId;
-            window.renderNavigation();
-            window.renderContent();
-        };
-
-        window.renderNavigation = function() {
-            const desktopNav = document.getElementById('desktop-nav');
-            desktopNav.innerHTML = navItems.map(item => `
-                <button onclick="window.switchTab('${item.id}')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                    window.activeTab === item.id 
-                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white shadow-md' 
-                    : 'text-gray-600 hover:bg-[#F8F7FF] hover:text-[#7C3AED]'
-                }">
-                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-                    <span class="font-medium">${item.label}</span>
-                </button>
-            `).join('');
-
-            const mobileNav = document.getElementById('mobile-nav');
-            mobileNav.innerHTML = navItems.map(item => `
-                <button onclick="window.switchTab('${item.id}')" class="flex flex-col items-center p-2 rounded-lg transition-colors ${
-                    window.activeTab === item.id ? 'text-[#7C3AED]' : 'text-gray-400'
-                }">
-                    <i data-lucide="${item.icon}" class="w-6 h-6 ${window.activeTab === item.id ? 'drop-shadow-sm' : ''}"></i>
-                    <span class="text-[10px] mt-1 font-medium">${item.label}</span>
-                </button>
-            `).join('');
-
-            lucide.createIcons();
-        };
-
-        // Helper Tanggal
-        function calculateDaysLeft(deadlineStr) {
-            if(!deadlineStr) return 0;
-            const todayDate = new Date();
-            todayDate.setHours(0,0,0,0);
-            const deadlineDate = new Date(deadlineStr);
-            deadlineDate.setHours(0,0,0,0);
-            const diffTime = deadlineDate - todayDate;
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // --- UTILS ---
+        function showToast(msg, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold animate-slide-up ${isError ? 'bg-red-500' : 'bg-purple-600'}`;
+            toast.innerHTML = `<i data-lucide="${isError ? 'x-circle' : 'check-circle'}"></i> ${msg}`;
+            document.getElementById('toast-container').appendChild(toast);
+            lucide.createIcons({ root: toast });
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
-        function formatDate(dateStr) {
-            if(!dateStr) return '';
-            const options = { day: 'numeric', month: 'short', year: 'numeric' };
-            return new Date(dateStr).toLocaleDateString('id-ID', options);
-        }
-
-        function getDeadlineColor(days) {
-            if (days < 0) return 'text-red-700 bg-red-100 border-red-300'; 
-            if (days <= 1) return 'text-red-500 bg-red-50 border-red-200';
-            if (days <= 3) return 'text-orange-500 bg-orange-50 border-orange-200';
-            return 'text-emerald-500 bg-emerald-50 border-emerald-200';
-        }
-
-        window.renderContent = function() {
-            const container = document.getElementById('content-area');
-            if(!window.currentUser) return;
-
-            let html = '';
-
-            window.tasks.forEach(t => {
-                t.daysLeft = calculateDaysLeft(t.deadlineDate);
-            });
-
-            const sortedTasks = [...window.tasks].sort((a, b) => {
-                if (a.status === 'Selesai' && b.status !== 'Selesai') return 1;
-                if (a.status !== 'Selesai' && b.status === 'Selesai') return -1;
-                return a.daysLeft - b.daysLeft;
-            });
-
-            if (window.activeTab === 'dashboard') {
-                const completedTasksCount = window.tasks.filter(t => t.status === 'Selesai').length;
-                const completedTargetsCount = window.targets.filter(t => t.completed).length;
-                const targetProgress = window.targets.length === 0 ? 0 : Math.round((completedTargetsCount / window.targets.length) * 100);
-                const nearDeadlineCount = window.tasks.filter(t => t.daysLeft <= 3 && t.status !== 'Selesai').length;
-
-                let deadlineTasksHtml = sortedTasks.filter(t => t.status !== 'Selesai').slice(0, 3).map(task => `
-                    <div class="flex justify-between items-center p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
-                        <div>
-                            <p class="font-medium text-gray-800 text-sm">${task.title}</p>
-                            <p class="text-xs text-gray-500 mt-0.5">${task.matkul} • ${formatDate(task.deadlineDate)}</p>
-                        </div>
-                        <span class="text-xs font-bold px-2 py-1 rounded-md border ${getDeadlineColor(task.daysLeft)} ${task.daysLeft <= 1 ? 'animate-pulse' : ''}">
-                            ${task.daysLeft < 0 ? 'Terlewat' : (task.daysLeft === 0 ? 'Hari Ini' : task.daysLeft + ' Hari Lagi')}
-                        </span>
-                    </div>
-                `).join('');
-                if(!deadlineTasksHtml) deadlineTasksHtml = '<p class="text-sm text-gray-400 italic">Tidak ada tugas mendesak.</p>';
-
-                let scheduleHtml = window.scheduleData.slice(0, 2).map(jadwal => `
-                    <div class="flex border-l-4 border-[#A78BFA] bg-[#F8F7FF] rounded-r-lg p-3 hover:shadow-md transition-shadow cursor-pointer">
-                        <div class="flex-1">
-                            <p class="font-semibold text-gray-800">${jadwal.matkul}</p>
-                            <div class="flex items-center text-xs text-gray-500 mt-1 gap-3">
-                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${jadwal.time}</span>
-                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${jadwal.room}</span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                if(!scheduleHtml) scheduleHtml = '<p class="text-sm text-gray-400 italic">Tidak ada jadwal hari ini.</p>';
-
-                html = `
-                <div class="space-y-6 animate-fade-in">
-                    <!-- Header Banner -->
-                    <div class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex items-center justify-between">
-                        <div class="relative z-10">
-                            <h2 class="text-2xl font-bold mb-1">Halo, ${window.currentUser.firstName}! 👋</h2>
-                            <p class="text-[#EEDCFF] opacity-90">Tetap semangat, skripsi menanti di depan mata.</p>
-                        </div>
-                        <div class="relative z-10 flex items-center space-x-4">
-                            <img src="${window.currentUser.avatar}" alt="Profile" class="w-16 h-16 rounded-full border-4 border-white/30 hidden sm:block shadow-md" onerror="this.src='https://ui-avatars.com/api/?name=${window.currentUser.firstName}&background=A78BFA&color=fff'" />
-                            <button onclick="window.handleLogout()" class="md:hidden bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-colors backdrop-blur-sm">
-                                <i data-lucide="log-out" class="w-5 h-5 text-white"></i>
-                            </button>
-                        </div>
-                        <div class="absolute right-0 top-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                    </div>
-
-                    <!-- Statistik Card -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
-                            <div class="p-3 rounded-lg bg-gray-50 text-blue-500"><i data-lucide="book-marked"></i></div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Total SKS</p>
-                                <p class="text-xl font-bold text-gray-800">20</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
-                            <div class="p-3 rounded-lg bg-gray-50 text-emerald-500"><i data-lucide="award"></i></div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Tugas Selesai</p>
-                                <p class="text-xl font-bold text-gray-800">${completedTasksCount}/${window.tasks.length}</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
-                            <div class="p-3 rounded-lg bg-gray-50 text-orange-500"><i data-lucide="alert-circle"></i></div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Deadline Dekat</p>
-                                <p class="text-xl font-bold text-gray-800">${nearDeadlineCount}</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
-                            <div class="p-3 rounded-lg bg-gray-50 text-[#7C3AED]"><i data-lucide="trending-up"></i></div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-medium">Progress Target</p>
-                                <p class="text-xl font-bold text-gray-800">${targetProgress}%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Jadwal Hari Ini -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-50 p-5">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                                    <i data-lucide="calendar" class="w-[18px] h-[18px] text-[#7C3AED]"></i> Jadwal Terbaru
-                                </h3>
-                            </div>
-                            <div class="space-y-3">${scheduleHtml}</div>
-                        </div>
-
-                        <!-- Deadline Terdekat -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-50 p-5">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2 mb-4">
-                                <i data-lucide="alert-circle" class="w-[18px] h-[18px] text-red-500"></i> Deadline Terdekat
-                            </h3>
-                            <div class="space-y-3">${deadlineTasksHtml}</div>
-                        </div>
-                    </div>
-                </div>`;
-            } 
-            else if (window.activeTab === 'jadwal') {
-                let cardsHtml = window.scheduleData.map(jadwal => `
-                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 relative group">
-                        <button onclick="window.deleteJadwal('${jadwal.id}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all bg-white p-1 rounded-md shadow-sm">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold bg-[#F8F7FF] text-[#7C3AED] px-2 py-1 rounded-md">${jadwal.day}</span>
-                            <div class="bg-[#A78BFA] w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm mr-6 group-hover:mr-8 transition-all">
-                                <i data-lucide="book-open" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <h3 class="font-bold text-lg text-gray-800 mb-1">${jadwal.matkul}</h3>
-                        <p class="text-sm text-gray-500 mb-4">${jadwal.dosen}</p>
-                        <div class="bg-gray-50 rounded-lg p-3 space-y-2">
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i data-lucide="clock" class="w-4 h-4 text-[#A78BFA] mr-2"></i> ${jadwal.time}
-                            </div>
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-[#A78BFA] mr-2"></i> ${jadwal.room}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-                if(!cardsHtml) cardsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada jadwal tersimpan. Klik Tambah Jadwal.</div>';
-
-                html = `
-                <div class="space-y-6 animate-fade-in">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-gray-800">Jadwal Kuliah</h2>
-                        <button onclick="window.openModal('jadwal')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
-                            + Tambah Jadwal
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cardsHtml}</div>
-                </div>`;
-            }
-            else if (window.activeTab === 'tugas') {
-                let taskListHtml = sortedTasks.map(task => `
-                    <div class="flex items-center p-4 border-b border-gray-50 hover:bg-[#F8F7FF] transition-colors group ${task.status === 'Selesai' ? 'opacity-60 bg-gray-50' : ''}">
-                        <button onclick="window.toggleTask('${task.id}')" class="mr-4 focus:outline-none transition-transform active:scale-90">
-                            ${task.status === 'Selesai' 
-                                ? `<i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-500"></i>` 
-                                : `<i data-lucide="circle" class="w-6 h-6 text-gray-300 group-hover:text-[#A78BFA] transition-colors"></i>`
-                            }
-                        </button>
-                        <div class="flex-1">
-                            <p class="font-semibold text-gray-800 ${task.status === 'Selesai' ? 'line-through text-gray-500' : ''}">
-                                ${task.title}
-                            </p>
-                            <p class="text-xs text-gray-500">${task.matkul} • <span class="font-medium text-gray-600">Deadline: ${formatDate(task.deadlineDate)}</span></p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            ${task.status !== 'Selesai' ? `
-                                <span class="text-xs font-bold px-3 py-1 rounded-full border ${getDeadlineColor(task.daysLeft)}">
-                                    ${task.daysLeft < 0 ? 'Terlewat' : (task.daysLeft === 0 ? 'Hari Ini' : 'Sisa ' + task.daysLeft + ' Hari')}
-                                </span>
-                            ` : `
-                                <span class="text-xs font-bold px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600">
-                                    Selesai
-                                </span>
-                            `}
-                            <button onclick="window.deleteTask('${task.id}')" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-
-                if(!taskListHtml) taskListHtml = '<div class="text-center py-10 text-gray-400">Tidak ada tugas tersimpan saat ini.</div>';
-
-                html = `
-                <div class="space-y-6 animate-fade-in">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-gray-800">Daftar Tugas</h2>
-                        <button onclick="window.openModal('tugas')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
-                            + Tambah Tugas
-                        </button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">${taskListHtml}</div>
-                </div>`;
-            }
-            else if (window.activeTab === 'target') {
-                const completedTargetsCount = window.targets.filter(t => t.completed).length;
-                const targetProgress = window.targets.length === 0 ? 0 : Math.round((completedTargetsCount / window.targets.length) * 100);
-
-                let targetsHtml = window.targets.map(target => `
-                    <div class="cursor-pointer p-4 rounded-xl border-2 transition-all duration-300 flex items-center justify-between group ${
-                        target.completed 
-                            ? 'bg-[#F8F7FF] border-[#C4B5FD] shadow-inner' 
-                            : 'bg-white border-gray-100 hover:border-[#A78BFA] hover:shadow-md hover:-translate-y-1'
-                    }">
-                        <div class="flex items-center space-x-4 flex-1" onclick="window.toggleTarget('${target.id}')">
-                            <div class="w-6 h-6 rounded-md flex items-center justify-center transition-colors ${
-                                target.completed ? 'bg-[#7C3AED] text-white' : 'border-2 border-gray-300'
-                            }">
-                                ${target.completed ? `<i data-lucide="check-square" class="w-4 h-4"></i>` : ''}
-                            </div>
-                            <span class="font-medium ${target.completed ? 'text-[#7C3AED] line-through opacity-80' : 'text-gray-700'}">
-                                ${target.text}
-                            </span>
-                        </div>
-                        <button onclick="window.deleteTarget('${target.id}')" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-white rounded-md shadow-sm">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `).join('');
-
-                if(!targetsHtml) targetsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada target tersimpan. Ayo tetapkan targetmu!</div>';
-
-                html = `
-                <div class="space-y-6 animate-fade-in">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Target Semester 6</h2>
-                        <button onclick="window.openModal('target')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
-                            + Tambah Target
-                        </button>
-                    </div>
-                    
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
-                        <div class="flex justify-between items-end mb-2">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">Progress Keseluruhan</h3>
-                                <p class="text-sm text-gray-500">${completedTargetsCount} dari ${window.targets.length} Target Selesai</p>
-                            </div>
-                            <span class="text-2xl font-extrabold text-[#7C3AED]">${targetProgress}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] h-3 rounded-full transition-all duration-1000 ease-out" style="width: ${targetProgress}%"></div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${targetsHtml}</div>
-                </div>`;
-            }
-
-            container.innerHTML = html;
-            lucide.createIcons();
-        };
     </script>
 </body>
 </html>
