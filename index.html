@@ -3,203 +3,775 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Study Planner</title>
     
-    <!-- KEAMANAN: Izin akses identitas untuk browser modern -->
-    <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
-    
-    <title>StudyFlow - Login & Dashboard</title>
-    
-    <!-- Dependencies: Tailwind CSS & Lucide Icons -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Identity Services Library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        /* Custom Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(2rem); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Animasi Muncul */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        .animate-zoom-in { animation: zoomIn 0.3s ease-out forwards; }
         
-        /* Efek Kaca (Glassmorphism) */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C4B5FD; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A78BFA; }
 
-        /* Latar Belakang Gambar AI Generatif */
-        .bg-studyflow {
-            background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
-<body class="bg-studyflow min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<body class="font-sans text-gray-800 bg-[#F8F7FF] selection:bg-[#C4B5FD] selection:text-[#7C3AED] min-h-screen flex relative overflow-x-hidden">
 
-    <!-- Overlay ungu transparan untuk estetika -->
-    <div class="absolute inset-0 bg-purple-900/10 pointer-events-none"></div>
+    <!-- Artistic Background -->
+    <div class="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none" style="background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png')">
+        <div class="absolute inset-0 bg-white/30 backdrop-blur-[2px]"></div>
+    </div>
 
-    <!-- ================= LAYAR LOGIN ================= -->
-    <div id="login-view" class="glass-container p-10 rounded-[3rem] w-full max-w-md text-center relative z-10 animate-fade-up">
-        <div class="mb-8">
-            <div class="w-24 h-24 bg-white rounded-3xl mx-auto shadow-2xl flex items-center justify-center p-3 transform -rotate-3 mb-4">
-                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-full h-full object-cover rounded-xl" />
-            </div>
-            <h1 class="text-4xl font-extrabold tracking-tighter text-gray-800">
-                Study<span class="text-purple-600">Flow</span>
-            </h1>
-            <p class="text-gray-500 mt-2 font-medium">Platform akademik masa depan</p>
-        </div>
-
-        <div class="space-y-6">
-            <p class="text-gray-600 text-sm leading-relaxed px-2">
-                Masuk untuk sinkronisasi jadwal, tugas, dan target semestermu secara otomatis.
-            </p>
+    <!-- ================= LOGIN VIEW ================= -->
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white w-full max-w-md relative animate-zoom-in min-h-[400px] flex flex-col justify-center transition-all duration-300">
             
-            <!-- Wadah Tombol Google Sign-In Resmi -->
-            <div class="flex justify-center py-4">
-                <div id="google-btn"></div>
-            </div>
-        </div>
+            <!-- Default Login Screen -->
+            <div id="login-main" class="text-center animate-fade-in">
+                <!-- LOGO DIPERBESAR (w-32 h-32) -->
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-32 h-32 rounded-3xl mx-auto shadow-lg mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-300 object-cover border-4 border-white" />
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-2">
+                    Study<span class="text-[#7C3AED]">Flow</span>
+                </h1>
+                <p class="text-gray-500 mb-6 font-medium text-sm">Masuk untuk mengatur jadwal dan capai target semestermu.</p>
+                
+                <!-- UI Simulasi Akun Bawaan HP -->
+                <div class="bg-white border-2 border-[#EEDCFF] rounded-2xl p-3 mb-4 shadow-sm relative overflow-hidden text-left group hover:border-[#C4B5FD] transition-colors">
+                    <div class="flex items-center mb-3">
+                        <div class="relative">
+                            <img id="default-acc-avatar" src="" alt="Profile" class="w-12 h-12 rounded-full mr-3 shadow-sm border border-gray-100" />
+                            <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
+                                <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+                                    <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+                                        <path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z"/>
+                                        <path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z"/>
+                                        <path fill="#FBBC05" d="M -21.484 53.529 C -21.734 52.809 -21.864 52.039 -21.864 51.239 C -21.864 50.439 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.464 45.859 C -26.284 47.479 -26.754 49.299 -26.754 51.239 C -26.754 53.179 -26.284 54.999 -25.464 56.619 L -21.484 53.529 Z"/>
+                                        <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <p id="default-acc-name" class="font-bold text-gray-800 text-sm truncate"></p>
+                            <p id="default-acc-email" class="text-xs text-gray-500 truncate"></p>
+                        </div>
+                    </div>
+                    <button onclick="loginWithDefault()" id="btn-login-default" class="w-full bg-[#7C3AED] text-white py-2.5 rounded-xl font-semibold hover:bg-[#6D28D9] transition-all shadow-md hover:shadow-lg flex justify-center items-center h-11 relative overflow-hidden">
+                        <span id="btn-login-text"></span>
+                        <div id="btn-login-spinner" class="hidden absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </button>
+                </div>
 
-        <p class="mt-8 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-            Terhubung ke localhost:5500
-        </p>
+                <button onclick="showAccountSelection()" id="btn-other-acc" class="text-sm font-semibold text-gray-500 hover:text-[#7C3AED] transition-colors py-2">
+                    Gunakan akun lain
+                </button>
+            </div>
+
+            <!-- Account Selection Screen (Hidden initially) -->
+            <div id="login-accounts" class="hidden animate-slide-in">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Pilih akun</h2>
+                    <p class="text-gray-500 text-sm mt-1">untuk melanjutkan ke StudyFlow</p>
+                </div>
+                
+                <div id="account-list" class="space-y-3 relative">
+                    <!-- Accounts will be injected here via JS -->
+                    
+                    <!-- Loading Overlay for account list -->
+                    <div id="accounts-loading" class="hidden absolute inset-0 bg-white/50 backdrop-blur-[2px] flex items-center justify-center rounded-xl z-10">
+                        <div class="w-8 h-8 border-4 border-[#7C3AED] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+                
+                <button onclick="hideAccountSelection()" class="mt-6 text-sm text-gray-500 hover:text-[#7C3AED] font-medium transition-colors w-full text-center">
+                    Batal
+                </button>
+            </div>
+
+        </div>
     </div>
 
-    <!-- ================= LAYAR DASHBOARD (Awalnya Tersembunyi) ================= -->
-    <div id="dashboard-view" class="hidden glass-container p-12 rounded-[3.5rem] w-full max-w-xl text-center relative z-10 animate-fade-up">
-        <div class="flex flex-col items-center">
-            <!-- Foto Profil dari Google -->
-            <div class="relative group cursor-pointer mb-6">
-                <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <img id="user-photo" src="" alt="Profile" class="relative w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover" />
-                <div class="absolute bottom-1 right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-white"></div>
-            </div>
-
-            <h2 class="text-purple-600 font-bold uppercase tracking-[0.3em] text-xs mb-2">Selamat Datang di StudyFlow</h2>
-            <h1 id="user-display-name" class="text-3xl font-black text-gray-800 mb-1">Nama Pengguna</h1>
-            <p id="user-email-address" class="text-gray-500 font-medium mb-10">email@kampus.ac.id</p>
-
-            <!-- Statistik Singkat -->
-            <div class="grid grid-cols-2 gap-4 w-full mb-10 text-left">
-                <div class="bg-white/40 p-5 rounded-3xl border border-white/50 shadow-sm">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Status Keaktifan</p>
-                    <p class="text-lg font-bold text-purple-700">Mahasiswa Aktif</p>
+    <!-- ================= MAIN APP VIEW (Hidden initially) ================= -->
+    <div id="main-app" class="hidden w-full flex relative z-10">
+        
+        <!-- Sidebar (Desktop) -->
+        <aside class="hidden md:flex flex-col w-64 bg-white/70 backdrop-blur-2xl border-r border-white/50 h-screen sticky top-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20">
+            <div class="p-6">
+                <!-- LOGO SIDEBAR DIPERBESAR (w-12 h-12) -->
+                <div class="flex items-center gap-3 mb-1">
+                    <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="Logo" class="w-12 h-12 rounded-xl object-cover shadow-sm border-2 border-white" />
+                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7C3AED] to-[#A78BFA]">
+                        StudyFlow
+                    </h1>
                 </div>
-                <div class="bg-white/40 p-5 rounded-3xl border border-white/50 shadow-sm">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Sesi Terkini</p>
-                    <p class="text-lg font-bold text-purple-700">Terautentikasi</p>
-                </div>
+                <p class="text-sm text-gray-500 mt-1 pl-1">Semester 6 Planner</p>
             </div>
+            
+            <nav class="flex-1 px-4 space-y-2" id="desktop-nav">
+                <!-- Nav items generated via JS -->
+            </nav>
 
-            <button onclick="handleLogout()" class="group flex items-center gap-3 bg-red-50 text-red-500 px-10 py-4 rounded-2xl font-bold hover:bg-red-500 hover:text-white transition-all duration-300 shadow-lg shadow-red-100 border border-red-100">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                Keluar Aplikasi
-            </button>
+            <div class="p-4 space-y-3">
+                <button class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-[#F8F7FF] text-[#7C3AED] rounded-lg hover:bg-[#EEDCFF] transition-colors">
+                    <i data-lucide="download" class="w-[18px] h-[18px]"></i>
+                    <span class="text-sm font-semibold">Export Data</span>
+                </button>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-100 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
+                    <i data-lucide="log-out" class="w-[18px] h-[18px]"></i>
+                    <span class="text-sm font-semibold">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-h-screen">
+            <main id="content-area" class="flex-1 p-4 md:p-8 pb-24 md:pb-8 max-w-6xl mx-auto w-full animate-fade-in">
+                <!-- Dynamic content will be rendered here -->
+            </main>
         </div>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-2xl border-t border-white/50 flex justify-around p-3 pb-safe z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+            <!-- Mobile nav items generated via JS -->
+        </nav>
     </div>
 
-    <!-- ================= LOGIKA JAVASCRIPT ================= -->
+    <!-- ================= MODALS (POPUP FORM TAMBAH) ================= -->
+    <div id="modal-container" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-opacity">
+        
+        <!-- Modal Tambah Jadwal -->
+        <div id="modal-jadwal" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-bold text-gray-800">Tambah Jadwal</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <form onsubmit="addJadwal(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah</label>
+                    <input type="text" id="j-matkul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] focus:border-[#7C3AED] outline-none transition-all" placeholder="Contoh: Metodologi Penelitian">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
+                        <select id="j-hari" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] focus:border-[#7C3AED] outline-none bg-white">
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
+                        <input type="text" id="j-waktu" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="08:00 - 10:00">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan</label>
+                        <input type="text" id="j-ruang" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="R.105">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dosen</label>
+                        <input type="text" id="j-dosen" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Nama Dosen">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Jadwal</button>
+            </form>
+        </div>
+
+        <!-- Modal Tambah Tugas -->
+        <div id="modal-tugas" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-bold text-gray-800">Tambah Tugas</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <form onsubmit="addTugas(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
+                    <input type="text" id="t-judul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Review Jurnal">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah</label>
+                    <input type="text" id="t-matkul" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Kewirausahaan">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Deadline</label>
+                    <input type="date" id="t-tanggal" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none">
+                </div>
+                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Tugas</button>
+            </form>
+        </div>
+
+        <!-- Modal Tambah Target -->
+        <div id="modal-target" class="hidden bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl animate-zoom-in">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-bold text-gray-800">Tambah Target</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <form onsubmit="addTarget(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Target</label>
+                    <input type="text" id="tg-nama" required class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-[#C4B5FD] outline-none" placeholder="Contoh: Lulus Cumlaude">
+                </div>
+                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">Simpan Target</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // --- KONFIGURASI ---
-        const GOOGLE_CLIENT_ID = "78272411326-gt4cobigqctk4t0e1n1b29q522j827of.apps.googleusercontent.com";
+        // --- DATA STATE ---
+        let activeTab = 'dashboard';
+        let currentUser = null;
 
-        /**
-         * Fungsi untuk membedah data profil dari JWT token Google
-         */
-        function decodeJwtResponse(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (err) {
-                console.error("Gagal mendecode token:", err);
-                return null;
-            }
-        }
+        const mockAccounts = [
+            { id: 1, name: 'Mahasiswa Berprestasi', firstName: 'Mahasiswa', email: 'mahasiswa.hits@kampus.ac.id', avatar: 'https://ui-avatars.com/api/?name=Mahasiswa+Berprestasi&background=7C3AED&color=fff' },
+            { id: 2, name: 'Budi (Pribadi)', firstName: 'Budi', email: 'budisantoso99@gmail.com', avatar: 'https://ui-avatars.com/api/?name=Budi&background=A78BFA&color=fff' }
+        ];
+        const defaultAccount = mockAccounts[0];
 
-        /**
-         * Fungsi yang dipanggil setelah pengguna sukses login
-         */
-        function onSignInSuccess(response) {
-            const userData = decodeJwtResponse(response.credential);
-            
-            if (userData) {
-                // Tampilkan data di UI Dashboard
-                document.getElementById('user-display-name').innerText = userData.name;
-                document.getElementById('user-email-address').innerText = userData.email;
-                document.getElementById('user-photo').src = userData.picture;
-
-                // Transisi View
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('dashboard-view').classList.remove('hidden');
-                
-                lucide.createIcons();
-                console.log("Data Pengguna:", userData);
-            }
-        }
-
-        /**
-         * Inisialisasi Google Identity saat halaman dimuat
-         */
-        window.onload = function () {
-            try {
-                google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
-                    callback: onSignInSuccess,
-                    // FIX: Menonaktifkan FedCM prompt untuk menghindari error permission di konsol
-                    use_fedcm_for_prompt: false 
-                });
-
-                // Render tombol login resmi sesuai identitas brand Google
-                google.accounts.id.renderButton(
-                    document.getElementById("google-btn"),
-                    { 
-                        theme: "filled_blue", 
-                        size: "large", 
-                        width: "320", 
-                        shape: "pill",
-                        text: "continue_with",
-                        logo_alignment: "left"
-                    }
-                );
-
-                // Munculkan prompt One Tap otomatis (mungkin terblokir di preview iframe)
-                google.accounts.id.prompt(); 
-                
-            } catch (error) {
-                console.error("GSI Init Error:", error);
-            }
-
-            lucide.createIcons();
+        // Helper untuk mock data & kalkulasi tanggal otomatis
+        const today = new Date();
+        const addDays = (days) => {
+            const d = new Date(today);
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
         };
 
-        /**
-         * Fungsi Logout sederhana (Refresh halaman)
-         */
-        function handleLogout() {
-            window.location.reload();
+        function calculateDaysLeft(deadlineStr) {
+            const todayDate = new Date();
+            todayDate.setHours(0,0,0,0);
+            const deadlineDate = new Date(deadlineStr);
+            deadlineDate.setHours(0,0,0,0);
+            const diffTime = deadlineDate - todayDate;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
+
+        function formatDate(dateStr) {
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+
+        let tasks = [
+            { id: 1, title: 'Proposal Skripsi', matkul: 'Metodologi Penelitian', deadlineDate: addDays(1), status: 'Belum' },
+            { id: 2, title: 'Analisis Kasus Perusahaan', matkul: 'Manajemen Strategik', deadlineDate: addDays(3), status: 'Belum' },
+            { id: 3, title: 'Review Jurnal Internasional', matkul: 'Kewirausahaan', deadlineDate: addDays(7), status: 'Selesai' },
+            { id: 4, title: 'Bab 1 Pendahuluan', matkul: 'Metodologi Penelitian', deadlineDate: addDays(14), status: 'Belum' },
+        ];
+
+        let scheduleData = [
+            { id: 1, day: 'Senin', matkul: 'Metodologi Penelitian', time: '13:00 - 15:00', room: 'R.105', dosen: 'Dr. Ahmad' },
+            { id: 2, day: 'Selasa', matkul: 'Manajemen Strategik', time: '08:00 - 10:00', room: 'R.203', dosen: 'Dr. Rina' },
+            { id: 3, day: 'Rabu', matkul: 'Kewirausahaan', time: '10:00 - 12:00', room: 'R.401', dosen: 'Dr. Budi' },
+        ];
+
+        let targets = [
+            { id: 1, text: 'Proposal skripsi selesai', completed: true },
+            { id: 2, text: 'Seminar proposal', completed: false },
+            { id: 3, text: 'IPK minimal 3.75', completed: false },
+            { id: 4, text: 'TOEFL minimal 500', completed: true },
+            { id: 5, text: 'Submit artikel jurnal', completed: false },
+        ];
+
+        const navItems = [
+            { id: 'dashboard', icon: 'home', label: 'Dashboard' },
+            { id: 'jadwal', icon: 'calendar', label: 'Jadwal Kuliah' },
+            { id: 'tugas', icon: 'check-square', label: 'Daftar Tugas' },
+            { id: 'target', icon: 'target', label: 'Target Semester' },
+        ];
+
+        // --- INIT LOGIN UI ---
+        document.getElementById('default-acc-avatar').src = defaultAccount.avatar;
+        document.getElementById('default-acc-name').innerText = defaultAccount.name;
+        document.getElementById('default-acc-email').innerText = defaultAccount.email;
+        document.getElementById('btn-login-text').innerText = `Lanjutkan sebagai ${defaultAccount.firstName}`;
+
+        function renderAccountList() {
+            const list = document.getElementById('account-list');
+            let html = '';
+            mockAccounts.forEach(acc => {
+                html += `
+                <button onclick="loginWithAccount(${acc.id})" class="w-full flex items-center p-3 rounded-xl border border-gray-100 hover:bg-[#F8F7FF] hover:border-[#C4B5FD] transition-all duration-200 text-left bg-white group">
+                    <img src="${acc.avatar}" alt="${acc.name}" class="w-10 h-10 rounded-full mr-4 shadow-sm" />
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800 group-hover:text-[#7C3AED] transition-colors">${acc.name}</p>
+                        <p class="text-xs text-gray-500">${acc.email}</p>
+                    </div>
+                </button>`;
+            });
+            html += `
+            <button onclick="alert('Fitur tambah akun belum tersedia.')" class="w-full flex items-center p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-all duration-200 text-left bg-white">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                    <i data-lucide="user-plus" class="w-[18px] h-[18px] text-gray-500"></i>
+                </div>
+                <span class="font-medium text-gray-600">Gunakan akun lain</span>
+            </button>
+            <div id="accounts-loading" class="hidden absolute inset-0 bg-white/50 backdrop-blur-[2px] flex items-center justify-center rounded-xl z-10">
+                <div class="w-8 h-8 border-4 border-[#7C3AED] border-t-transparent rounded-full animate-spin"></div>
+            </div>`;
+            list.innerHTML = html;
+            lucide.createIcons();
+        }
+        renderAccountList();
+
+        // --- LOGIN / LOGOUT LOGIC ---
+        function showAccountSelection() {
+            document.getElementById('btn-other-acc').disabled = true;
+            setTimeout(() => {
+                document.getElementById('btn-other-acc').disabled = false;
+                document.getElementById('login-main').classList.add('hidden');
+                document.getElementById('login-accounts').classList.remove('hidden');
+            }, 500);
+        }
+
+        function hideAccountSelection() {
+            document.getElementById('login-accounts').classList.add('hidden');
+            document.getElementById('login-main').classList.remove('hidden');
+        }
+
+        function loginWithDefault() {
+            document.getElementById('btn-login-text').classList.add('opacity-0');
+            document.getElementById('btn-login-spinner').classList.remove('hidden');
+            document.getElementById('btn-login-default').disabled = true;
+            
+            setTimeout(() => {
+                setCurrentUser(defaultAccount);
+            }, 1200);
+        }
+
+        function loginWithAccount(id) {
+            document.getElementById('accounts-loading').classList.remove('hidden');
+            const acc = mockAccounts.find(a => a.id === id);
+            setTimeout(() => {
+                setCurrentUser(acc);
+            }, 1200);
+        }
+
+        function setCurrentUser(user) {
+            currentUser = user;
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            
+            // Reset state
+            activeTab = 'dashboard';
+            document.getElementById('btn-login-text').classList.remove('opacity-0');
+            document.getElementById('btn-login-spinner').classList.add('hidden');
+            document.getElementById('btn-login-default').disabled = false;
+            document.getElementById('accounts-loading').classList.add('hidden');
+            hideAccountSelection();
+            
+            renderNavigation();
+            renderContent();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            activeTab = tabId;
+            renderNavigation();
+            renderContent();
+        }
+
+        function renderNavigation() {
+            const desktopNav = document.getElementById('desktop-nav');
+            desktopNav.innerHTML = navItems.map(item => `
+                <button onclick="switchTab('${item.id}')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                    activeTab === item.id 
+                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white shadow-md' 
+                    : 'text-gray-600 hover:bg-[#F8F7FF] hover:text-[#7C3AED]'
+                }">
+                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                    <span class="font-medium">${item.label}</span>
+                </button>
+            `).join('');
+
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.innerHTML = navItems.map(item => `
+                <button onclick="switchTab('${item.id}')" class="flex flex-col items-center p-2 rounded-lg transition-colors ${
+                    activeTab === item.id ? 'text-[#7C3AED]' : 'text-gray-400'
+                }">
+                    <i data-lucide="${item.icon}" class="w-6 h-6 ${activeTab === item.id ? 'drop-shadow-sm' : ''}"></i>
+                    <span class="text-[10px] mt-1 font-medium">${item.label}</span>
+                </button>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // --- CRUD LOGIC (TAMBAH & HAPUS) ---
+        function openModal(type) {
+            document.getElementById('modal-container').classList.remove('hidden');
+            document.getElementById('modal-jadwal').classList.add('hidden');
+            document.getElementById('modal-tugas').classList.add('hidden');
+            document.getElementById('modal-target').classList.add('hidden');
+            
+            document.getElementById(`modal-${type}`).classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+
+        function addJadwal(e) {
+            e.preventDefault();
+            const matkul = document.getElementById('j-matkul').value;
+            const day = document.getElementById('j-hari').value;
+            const time = document.getElementById('j-waktu').value;
+            const room = document.getElementById('j-ruang').value;
+            const dosen = document.getElementById('j-dosen').value;
+
+            scheduleData.push({ id: Date.now(), matkul, day, time, room, dosen });
+            e.target.reset();
+            closeModal();
+            renderContent();
+        }
+
+        function deleteJadwal(id) {
+            scheduleData = scheduleData.filter(j => j.id !== id);
+            renderContent();
+        }
+
+        function addTugas(e) {
+            e.preventDefault();
+            const title = document.getElementById('t-judul').value;
+            const matkul = document.getElementById('t-matkul').value;
+            const deadlineDate = document.getElementById('t-tanggal').value;
+
+            tasks.push({ id: Date.now(), title, matkul, deadlineDate, status: 'Belum' });
+            e.target.reset();
+            closeModal();
+            renderContent();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderContent();
+        }
+
+        function addTarget(e) {
+            e.preventDefault();
+            const text = document.getElementById('tg-nama').value;
+            targets.push({ id: Date.now(), text, completed: false });
+            e.target.reset();
+            closeModal();
+            renderContent();
+        }
+
+        function deleteTarget(id) {
+            targets = targets.filter(t => t.id !== id);
+            renderContent();
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if(task) task.status = task.status === 'Selesai' ? 'Belum' : 'Selesai';
+            renderContent();
+        }
+
+        function toggleTarget(id) {
+            const target = targets.find(t => t.id === id);
+            if(target) target.completed = !target.completed;
+            renderContent();
+        }
+
+        // --- CONTENT RENDER LOGIC ---
+        function getDeadlineColor(days) {
+            if (days < 0) return 'text-red-700 bg-red-100 border-red-300'; // Terlewat
+            if (days <= 1) return 'text-red-500 bg-red-50 border-red-200';
+            if (days <= 3) return 'text-orange-500 bg-orange-50 border-orange-200';
+            return 'text-emerald-500 bg-emerald-50 border-emerald-200';
+        }
+
+        function renderContent() {
+            const container = document.getElementById('content-area');
+            let html = '';
+
+            // Update perhitungan sisa hari setiap kali di-render
+            tasks.forEach(t => {
+                t.daysLeft = calculateDaysLeft(t.deadlineDate);
+            });
+
+            const sortedTasks = [...tasks].sort((a, b) => {
+                if (a.status === 'Selesai' && b.status !== 'Selesai') return 1;
+                if (a.status !== 'Selesai' && b.status === 'Selesai') return -1;
+                return a.daysLeft - b.daysLeft;
+            });
+
+            if (activeTab === 'dashboard') {
+                const completedTasksCount = tasks.filter(t => t.status === 'Selesai').length;
+                const completedTargetsCount = targets.filter(t => t.completed).length;
+                const targetProgress = targets.length === 0 ? 0 : Math.round((completedTargetsCount / targets.length) * 100);
+                const nearDeadlineCount = tasks.filter(t => t.daysLeft <= 3 && t.status !== 'Selesai').length;
+
+                let deadlineTasksHtml = sortedTasks.filter(t => t.status !== 'Selesai').slice(0, 3).map(task => `
+                    <div class="flex justify-between items-center p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm">${task.title}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">${task.matkul} • ${formatDate(task.deadlineDate)}</p>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded-md border ${getDeadlineColor(task.daysLeft)} ${task.daysLeft <= 1 ? 'animate-pulse' : ''}">
+                            ${task.daysLeft < 0 ? 'Terlewat' : (task.daysLeft === 0 ? 'Hari Ini' : task.daysLeft + ' Hari Lagi')}
+                        </span>
+                    </div>
+                `).join('');
+                if(!deadlineTasksHtml) deadlineTasksHtml = '<p class="text-sm text-gray-400 italic">Tidak ada tugas mendesak.</p>';
+
+                let scheduleHtml = scheduleData.slice(0, 2).map(jadwal => `
+                    <div class="flex border-l-4 border-[#A78BFA] bg-[#F8F7FF] rounded-r-lg p-3 hover:shadow-md transition-shadow cursor-pointer">
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">${jadwal.matkul}</p>
+                            <div class="flex items-center text-xs text-gray-500 mt-1 gap-3">
+                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${jadwal.time}</span>
+                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${jadwal.room}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                if(!scheduleHtml) scheduleHtml = '<p class="text-sm text-gray-400 italic">Tidak ada jadwal hari ini.</p>';
+
+                html = `
+                <div class="space-y-6 animate-fade-in">
+                    <!-- Header Banner -->
+                    <div class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden flex items-center justify-between">
+                        <div class="relative z-10">
+                            <h2 class="text-2xl font-bold mb-1">Halo, ${currentUser?.firstName || 'Mahasiswa'}! 👋</h2>
+                            <p class="text-[#EEDCFF] opacity-90">Tetap semangat, skripsi menanti di depan mata.</p>
+                        </div>
+                        <div class="relative z-10 flex items-center space-x-4">
+                            <img src="${currentUser?.avatar}" alt="Profile" class="w-16 h-16 rounded-full border-4 border-white/30 hidden sm:block shadow-md" />
+                            <button onclick="handleLogout()" class="md:hidden bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-colors backdrop-blur-sm">
+                                <i data-lucide="log-out" class="w-5 h-5 text-white"></i>
+                            </button>
+                        </div>
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    </div>
+
+                    <!-- Statistik Card -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
+                            <div class="p-3 rounded-lg bg-gray-50 text-blue-500"><i data-lucide="book-marked"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Total SKS</p>
+                                <p class="text-xl font-bold text-gray-800">20</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
+                            <div class="p-3 rounded-lg bg-gray-50 text-emerald-500"><i data-lucide="award"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Tugas Selesai</p>
+                                <p class="text-xl font-bold text-gray-800">${completedTasksCount}/${tasks.length}</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
+                            <div class="p-3 rounded-lg bg-gray-50 text-orange-500"><i data-lucide="alert-circle"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Deadline Dekat</p>
+                                <p class="text-xl font-bold text-gray-800">${nearDeadlineCount}</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:-translate-y-1 transition-transform duration-300">
+                            <div class="p-3 rounded-lg bg-gray-50 text-[#7C3AED]"><i data-lucide="trending-up"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Progress Target</p>
+                                <p class="text-xl font-bold text-gray-800">${targetProgress}%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Jadwal Hari Ini -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-50 p-5">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                    <i data-lucide="calendar" class="w-[18px] h-[18px] text-[#7C3AED]"></i> Jadwal Hari Ini
+                                </h3>
+                                <span class="text-xs font-semibold bg-[#F8F7FF] text-[#7C3AED] px-2 py-1 rounded-md">Senin</span>
+                            </div>
+                            <div class="space-y-3">${scheduleHtml}</div>
+                        </div>
+
+                        <!-- Deadline Terdekat -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-50 p-5">
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2 mb-4">
+                                <i data-lucide="alert-circle" class="w-[18px] h-[18px] text-red-500"></i> Deadline Terdekat
+                            </h3>
+                            <div class="space-y-3">${deadlineTasksHtml}</div>
+                        </div>
+                    </div>
+                </div>`;
+            } 
+            else if (activeTab === 'jadwal') {
+                let cardsHtml = scheduleData.map(jadwal => `
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 relative group">
+                        <!-- Tombol Hapus Jadwal -->
+                        <button onclick="deleteJadwal(${jadwal.id})" class="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all bg-white p-1 rounded-md shadow-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold bg-[#F8F7FF] text-[#7C3AED] px-2 py-1 rounded-md">${jadwal.day}</span>
+                            <div class="bg-[#A78BFA] w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm mr-6 group-hover:mr-8 transition-all">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">${jadwal.matkul}</h3>
+                        <p class="text-sm text-gray-500 mb-4">${jadwal.dosen}</p>
+                        
+                        <div class="bg-gray-50 rounded-lg p-3 space-y-2">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i data-lucide="clock" class="w-4 h-4 text-[#A78BFA] mr-2"></i> ${jadwal.time}
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-[#A78BFA] mr-2"></i> ${jadwal.room}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                if(!cardsHtml) cardsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada jadwal. Klik Tambah Jadwal.</div>';
+
+                html = `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">Jadwal Kuliah</h2>
+                        <button onclick="openModal('jadwal')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
+                            + Tambah Jadwal
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cardsHtml}</div>
+                </div>`;
+            }
+            else if (activeTab === 'tugas') {
+                let taskListHtml = sortedTasks.map(task => `
+                    <div class="flex items-center p-4 border-b border-gray-50 hover:bg-[#F8F7FF] transition-colors group ${task.status === 'Selesai' ? 'opacity-60 bg-gray-50' : ''}">
+                        <button onclick="toggleTask(${task.id})" class="mr-4 focus:outline-none transition-transform active:scale-90">
+                            ${task.status === 'Selesai' 
+                                ? `<i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-500"></i>` 
+                                : `<i data-lucide="circle" class="w-6 h-6 text-gray-300 group-hover:text-[#A78BFA] transition-colors"></i>`
+                            }
+                        </button>
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800 ${task.status === 'Selesai' ? 'line-through text-gray-500' : ''}">
+                                ${task.title}
+                            </p>
+                            <p class="text-xs text-gray-500">${task.matkul} • <span class="font-medium text-gray-600">Deadline: ${formatDate(task.deadlineDate)}</span></p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            ${task.status !== 'Selesai' ? `
+                                <span class="text-xs font-bold px-3 py-1 rounded-full border ${getDeadlineColor(task.daysLeft)}">
+                                    ${task.daysLeft < 0 ? 'Terlewat' : (task.daysLeft === 0 ? 'Hari Ini' : 'Sisa ' + task.daysLeft + ' Hari')}
+                                </span>
+                            ` : `
+                                <span class="text-xs font-bold px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600">
+                                    Selesai
+                                </span>
+                            `}
+                            <!-- Tombol Hapus Tugas -->
+                            <button onclick="deleteTask(${task.id})" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                if(!taskListHtml) taskListHtml = '<div class="text-center py-10 text-gray-400">Hore! Tidak ada tugas saat ini.</div>';
+
+                html = `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">Daftar Tugas</h2>
+                        <button onclick="openModal('tugas')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
+                            + Tambah Tugas
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">${taskListHtml}</div>
+                </div>`;
+            }
+            else if (activeTab === 'target') {
+                const completedTargetsCount = targets.filter(t => t.completed).length;
+                const targetProgress = targets.length === 0 ? 0 : Math.round((completedTargetsCount / targets.length) * 100);
+
+                let targetsHtml = targets.map(target => `
+                    <div class="cursor-pointer p-4 rounded-xl border-2 transition-all duration-300 flex items-center justify-between group ${
+                        target.completed 
+                            ? 'bg-[#F8F7FF] border-[#C4B5FD] shadow-inner' 
+                            : 'bg-white border-gray-100 hover:border-[#A78BFA] hover:shadow-md hover:-translate-y-1'
+                    }">
+                        <div class="flex items-center space-x-4 flex-1" onclick="toggleTarget(${target.id})">
+                            <div class="w-6 h-6 rounded-md flex items-center justify-center transition-colors ${
+                                target.completed ? 'bg-[#7C3AED] text-white' : 'border-2 border-gray-300'
+                            }">
+                                ${target.completed ? `<i data-lucide="check-square" class="w-4 h-4"></i>` : ''}
+                            </div>
+                            <span class="font-medium ${target.completed ? 'text-[#7C3AED] line-through opacity-80' : 'text-gray-700'}">
+                                ${target.text}
+                            </span>
+                        </div>
+                        
+                        <!-- Tombol Hapus Target -->
+                        <button onclick="deleteTarget(${target.id})" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-white rounded-md shadow-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                if(!targetsHtml) targetsHtml = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada target dibuat. Ayo tetapkan targetmu!</div>';
+
+                html = `
+                <div class="space-y-6 animate-fade-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Target Semester 6</h2>
+                        <button onclick="openModal('target')" class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm font-medium">
+                            + Tambah Target
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+                        <div class="flex justify-between items-end mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Progress Keseluruhan</h3>
+                                <p class="text-sm text-gray-500">${completedTargetsCount} dari ${targets.length} Target Selesai</p>
+                            </div>
+                            <span class="text-2xl font-extrabold text-[#7C3AED]">${targetProgress}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] h-3 rounded-full transition-all duration-1000 ease-out" style="width: ${targetProgress}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${targetsHtml}</div>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Initialize icons on page load
+        lucide.createIcons();
     </script>
 </body>
 </html>
