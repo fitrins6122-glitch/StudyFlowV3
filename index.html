@@ -293,16 +293,19 @@
         window.onload = function () {
             if (window.google) {
                 google.accounts.id.initialize({
+                    // Menggunakan Client ID Google milikmu yang telah diperbarui
                     client_id: "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com", 
                     callback: window.handleCredentialResponse,
-                    use_fedcm_for_prompt: true
+                    use_fedcm_for_prompt: true // FIX: Tambahkan parameter ini sesuai arahan error
                 });
                 
+                // Render Tombol Google API
                 google.accounts.id.renderButton(
                     document.getElementById("google-button-container"),
                     { theme: "outline", size: "large", width: "100%", text: "continue_with" } 
                 );
                 
+                // Munculkan popup Google One Tap
                 google.accounts.id.prompt(); 
             }
             lucide.createIcons();
