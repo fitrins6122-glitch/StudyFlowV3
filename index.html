@@ -46,6 +46,9 @@
         <div class="absolute inset-0 bg-white/30 backdrop-blur-[2px]"></div>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2"></div>
+
     <!-- ================= LOGIN VIEW ================= -->
     <div id="login-view" class="fixed inset-0 z-40 flex items-center justify-center p-4">
         <div class="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white w-full max-w-md relative animate-zoom-in min-h-[400px] flex flex-col justify-center transition-all duration-300">
@@ -194,7 +197,28 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- SISTEM NOTIFIKASI TOAST (PENGGANTI ALERT) ---
+        window.showToast = function(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-xl transform transition-all duration-300 translate-y-10 opacity-0 flex items-center gap-2 ${isError ? 'bg-red-500' : 'bg-emerald-500'}`;
+            toast.innerHTML = `<i data-lucide="${isError ? 'alert-circle' : 'check-circle'}" class="w-4 h-4"></i> ${message}`;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            lucide.createIcons({root: toast});
+            
+            // Animasi masuk
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            // Hapus otomatis
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
 
         // --- STATE & VARIABEL GLOBAL ---
         window.activeTab = 'dashboard';
@@ -220,17 +244,15 @@
         // --- INISIALISASI FIREBASE ---
         async function initFirebase() {
             try {
-                // Konfigurasi bawaan untuk menghindari crash jika API key belum diganti
-                let firebaseConfig = {};
-                if (typeof __firebase_config !== 'undefined') {
-                    firebaseConfig = JSON.parse(__firebase_config);
-                } else {
-                    firebaseConfig = {
-                        apiKey: "DUMMY_KEY",
-                        authDomain: "studyflow.firebaseapp.com",
-                        projectId: "studyflow",
-                    };
-                }
+                // Konfigurasi Firebase dari pengguna
+                const firebaseConfig = {
+                    apiKey: "AIzaSy...", // Ganti dengan API Key lengkap jika ingin dipakai di luar Canvas
+                    authDomain: "studyflow-7afba.firebaseapp.com",
+                    projectId: "studyflow-7afba",
+                    storageBucket: "studyflow-7afba.appspot.com",
+                    messagingSenderId: "...", // Ganti dengan Sender ID Anda
+                    appId: "..." // Ganti dengan App ID Anda
+                };
 
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
@@ -281,6 +303,7 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             window.switchTab('dashboard');
+            window.showToast(`Selamat datang, ${window.currentUser.firstName}!`);
         };
 
         window.onload = function () {
@@ -305,6 +328,7 @@
             window.currentUser = null;
             document.getElementById('main-app').classList.add('hidden');
             document.getElementById('login-view').classList.remove('hidden');
+            window.showToast('Berhasil logout.');
             
             if(unsubTasks) unsubTasks();
             if(unsubSchedules) unsubSchedules();
@@ -313,6 +337,7 @@
 
         // --- FIRESTORE LISTENERS ---
         function startFirestoreListeners() {
+            // Menggunakan struktur path yang aman untuk multi-user
             const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
             unsubTasks = onSnapshot(tasksRef, (snapshot) => {
                 window.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -332,7 +357,7 @@
             }, (error) => console.error("Error fetching targets:", error));
         }
 
-        // --- CRUD OPERATIONS (DENGAN FALLBACK LOKAL) ---
+        // --- CRUD OPERATIONS ---
         window.openModal = function(type) {
             document.getElementById('modal-container').classList.remove('hidden');
             document.getElementById('modal-jadwal').classList.add('hidden');
@@ -354,19 +379,25 @@
             const room = document.getElementById('j-ruang').value;
             const dosen = document.getElementById('j-dosen').value;
 
+            if(!matkul) return window.showToast("Mata kuliah wajib diisi!", true);
+
             const newJadwal = { matkul, day, time, room, dosen, createdAt: Date.now() };
 
             if (userId && db) {
                 try {
                     const schedulesRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'schedules');
                     await addDoc(schedulesRef, newJadwal);
-                } catch(err) {
+                    window.showToast("Jadwal berhasil disimpan!");
+                } catch(error) {
+                    console.error("Error simpan jadwal: ", error);
                     window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
                     window.renderContent();
+                    window.showToast("Disimpan ke memori lokal (Cloud gagal)", true);
                 }
             } else {
                 window.scheduleData.push({ id: Date.now().toString(), ...newJadwal });
                 window.renderContent();
+                window.showToast("Disimpan ke memori lokal.");
             }
             
             e.target.reset();
@@ -377,6 +408,7 @@
             if (userId && db) {
                 try {
                     await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'schedules', docId));
+                    window.showToast("Jadwal dihapus!");
                 } catch(err) {
                     window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
                     window.renderContent();
@@ -384,6 +416,7 @@
             } else {
                 window.scheduleData = window.scheduleData.filter(j => j.id !== docId);
                 window.renderContent();
+                window.showToast("Jadwal dihapus dari lokal!");
             }
         };
 
@@ -394,19 +427,25 @@
             const matkul = document.getElementById('t-matkul').value;
             const deadlineDate = document.getElementById('t-tanggal').value;
 
+            if(!title) return window.showToast("Judul tugas wajib diisi!", true);
+
             const newTask = { title, matkul, deadlineDate, status: 'Belum', createdAt: Date.now() };
 
             if (userId && db) {
                 try {
                     const tasksRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'tasks');
                     await addDoc(tasksRef, newTask);
-                } catch(err) {
+                    window.showToast("Tugas berhasil ditambahkan!");
+                } catch(error) {
+                    console.error("Error simpan tugas: ", error);
                     window.tasks.push({ id: Date.now().toString(), ...newTask });
                     window.renderContent();
+                    window.showToast("Disimpan ke memori lokal (Cloud gagal)", true);
                 }
             } else {
                 window.tasks.push({ id: Date.now().toString(), ...newTask });
                 window.renderContent();
+                window.showToast("Tugas disimpan ke lokal.");
             }
             
             e.target.reset();
@@ -417,6 +456,7 @@
             if (userId && db) {
                 try {
                     await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'tasks', docId));
+                    window.showToast("Tugas dihapus!");
                 } catch(err) {
                     window.tasks = window.tasks.filter(t => t.id !== docId);
                     window.renderContent();
@@ -424,6 +464,7 @@
             } else {
                 window.tasks = window.tasks.filter(t => t.id !== docId);
                 window.renderContent();
+                window.showToast("Tugas dihapus dari lokal!");
             }
         };
 
@@ -450,19 +491,31 @@
             e.preventDefault();
             const text = document.getElementById('tg-nama').value;
             
-            const newTarget = { text, completed: false, createdAt: Date.now() };
+            // Validasi seperti kode snippet dari Anda
+            if (!text) {
+                window.showToast("Nama target tidak boleh kosong!", true);
+                return;
+            }
+            
+            const newTarget = { text, completed: false, timestamp: serverTimestamp(), userId: window.currentUser?.email };
 
             if (userId && db) {
                 try {
                     const targetsRef = collection(db, 'artifacts', APP_ID, 'users', userId, 'targets');
                     await addDoc(targetsRef, newTarget);
-                } catch(err) {
-                    window.targets.push({ id: Date.now().toString(), ...newTarget });
+                    window.showToast("Data target berhasil disimpan!");
+                } catch(error) {
+                    console.error("Error simpan data target: ", error);
+                    window.showToast("Gagal menyimpan data ke cloud. Cek console log.", true);
+                    
+                    // Fallback memori lokal
+                    window.targets.push({ id: Date.now().toString(), text, completed: false });
                     window.renderContent();
                 }
             } else {
-                window.targets.push({ id: Date.now().toString(), ...newTarget });
+                window.targets.push({ id: Date.now().toString(), text, completed: false });
                 window.renderContent();
+                window.showToast("Disimpan ke memori lokal.");
             }
             
             e.target.reset();
@@ -473,6 +526,7 @@
             if (userId && db) {
                 try {
                     await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', userId, 'targets', docId));
+                    window.showToast("Target dihapus!");
                 } catch(err) {
                     window.targets = window.targets.filter(t => t.id !== docId);
                     window.renderContent();
@@ -480,6 +534,7 @@
             } else {
                 window.targets = window.targets.filter(t => t.id !== docId);
                 window.renderContent();
+                window.showToast("Target dihapus dari lokal!");
             }
         };
 
