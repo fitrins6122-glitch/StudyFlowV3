@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- KEAMANAN: Izin agar Google Login tidak error di browser modern (FedCM) -->
+    <!-- KEAMANAN: Izin agar Google Login tidak error (FedCM) -->
     <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
     
-    <title>StudyFlow - Login & Dashboard</title>
+    <title>StudyFlow - Smart Study Planner Semester 6</title>
     
     <!-- Dependencies: Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,136 +22,464 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             margin: 0;
-            padding: 0;
+            background-color: #F8F7FF;
         }
 
-        /* Animasi */
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+        /* Animasi Transisi */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
         
-        /* Efek Glassmorphism */
+        /* Efek Glassmorphism Premium */
         .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        /* Latar Belakang Gambar AI Generatif */
+        .glass-sidebar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(124, 58, 237, 0.1);
+        }
+
+        /* Background Dinamis */
         .bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C4B5FD; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7C3AED; }
+
+        .active-nav {
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            color: white !important;
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+        }
     </style>
 </head>
-<body class="bg-studyflow text-gray-800 min-h-screen flex items-center justify-center p-4">
+<body class="bg-studyflow text-gray-800 min-h-screen relative">
 
-    <!-- Overlay tipis agar konten lebih menonjol -->
-    <div class="fixed inset-0 bg-purple-900/10 pointer-events-none"></div>
+    <!-- Overlay tipis untuk menjaga keterbacaan -->
+    <div class="fixed inset-0 bg-white/20 pointer-events-none z-0"></div>
 
-    <!-- ================= KARTU LOGIN ================= -->
-    <div id="login-card" class="glass-card p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center relative z-10 animate-fade">
-        <div class="mb-6">
-            <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 rounded-3xl mx-auto shadow-xl border-4 border-white object-cover transform -rotate-2" />
-        </div>
-        
-        <h1 class="text-4xl font-extrabold tracking-tight mb-2">
-            Study<span class="text-purple-600">Flow</span>
-        </h1>
-        <p class="text-gray-600 mb-10 font-medium leading-relaxed">Kelola tugas kuliah lebih cerdas dengan satu akun Google.</p>
-        
-        <!-- Wadah Tombol Google Sign-In -->
-        <div class="flex flex-col items-center gap-4">
-            <div id="google-signin-button"></div>
+    <!-- ================= VIEW LOGIN ================= -->
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="glass-card p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center animate-fade">
+            <div class="mb-6">
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 rounded-3xl mx-auto shadow-xl border-4 border-white object-cover transform -rotate-2" />
+            </div>
             
-            <!-- Notifikasi jika terjadi origin mismatch -->
-            <div id="origin-error" class="hidden text-[11px] text-red-600 bg-red-50 p-3 rounded-xl border border-red-200 animate-fade">
-                <p class="font-bold mb-1">Error: Origin Mismatch</p>
-                Aplikasi ini dijalankan dari origin yang belum terdaftar. Pastikan <b>http://localhost:5500</b> ada di Google Console.
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
+                Study<span class="text-purple-600">Flow</span>
+            </h1>
+            <p class="text-gray-600 mb-10 font-medium leading-relaxed">Asisten Digital Semester 6 Anda. Kelola jadwal, tugas, dan target dalam satu tempat.</p>
+            
+            <div class="flex justify-center mb-6">
+                <div id="google-signin-button"></div>
             </div>
+            
+            <p class="text-[11px] text-gray-400 uppercase tracking-widest font-bold">Authorized for localhost:5500</p>
         </div>
+    </div>
+
+    <!-- ================= MAIN DASHBOARD VIEW (Hidden until login) ================= -->
+    <div id="app-view" class="hidden flex min-h-screen relative z-10">
         
-        <p class="text-[11px] text-gray-400 mt-8 uppercase tracking-widest font-bold italic">Wajib dijalankan melalui Local Server</p>
-    </div>
-
-    <!-- ================= KARTU DASHBOARD ================= -->
-    <div id="dashboard-card" class="hidden glass-card p-10 rounded-[2.5rem] shadow-2xl w-full max-w-lg text-center relative z-10 animate-fade">
-        <div class="flex flex-col items-center">
-            <div class="relative mb-6">
-                <img id="user-pic" src="" alt="Profil" class="w-32 h-32 rounded-full border-8 border-white shadow-2xl object-cover" />
-                <div class="absolute bottom-2 right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white"></div>
+        <!-- Sidebar Desktop -->
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6">
+            <div class="flex items-center gap-3 mb-10 px-2">
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-10 h-10 rounded-xl object-cover shadow-md" />
+                <h1 class="text-2xl font-black text-purple-700 tracking-tight">StudyFlow</h1>
             </div>
 
-            <h2 class="text-sm font-bold text-purple-600 uppercase tracking-[0.2em] mb-1">Selamat Datang Kembali</h2>
-            <h1 id="user-name" class="text-3xl font-black text-gray-800 mb-1">Nama Pengguna</h1>
-            <p id="user-email" class="text-gray-500 font-medium mb-8">email@pengguna.com</p>
+            <nav class="flex-1 space-y-2">
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50 active-nav">
+                    <i data-lucide="layout-grid"></i> Dashboard
+                </button>
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                    <i data-lucide="book-open"></i> Mata Kuliah
+                </button>
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                    <i data-lucide="calendar"></i> Jadwal Kuliah
+                </button>
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                    <i data-lucide="check-square"></i> Tugas & Deadline
+                </button>
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                    <i data-lucide="target"></i> Target Semester
+                </button>
+                <button onclick="navigate('statistik')" id="nav-statistik" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 hover:bg-purple-50">
+                    <i data-lucide="bar-chart-3"></i> Statistik
+                </button>
+            </nav>
 
-            <button onclick="logout()" class="flex items-center gap-2 bg-red-50 text-red-500 px-8 py-3 rounded-2xl font-bold hover:bg-red-100 transition-all border border-red-100">
-                <i data-lucide="log-out" class="w-5 h-5"></i> Keluar Sesi
-            </button>
-        </div>
+            <div class="pt-6 border-t border-purple-100">
+                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold">
+                    <i data-lucide="log-out"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 lg:p-10 pb-32 lg:pb-10 max-w-7xl mx-auto w-full overflow-y-auto h-screen">
+            
+            <!-- Top Header -->
+            <header class="flex justify-between items-center mb-8 bg-white/40 p-4 rounded-[2rem] border border-white/50 backdrop-blur-md">
+                <div class="flex items-center gap-4">
+                    <img id="profile-pic" src="" class="w-12 h-12 rounded-full border-2 border-purple-500 p-0.5 shadow-md object-cover" />
+                    <div>
+                        <h2 class="text-sm font-bold text-purple-600 uppercase tracking-widest">Selamat Datang</h2>
+                        <h1 id="profile-name" class="text-xl font-black text-gray-800">Nama Pengguna</h1>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="bg-white p-3 rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all">
+                        <i data-lucide="bell"></i>
+                    </button>
+                    <button onclick="exportToExcel()" class="bg-purple-600 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-200 hover:scale-105 transition-all">
+                        <i data-lucide="download"></i> <span class="hidden md:inline">Export</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Section -->
+            <div id="content-area" class="animate-fade">
+                <!-- Content will be injected here -->
+            </div>
+        </main>
+
+        <!-- Bottom Nav Mobile -->
+        <nav class="lg:hidden fixed bottom-6 left-6 right-6 h-20 glass-card rounded-[2rem] shadow-2xl flex items-center justify-around px-4 z-[90]">
+            <button onclick="navigate('dashboard')" class="p-3 text-purple-600"><i data-lucide="layout-grid"></i></button>
+            <button onclick="navigate('jadwal')" class="p-3 text-gray-400"><i data-lucide="calendar"></i></button>
+            <button onclick="navigate('tugas')" class="p-3 text-gray-400"><i data-lucide="check-square"></i></button>
+            <button onclick="navigate('target')" class="p-3 text-gray-400"><i data-lucide="target"></i></button>
+        </nav>
     </div>
 
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
+        // --- KONFIGURASI & MOCK DATA ---
         const CLIENT_ID = "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com";
+        
+        let mataKuliah = [
+            { id: 1, nama: 'Metodologi Penelitian', sks: 3, dosen: 'Dr. Ahmad', semester: 6 },
+            { id: 2, nama: 'Manajemen Strategik', sks: 3, dosen: 'Dr. Rina', semester: 6 },
+            { id: 3, nama: 'Kewirausahaan', sks: 2, dosen: 'Dr. Budi', semester: 6 }
+        ];
 
+        let jadwalKuliah = [
+            { id: 1, matkul: 'Manajemen Strategik', hari: 'Senin', waktu: '08:00 - 10:00', ruang: 'R.203' },
+            { id: 2, matkul: 'Metodologi Penelitian', hari: 'Senin', waktu: '13:00 - 15:00', ruang: 'R.105' },
+            { id: 3, matkul: 'Kewirausahaan', hari: 'Rabu', waktu: '10:00 - 12:00', ruang: 'R.401' }
+        ];
+
+        let daftarTugas = [
+            { id: 1, nama: 'Review Jurnal', matkul: 'Manajemen Strategik', deadline: '2026-04-08', status: true, prioritas: 'Tinggi' },
+            { id: 2, nama: 'Proposal Penelitian', matkul: 'Metodologi Penelitian', deadline: '2026-04-12', status: false, prioritas: 'Tinggi' },
+            { id: 3, nama: 'Business Plan', matkul: 'Kewirausahaan', deadline: '2026-04-20', status: false, prioritas: 'Sedang' }
+        ];
+
+        let targetSemester = [
+            { id: 1, teks: 'Proposal skripsi selesai', selesai: true },
+            { id: 2, teks: 'TOEFL minimal 500', selesai: false },
+            { id: 3, teks: 'Publikasi jurnal nasional', selesai: false },
+            { id: 4, teks: 'IPK minimal 3.75', selesai: false }
+        ];
+
+        // --- AUTH LOGIC ---
         function parseJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
-            } catch (e) {
-                return null;
-            }
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
         function handleCredentialResponse(response) {
             const data = parseJwt(response.credential);
-            if (data) {
-                document.getElementById('user-name').innerText = data.name;
-                document.getElementById('user-email').innerText = data.email;
-                document.getElementById('user-pic').src = data.picture;
+            document.getElementById('profile-name').innerText = data.name;
+            document.getElementById('profile-pic').src = data.picture;
 
-                document.getElementById('login-card').classList.add('hidden');
-                document.getElementById('dashboard-card').classList.remove('hidden');
-                lucide.createIcons();
-            }
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            
+            navigate('dashboard');
         }
 
         window.onload = function () {
-            // Cek apakah origin sesuai dengan yang didaftarkan (biasanya localhost:5500)
-            if (window.location.origin !== "http://localhost:5500" && window.location.hostname !== "localhost") {
-                console.warn("Origin mismatch detected visually.");
-                // Tetap biarkan berjalan, tapi tampilkan pesan jika user kesulitan
-            }
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleCredentialResponse,
+                use_fedcm_for_prompt: true 
+            });
 
-            try {
-                google.accounts.id.initialize({
-                    client_id: CLIENT_ID,
-                    callback: handleCredentialResponse,
-                    use_fedcm_for_prompt: true 
-                });
+            google.accounts.id.renderButton(
+                document.getElementById("google-signin-button"),
+                { theme: "outline", size: "large", width: 320, shape: "pill", text: "continue_with" }
+            );
 
-                google.accounts.id.renderButton(
-                    document.getElementById("google-signin-button"),
-                    { 
-                        theme: "filled_blue", 
-                        size: "large", 
-                        width: 320, 
-                        shape: "pill",
-                        text: "continue_with"
-                    }
-                );
-
-                google.accounts.id.prompt(); 
-            } catch (err) {
-                console.error("GSI Error:", err);
-            }
-            
             lucide.createIcons();
         };
+
+        // --- NAVIGATION & VIEWS ---
+        function navigate(view) {
+            const content = document.getElementById('content-area');
+            content.innerHTML = ''; // Clear previous
+            
+            // Update Sidebar UI
+            document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('active-nav'));
+            const activeNav = document.getElementById('nav-' + view);
+            if(activeNav) activeNav.classList.add('active-nav');
+
+            switch(view) {
+                case 'dashboard': renderDashboard(); break;
+                case 'matkul': renderMatkul(); break;
+                case 'jadwal': renderJadwal(); break;
+                case 'tugas': renderTugas(); break;
+                case 'target': renderTarget(); break;
+                case 'statistik': renderStatistik(); break;
+            }
+            lucide.createIcons();
+        }
+
+        function renderDashboard() {
+            const targetDone = targetSemester.filter(t => t.selesai).length;
+            const targetTotal = targetSemester.length;
+            const progress = Math.round((targetDone / targetTotal) * 100);
+
+            let html = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Jadwal Hari Ini Card -->
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-black flex items-center gap-3 text-purple-700">
+                                    <i data-lucide="calendar-check"></i> Jadwal Hari Ini
+                                </h3>
+                                <span class="bg-purple-100 text-purple-600 px-4 py-1 rounded-full text-xs font-bold">Senin</span>
+                            </div>
+                            <div class="space-y-4">
+                                ${jadwalKuliah.filter(j => j.hari === 'Senin').map(j => `
+                                    <div class="flex items-center gap-6 p-4 rounded-3xl bg-white/50 border border-white hover:scale-[1.02] transition-all">
+                                        <div class="w-16 h-16 rounded-2xl bg-purple-600 text-white flex flex-col items-center justify-center font-bold">
+                                            <span class="text-xs">WAKTU</span>
+                                            <span class="text-xs">PAGI</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="font-black text-gray-800">${j.matkul}</p>
+                                            <div class="flex gap-4 mt-1 text-xs text-gray-500 font-medium">
+                                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3"></i> ${j.waktu}</span>
+                                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3"></i> ${j.ruang}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Target Progress Area -->
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
+                            <h3 class="text-xl font-black mb-6 text-purple-700">Progress Target Semester</h3>
+                            <div class="flex items-end justify-between mb-3">
+                                <p class="text-sm font-bold text-gray-500">${targetDone} dari ${targetTotal} target selesai</p>
+                                <p class="text-3xl font-black text-purple-600">${progress}%</p>
+                            </div>
+                            <div class="w-full bg-purple-100 h-4 rounded-full overflow-hidden mb-6">
+                                <div class="bg-gradient-to-r from-purple-600 to-indigo-500 h-full transition-all duration-1000" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="space-y-3">
+                                ${targetSemester.slice(0, 3).map(t => `
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-5 h-5 rounded-md flex items-center justify-center border-2 ${t.selesai ? 'bg-purple-600 border-purple-600 text-white' : 'border-purple-200'}">
+                                            ${t.selesai ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
+                                        </div>
+                                        <span class="text-sm font-semibold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700'}">${t.teks}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <!-- Deadline Card -->
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-t-red-400">
+                            <h3 class="text-xl font-black mb-6 flex items-center gap-3 text-red-500">
+                                <i data-lucide="alert-circle"></i> Deadline Terdekat
+                            </h3>
+                            <div class="space-y-4">
+                                ${daftarTugas.filter(t => !t.status).sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).slice(0,2).map(t => `
+                                    <div class="p-5 rounded-3xl bg-red-50 border border-red-100">
+                                        <p class="font-black text-gray-800 mb-1">⚠️ ${t.nama}</p>
+                                        <p class="text-xs text-red-600 font-bold">Matkul: ${t.matkul}</p>
+                                        <p class="text-xs text-red-400 font-medium mt-2">Deadline: ${t.deadline}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Mini Stats Card -->
+                        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 p-8 rounded-[2.5rem] shadow-2xl text-white">
+                            <h4 class="text-sm font-bold uppercase tracking-widest opacity-80">Total SKS Semester</h4>
+                            <p class="text-5xl font-black mt-2">22</p>
+                            <div class="mt-8 flex justify-between items-center">
+                                <div class="bg-white/20 px-4 py-2 rounded-2xl text-xs font-bold">Semester 6</div>
+                                <i data-lucide="award" class="w-10 h-10 opacity-30"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function renderMatkul() {
+            let html = `
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-black text-gray-800">Daftar Mata Kuliah</h2>
+                    <button class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2 hover:bg-purple-700 transition-all">
+                        <i data-lucide="plus"></i> Tambah Matkul
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${mataKuliah.map(m => `
+                        <div class="glass-card p-6 rounded-[2rem] shadow-lg border-l-8 border-l-purple-500">
+                            <h3 class="text-xl font-black mb-1">${m.nama}</h3>
+                            <p class="text-gray-500 font-medium mb-4">${m.dosen}</p>
+                            <div class="flex justify-between items-center mt-4 border-t border-purple-100 pt-4 text-xs font-bold uppercase text-purple-600">
+                                <span>${m.sks} SKS</span>
+                                <span>Semester ${m.semester}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function renderJadwal() {
+            let html = `
+                <h2 class="text-3xl font-black text-gray-800 mb-8">Jadwal Mingguan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'].map(hari => `
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-black text-purple-600 flex items-center gap-2">
+                                <i data-lucide="calendar"></i> ${hari}
+                            </h3>
+                            ${jadwalKuliah.filter(j => j.hari === hari).map(j => `
+                                <div class="glass-card p-5 rounded-3xl shadow-md border border-white hover:border-purple-200 transition-all cursor-pointer">
+                                    <p class="font-bold text-gray-800">${j.matkul}</p>
+                                    <div class="mt-3 space-y-1 text-xs text-gray-400 font-medium">
+                                        <p class="flex items-center gap-2"><i data-lucide="clock" class="w-3"></i> ${j.waktu}</p>
+                                        <p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3"></i> ${j.ruang}</p>
+                                    </div>
+                                </div>
+                            `).join('') || '<p class="text-xs text-gray-300 italic px-2">Tidak ada jadwal.</p>'}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function renderTugas() {
+            let html = `
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-black text-gray-800">Tugas & Deadline</h2>
+                    <button class="bg-purple-600 text-white px-6 py-4 rounded-2xl font-bold shadow-lg flex items-center gap-2">
+                        <i data-lucide="plus"></i> Tambah Tugas
+                    </button>
+                </div>
+                <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl border border-white">
+                    <table class="w-full text-left">
+                        <thead class="bg-purple-50 text-purple-700 text-xs font-black uppercase tracking-widest border-b border-purple-100">
+                            <tr>
+                                <th class="p-6">Nama Tugas</th>
+                                <th class="p-6">Mata Kuliah</th>
+                                <th class="p-6">Deadline</th>
+                                <th class="p-6">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-semibold text-gray-600">
+                            ${daftarTugas.sort((a,b) => a.status - b.status).map(t => `
+                                <tr class="border-b border-purple-50 hover:bg-white/50 transition-all">
+                                    <td class="p-6">${t.nama}</td>
+                                    <td class="p-6 text-xs font-bold text-purple-600">${t.matkul}</td>
+                                    <td class="p-6">${t.deadline}</td>
+                                    <td class="p-6">
+                                        <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black ${t.status ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                            ${t.status ? 'Selesai' : 'Belum'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function renderTarget() {
+            let html = `
+                <div class="max-w-2xl mx-auto py-10">
+                    <h2 class="text-4xl font-black text-gray-900 mb-2 text-center">Target Semester 6</h2>
+                    <p class="text-gray-500 text-center mb-12 font-medium">Tetapkan tujuan dan pantau pencapaian akademikmu.</p>
+                    <div class="space-y-4">
+                        ${targetSemester.map(t => `
+                            <div class="glass-card p-6 rounded-3xl flex items-center justify-between group cursor-pointer hover:shadow-lg transition-all border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'}">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white' : 'border-purple-200'}">
+                                        ${t.selesai ? '<i data-lucide="check"></i>' : ''}
+                                    </div>
+                                    <span class="text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700'}">${t.teks}</span>
+                                </div>
+                                <button class="text-gray-300 group-hover:text-red-400 transition-all"><i data-lucide="trash-2" class="w-5"></i></button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function renderStatistik() {
+            let html = `
+                <h2 class="text-3xl font-black text-gray-800 mb-8">Statistik Belajar</h2>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="glass-card p-8 rounded-[2rem] text-center">
+                        <p class="text-[10px] font-black text-purple-400 uppercase mb-2">Mata Kuliah</p>
+                        <p class="text-4xl font-black text-purple-700">7</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-[2rem] text-center">
+                        <p class="text-[10px] font-black text-emerald-400 uppercase mb-2">Tugas Selesai</p>
+                        <p class="text-4xl font-black text-emerald-600">12</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-[2rem] text-center">
+                        <p class="text-[10px] font-black text-red-400 uppercase mb-2">Belum Selesai</p>
+                        <p class="text-4xl font-black text-red-500">5</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-[2rem] text-center">
+                        <p class="text-[10px] font-black text-blue-400 uppercase mb-2">Target</p>
+                        <p class="text-4xl font-black text-blue-600">2</p>
+                    </div>
+                </div>
+                <div class="glass-card p-10 rounded-[3rem] h-64 flex items-center justify-center border-dashed border-2 border-purple-200">
+                    <p class="text-gray-400 font-bold italic flex items-center gap-2"><i data-lucide="pie-chart"></i> Grafik Aktivitas Belajar (Coming Soon)</p>
+                </div>
+            `;
+            document.getElementById('content-area').innerHTML = html;
+        }
+
+        function exportToExcel() {
+            alert("Mengekspor data ke format .xlsx...");
+            // Logika export simulasi
+        }
 
         function logout() {
             window.location.reload();
