@@ -43,6 +43,7 @@
         .dark body { background-color: #0f172a; }
         html.dark { color-scheme: dark; }
         
+        /* Memastikan dropdown mudah dibaca di mode gelap */
         .dark select option { 
             background-color: #1e293b; 
             color: #f8fafc; 
@@ -85,6 +86,7 @@
             transition: background-image 0.5s ease-in-out;
         }
 
+        /* Latar belakang khusus mode gelap */
         html.dark body.bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg') !important;
             background-color: #0f172a;
@@ -200,9 +202,7 @@
             </div>
         </aside>
 
-        <!-- Area Konten Utama -->
         <main class="flex-1 p-4 md:p-8 lg:p-10 pb-32 lg:pb-10 max-w-[1600px] mx-auto w-full overflow-y-auto h-screen relative z-10">
-            <!-- Header Atas -->
             <header class="flex justify-between items-center mb-8 bg-white/60 dark:bg-slate-800/60 p-3 md:p-5 rounded-[1.5rem] md:rounded-[2rem] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm transition-all hover:shadow-md">
                 <div class="flex items-center gap-3 md:gap-5 overflow-hidden">
                     <div class="relative">
@@ -254,7 +254,6 @@
             <div id="content-area" class="animate-fade relative z-0"></div>
         </main>
 
-        <!-- Bottom Nav Mobile -->
         <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-[72px] glass-card rounded-[2rem] shadow-2xl flex items-center justify-around px-2 z-[90] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl overflow-x-auto">
             <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="layout-grid"></i></button>
             <button onclick="navigate('matkul')" id="m-nav-matkul" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="book-open"></i></button>
@@ -397,7 +396,7 @@
         
         let dashboardChartInstance = null;
 
-        // FUNGSI GLOBAL
+        // FUNGSI setFontSize
         function setFontSize(size) {
             const root = document.querySelector(':root');
             const sizes = { small: '14px', medium: '16px', large: '18px' };
@@ -415,7 +414,11 @@
             if (isDarkMode) { document.documentElement.classList.add('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'sun'); } 
             else { document.documentElement.classList.remove('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'moon'); }
             lucide.createIcons();
-            if(activeTab === 'dashboard') renderDashboard(document.getElementById('content-area'));
+            // JANGAN panggil renderDashboard di sini agar tidak overwrite view lain saat ganti tema
+            if(activeTab === 'dashboard') {
+                const container = document.getElementById('content-area');
+                if(container) renderDashboard(container);
+            }
         }
         window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('studyflow_theme', isDarkMode ? 'dark' : 'light'); applyTheme(); };
 
@@ -443,6 +446,40 @@
             ['in-j-mulai-h', 'in-j-selesai-h', 'in-u-waktu-h'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; hours.forEach(h => el.add(new Option(h, h))); } });
             ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); } });
         }
+
+        // PERBAIKAN FUNGSI EKSPOR KE XLSX
+        window.exportToExcel = () => {
+            const activeJadwal = getSemesterData('jadwal');
+            const activeMatkul = getSemesterData('matkul');
+            const activeTugas = getSemesterData('tugas');
+            const activeUjian = getSemesterData('ujian');
+            
+            if (!activeJadwal.length && !activeMatkul.length && !activeTugas.length && !activeUjian.length) { 
+                alert("Tidak ada data untuk diekspor!"); 
+                return; 
+            }
+
+            const wb = XLSX.utils.book_new();
+            
+            if (activeMatkul.length > 0) {
+                const dataMatkul = activeMatkul.map(m => ({ "Mata Kuliah": m.nama, "SKS": m.sks, "Dosen": m.dosen }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dataMatkul), "Daftar Matkul");
+            }
+            if (activeJadwal.length > 0) {
+                const dataJadwal = activeJadwal.map(j => ({ "Hari": j.hari, "Waktu": j.waktu, "Mata Kuliah": j.matkul, "Ruang": j.ruang }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dataJadwal), "Jadwal Kuliah");
+            }
+            if (activeTugas.length > 0) {
+                const dataTugas = activeTugas.map(t => ({ "Tugas": t.nama, "Mata Kuliah": t.matkul, "Deadline": t.deadline, "Status": t.status ? "Selesai" : "Belum" }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dataTugas), "Tugas & Deadline");
+            }
+            if (activeUjian.length > 0) {
+                const dataUjian = activeUjian.map(u => ({ "Jenis": u.jenis, "Mata Kuliah": u.matkul, "Tanggal": u.tanggal, "Waktu": u.waktu, "Nilai": u.nilai || "-" }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dataUjian), "Ujian & Nilai");
+            }
+
+            XLSX.writeFile(wb, `StudyFlow_Smt${currentSemester}_Export.xlsx`);
+        };
 
         window.loginWithGoogle = async () => {
             const statusEl = document.getElementById('conn-status');
@@ -509,6 +546,10 @@
             if(activeMob) activeMob.classList.add('text-purple-600', 'bg-purple-100', 'dark:bg-slate-800');
 
             updateDynamicDropdowns();
+            
+            // BERSIHKAN CONTAINER sebelum render ulang agar tidak terjadi tumpang tindih
+            container.innerHTML = '';
+            
             if (activeTab === 'dashboard') renderDashboard(container);
             else if (activeTab === 'matkul') renderMatkul(container);
             else if (activeTab === 'jadwal') renderJadwal(container);
@@ -560,7 +601,7 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                         <!-- Progress Donut (Small) -->
-                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col items-center justify-center min-h-[300px]">
+                        <div class="glass-card p-6 rounded-[2rem] flex flex-col items-center justify-center min-h-[300px]">
                             <h3 class="font-black mb-4 text-sm flex items-center gap-2 self-start"><i data-lucide="pie-chart" class="w-4 h-4 text-purple-500"></i> Progress Tugas</h3>
                             <div class="relative w-full flex-1 min-h-0 flex justify-center items-center">
                                 ${totalTugas > 0 ? `<div style="width: 180px; height: 180px;"><canvas id="tugasChart"></canvas></div>` : `
@@ -573,13 +614,13 @@
                         </div>
 
                         <!-- Beban Tugas Bar Chart -->
-                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col min-h-[300px]">
+                        <div class="glass-card p-6 rounded-[2rem] flex flex-col min-h-[300px]">
                             <h3 class="font-black mb-4 text-sm flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-500"></i> Beban Tugas</h3>
                             <div class="flex-1 min-h-0 relative"><canvas id="bebanChart"></canvas></div>
                         </div>
 
                         <!-- Agenda Hari Ini -->
-                        <div class="glass-card p-6 rounded-[2.5rem] min-h-[300px]">
+                        <div class="glass-card p-6 rounded-[2rem] min-h-[300px]">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-black text-sm flex items-center gap-2"><i data-lucide="calendar-check" class="w-4 h-4 text-green-500"></i> Agenda Hari Ini</h3>
                                 <span class="text-[9px] font-bold uppercase tracking-widest text-gray-400">${todayName}</span>
@@ -601,7 +642,7 @@
                     </div>
 
                     <!-- Tugas Mendesak Section -->
-                    <div class="glass-card p-6 rounded-[2.5rem]">
+                    <div class="glass-card p-6 rounded-[2rem]">
                         <h3 class="font-black mb-6 flex items-center gap-2"><i data-lucide="flame" class="text-red-500"></i> Tugas Mendesak (Countdown)</h3>
                         <div class="space-y-3">
                             ${urgent.length > 0 ? urgent.slice(0,5).map(t => `
@@ -643,9 +684,9 @@
                 }, 50);
             }
             
-            // Bar chart logic
             setTimeout(() => {
                const ctxBeban = document.getElementById('bebanChart');
+               if (!ctxBeban) return;
                new Chart(ctxBeban, {
                    type: 'bar',
                    data: {
@@ -669,10 +710,38 @@
             }, 50);
         }
 
-        // FUNGSI NAVIGASI
-        window.navigate = (view) => { activeTab = view; renderUI(); };
+        function renderMatkul(el) {
+            const data = getSemesterData('matkul');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-start text-left"><div><h4 class="font-black text-gray-800 dark:text-white">${m.nama}</h4><p class="text-xs text-gray-500 mt-1">${m.dosen}</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button></div>`).join('')}</div>`;
+        }
 
-        // MODAL HANDLERS (EXPLICIT WINDOW ATTACHMENT)
+        function renderJadwal(el) {
+            const data = getSemesterData('jadwal');
+            const hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">${hari.map(h => `<div class="space-y-4"><h3 class="font-black border-b pb-2 dark:border-slate-700 dark:text-purple-400 text-purple-600 uppercase tracking-widest text-xs">${h}</h3>${data.filter(j => j.hari === h).map(j => `<div class="glass-card p-4 rounded-2xl relative overflow-hidden"><div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div><div class="flex justify-between items-start"><h5 class="font-bold text-gray-800 dark:text-gray-100 text-sm leading-tight">${j.matkul}</h5><button onclick="deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500"><i data-lucide="trash-2" size="14"></i></button></div><p class="text-[10px] text-gray-400 font-bold mt-1 uppercase">${j.waktu}</p></div>`).join('') || '<p class="text-[10px] text-gray-300 italic">Libur</p>'}</div>`).join('')}</div>`;
+        }
+
+        function renderTugas(el) {
+            const data = getSemesterData('tugas');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Daftar Tugas</h2><button onclick="openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex flex-col justify-between h-full"><div class="flex justify-between items-start mb-4"><span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded">${t.matkul}</span><div class="flex gap-2"><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="text-gray-300 hover:text-green-500"><i data-lucide="${t.status?'check-square':'square'}" size="20"></i></button><button onclick="deleteItem('tugas', '${t.id}')" class="text-gray-200 hover:text-red-500"><i data-lucide="trash-2" size="16"></i></button></div></div><p class="font-bold dark:text-white ${t.status?'line-through opacity-50':''} leading-snug">${t.nama}</p><p class="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">${t.deadline}</p></div>`).join('')}</div>`;
+        }
+
+        function renderUjian(el) {
+            const data = getSemesterData('ujian');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Ujian & Nilai</h2><button onclick="openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-left"><div><span class="text-[10px] font-black bg-orange-100 dark:bg-orange-900/30 text-orange-600 px-2 py-0.5 rounded">${u.jenis}</span><h4 class="font-black mt-2 dark:text-white leading-tight">${u.matkul}</h4><p class="text-[10px] text-gray-500 mt-1 uppercase">${u.tanggal} • ${u.waktu}</p></div><div class="flex items-center gap-4">${u.nilai?`<span class="text-3xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="openModalNilai('${u.id}', '${u.matkul}')" class="text-[10px] font-black bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg uppercase transition-colors hover:bg-purple-200">Nilai</button>`}<button onclick="deleteItem('ujian', '${u.id}')" class="text-gray-300 hover:text-red-500"><i data-lucide="trash-2" size="16"></i></button></div></div>`).join('')}</div>`;
+        }
+
+        function renderTarget(el) {
+            const data = getSemesterData('target');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Target Semester</h2><button onclick="openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
+            <div class="space-y-4 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center cursor-pointer group"><p class="font-bold text-gray-700 dark:text-white ${t.selesai?'line-through opacity-50':''}">${t.teks}</p><div class="flex gap-4"><button onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><i data-lucide="${t.selesai?'check-circle-2':'circle'}" class="${t.selesai?'text-green-500':'text-gray-300 group-hover:text-purple-400'}"></i></button><button onclick="deleteItem('target', '${t.id}')" class="text-gray-200 hover:text-red-500"><i data-lucide="trash-2" size="18"></i></button></div></div>`).join('')}</div>`;
+        }
+
+        // --- GLOBAL WRAPPERS ---
         window.openModal = (id) => { 
             document.getElementById('modal-overlay').classList.remove('hidden'); 
             document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); 
@@ -680,89 +749,25 @@
             updateDynamicDropdowns();
         };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
-        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; openModal('nilai'); };
+        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; window.openModal('nilai'); };
 
-        // SAVE ACTIONS
         window.saveJadwal = async () => { 
             const matkul = document.getElementById('in-j-matkul').value; 
-            const hM = document.getElementById('in-j-mulai-h').value; 
-            const mM = document.getElementById('in-j-mulai-m').value;
-            const hS = document.getElementById('in-j-selesai-h').value; 
-            const mS = document.getElementById('in-j-selesai-m').value;
-            if(!matkul || !hM || !hS) { alert("Data belum lengkap!"); return; }
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { 
-                matkul, 
-                sks: document.getElementById('in-j-sks').value, 
-                dosen: document.getElementById('in-j-dosen').value, 
-                hari: document.getElementById('in-j-hari').value, 
-                waktu: `${hM}:${mM} - ${hS}:${mS}`, 
-                ruang: document.getElementById('in-j-ruang').value, 
-                semester: currentSemester, 
-                createdAt: serverTimestamp() 
-            });
-            closeModal();
+            const hM = document.getElementById('in-j-mulai-h').value; const mM = document.getElementById('in-j-mulai-m').value;
+            const hS = document.getElementById('in-j-selesai-h').value; const mS = document.getElementById('in-j-selesai-m').value;
+            if(!matkul || !hM || !hS) { alert("Lengkapi data!"); return; }
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${mM} - ${hS}:${mS}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, createdAt: serverTimestamp() });
+            window.closeModal();
         };
-
-        window.saveMatkul = async () => { 
-            const n = document.getElementById('in-m-nama').value; 
-            const d = document.getElementById('in-m-dosen').value;
-            if(!n || !d) { alert("Pilih Matkul dan Dosen!"); return; } 
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { 
-                nama: n, sks: document.getElementById('in-m-sks').value, dosen: d, semester: currentSemester 
-            }); 
-            closeModal(); 
-        };
-
-        window.saveTugas = async () => { 
-            const n = document.getElementById('in-t-nama').value; 
-            const m = document.getElementById('in-t-matkul').value;
-            if(!n || !m) { alert("Lengkapi data tugas!"); return; } 
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { 
-                nama: n, matkul: m, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester 
-            }); 
-            closeModal(); 
-        };
-
-        window.saveTarget = async () => { 
-            const t = document.getElementById('in-tg-teks').value; 
-            if(!t) return; 
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { 
-                teks: t, selesai: false, semester: currentSemester 
-            }); 
-            closeModal(); 
-        };
-
-        window.saveUjian = async () => { 
-            const m = document.getElementById('in-u-matkul').value; 
-            if(!m) return; 
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { 
-                matkul: m, 
-                jenis: document.getElementById('in-u-jenis').value, 
-                tanggal: document.getElementById('in-u-tanggal').value, 
-                waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, 
-                nilai: null, 
-                semester: currentSemester 
-            }); 
-            closeModal(); 
-        };
-
-        window.saveNilai = async () => { 
-            const id = document.getElementById('in-n-id').value; 
-            const v = document.getElementById('in-n-nilai').value; 
-            if(!v) return; 
-            await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); 
-            closeModal(); 
-        };
-
-        window.toggleStatus = async (col, docId, s) => { 
-            await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); 
-        };
-
-        window.deleteItem = async (col, docId) => { 
-            if(confirm('Hapus item ini selamanya?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); 
-        };
-
+        window.saveMatkul = async () => { const n = document.getElementById('in-m-nama').value; const d = document.getElementById('in-m-dosen').value; if(!n || !d) { alert("Lengkapi!"); return; } await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: document.getElementById('in-m-sks').value, dosen: d, semester: currentSemester }); window.closeModal(); };
+        window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; const m = document.getElementById('in-t-matkul').value; if(!n || !m) { alert("Lengkapi!"); return; } await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: m, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester }); window.closeModal(); };
+        window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, semester: currentSemester }); window.closeModal(); };
+        window.saveUjian = async () => { const m = document.getElementById('in-u-matkul').value; if(!m) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { matkul: m, jenis: document.getElementById('in-u-jenis').value, tanggal: document.getElementById('in-u-tanggal').value, waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, nilai: null, semester: currentSemester }); window.closeModal(); };
+        window.saveNilai = async () => { const id = document.getElementById('in-n-id').value; const v = document.getElementById('in-n-nilai').value; if(!v) return; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); window.closeModal(); };
+        window.toggleStatus = async (col, docId, s) => { await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus item ini?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
         window.logout = async () => { await signOut(auth); window.location.reload(); };
+        window.navigate = navigate;
 
     </script>
 </body>
