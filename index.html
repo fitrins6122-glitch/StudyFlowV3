@@ -85,8 +85,9 @@
             transition: background-image 0.5s ease-in-out;
         }
 
-        .dark .bg-studyflow {
-            background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg');
+        /* Perbaikan Background Mode Gelap */
+        html.dark body.bg-studyflow {
+            background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg') !important;
             background-color: #0f172a;
             background-blend-mode: normal;
         }
@@ -185,17 +186,17 @@
             <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3 text-gray-900 dark:text-white relative z-10">
                 Study<span class="text-gradient">Flow</span>
             </h1>
-            <p class="text-gray-500 dark:text-gray-400 mb-8 font-medium leading-relaxed px-2 text-sm md:text-base relative z-10">Ruang belajar pintarmu. Kelola jadwal, tugas, dan ujian secara otomatis.</p>
+            <p class="text-gray-500 dark:text-gray-300 mb-8 font-medium leading-relaxed px-2 text-sm md:text-base relative z-10">Ruang belajar pintarmu. Kelola jadwal, tugas, dan ujian secara otomatis.</p>
             
             <div class="flex flex-col items-center gap-4 mb-4 w-full relative z-10">
                 <!-- Tombol Login Google Asli Firebase -->
-                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white dark:bg-slate-800 border-2 border-purple-50 dark:border-slate-700 text-gray-700 dark:text-gray-200 font-bold py-3.5 px-4 rounded-2xl shadow-xl shadow-purple-100 dark:shadow-none hover:bg-purple-50 dark:hover:bg-slate-700 transition-all active:scale-95 text-sm md:text-base group">
+                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white dark:bg-slate-800 border-2 border-purple-50 dark:border-slate-700 text-gray-700 dark:text-white font-bold py-3.5 px-4 rounded-2xl shadow-xl shadow-purple-100 dark:shadow-none hover:bg-purple-50 dark:hover:bg-slate-700 transition-all active:scale-95 text-sm md:text-base group">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 group-hover:scale-110 transition-transform">
                     Lanjutkan dengan Google
                 </button>
             </div>
             
-            <div id="conn-status" class="text-[10px] text-purple-500 dark:text-purple-400 uppercase tracking-widest font-bold mt-4 min-h-[32px] w-full flex items-center justify-center text-center px-4 relative z-10"></div>
+            <div id="conn-status" class="text-[10px] text-purple-500 dark:text-purple-300 uppercase tracking-widest font-bold mt-4 min-h-[32px] w-full flex items-center justify-center text-center px-4 relative z-10"></div>
         </div>
     </div>
 
@@ -206,26 +207,26 @@
         <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
             <div class="flex items-center gap-4 mb-10 px-2 pt-4">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-white dark:border-slate-700" />
-                <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-700 to-pink-500 dark:from-purple-400 dark:to-pink-400 tracking-tighter">StudyFlow</h1>
+                <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-700 to-pink-500 dark:from-purple-300 dark:to-pink-300 tracking-tighter">StudyFlow</h1>
             </div>
 
             <nav class="flex-1 space-y-2 overflow-y-auto pr-2 pb-10">
-                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 active-nav text-sm">
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white active-nav text-sm">
                     <i data-lucide="layout-grid"></i> Dashboard Analytics
                 </button>
-                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 text-sm">
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
                     <i data-lucide="book-open"></i> Mata Kuliah
                 </button>
-                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 text-sm">
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
                     <i data-lucide="calendar"></i> Jadwal Kuliah
                 </button>
-                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 text-sm">
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
                     <i data-lucide="check-square"></i> Tugas & Deadline
                 </button>
-                <button onclick="navigate('ujian')" id="nav-ujian" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 text-sm">
+                <button onclick="navigate('ujian')" id="nav-ujian" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
                     <i data-lucide="award"></i> Ujian & Nilai
                 </button>
-                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-purple-300 text-sm">
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
                     <i data-lucide="target"></i> Target Semester
                 </button>
             </nav>
@@ -248,16 +249,16 @@
                         <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-slate-700 rounded-full"></div>
                     </div>
                     <div class="overflow-hidden flex flex-col justify-center">
-                        <h2 class="text-[10px] md:text-xs font-black text-purple-500 dark:text-purple-400 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
+                        <h2 class="text-[10px] md:text-xs font-black text-purple-500 dark:text-purple-300 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
                         
                         <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-0.5">
                             <h1 id="profile-name" class="text-sm md:text-xl font-black text-gray-800 dark:text-white tracking-tight truncate leading-tight">Memuat...</h1>
                             
                             <!-- Pilihan Semester yang Lebih Intuitif -->
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] md:text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:inline-block">Periode Aktif:</span>
+                                <span class="text-[9px] md:text-[10px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:inline-block">Periode Aktif:</span>
                                 <div class="relative flex items-center group">
-                                    <select id="semester-select" onchange="changeSemester(this.value)" class="bg-white/80 dark:bg-slate-800/80 text-purple-700 dark:text-purple-300 font-bold text-xs px-2.5 py-1 md:py-1.5 md:px-3 md:pr-8 pr-7 rounded-lg border border-purple-200 dark:border-purple-800 outline-none cursor-pointer hover:bg-purple-50 dark:hover:bg-slate-700 transition-all shadow-sm appearance-none focus:ring-2 focus:ring-purple-400">
+                                    <select id="semester-select" onchange="changeSemester(this.value)" class="bg-purple-100 dark:bg-slate-700 text-purple-700 dark:text-white font-bold text-xs px-2.5 py-1 md:py-1.5 md:px-3 md:pr-8 pr-7 rounded-lg border border-purple-200 dark:border-slate-600 outline-none cursor-pointer hover:bg-purple-200 dark:hover:bg-slate-600 transition-all shadow-sm appearance-none focus:ring-2 focus:ring-purple-400">
                                         <option value="1">Semester 1</option>
                                         <option value="2">Semester 2</option>
                                         <option value="3">Semester 3</option>
@@ -267,7 +268,7 @@
                                         <option value="7">Semester 7</option>
                                         <option value="8">Semester 8</option>
                                     </select>
-                                    <i data-lucide="chevron-down" class="absolute right-2 w-3.5 h-3.5 text-purple-600 dark:text-purple-400 pointer-events-none group-hover:translate-y-0.5 transition-transform"></i>
+                                    <i data-lucide="chevron-down" class="absolute right-2 w-3.5 h-3.5 text-purple-600 dark:text-white pointer-events-none group-hover:translate-y-0.5 transition-transform"></i>
                                 </div>
                             </div>
                         </div>
@@ -282,7 +283,7 @@
 
                     <!-- Dropdown Atur Font -->
                     <div class="relative group hidden sm:block">
-                        <button class="bg-white dark:bg-slate-700 p-3 md:p-3.5 rounded-xl md:rounded-2xl shadow-sm text-gray-400 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Atur Tampilan">
+                        <button class="bg-white dark:bg-slate-700 p-3 md:p-3.5 rounded-xl md:rounded-2xl shadow-sm text-gray-400 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white hover:bg-purple-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Atur Tampilan">
                             <i data-lucide="type" size="20"></i>
                         </button>
                         <div class="absolute right-0 top-full mt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible glass-card rounded-2xl p-2 w-40 shadow-2xl z-[100] border border-purple-100 dark:border-slate-600 transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
@@ -350,12 +351,12 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Jadwal Baru</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1">Tambah Kelas</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tambah Kelas</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <select id="in-j-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <select id="in-j-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="" disabled selected>Pilih Mata Kuliah...</option>
                         <option value="Sistem Politik Indonesia">Sistem Politik Indonesia</option>
                         <option value="Manajemen Strategi">Manajemen Strategi</option>
@@ -368,8 +369,8 @@
                         <option value="Start Up Business">Start Up Business</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="in-j-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Jumlah SKS" />
-                        <select id="in-j-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                        <input type="number" id="in-j-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Jumlah SKS" />
+                        <select id="in-j-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                             <option value="" disabled selected>Pilih Dosen...</option>
                             <option value="Dr. Budi Santoso, M.Si.">Dr. Budi Santoso, M.Si.</option>
                             <option value="Prof. Siti Aminah, Ph.D.">Prof. Siti Aminah, Ph.D.</option>
@@ -382,31 +383,31 @@
                             <option value="Bpk. Reza Rahadian, M.B.A.">Bpk. Reza Rahadian, M.B.A.</option>
                         </select>
                     </div>
-                    <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
                     </select>
                     
-                    <!-- Time Picker Kombinasi 24 Jam Murni (Tanpa AM/PM OS) -->
+                    <!-- Time Picker Kombinasi 24 Jam Murni -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Mulai</label>
                             <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
-                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
-                                <span class="font-bold text-gray-400 px-0.5">:</span>
-                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                             </div>
                         </div>
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Selesai</label>
                             <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
-                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
-                                <span class="font-bold text-gray-400 px-0.5">:</span>
-                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                             </div>
                         </div>
                     </div>
 
-                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Ruangan Kelas" />
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Ruangan Kelas" />
                     <button onclick="saveJadwal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Jadwal</button>
                 </div>
             </div>
@@ -416,12 +417,12 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Mata Kuliah</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1">Tambah Data</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tambah Data</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <select id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <select id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="" disabled selected>Pilih Mata Kuliah...</option>
                         <option value="Sistem Politik Indonesia">Sistem Politik Indonesia</option>
                         <option value="Manajemen Strategi">Manajemen Strategi</option>
@@ -434,8 +435,8 @@
                         <option value="Start Up Business">Start Up Business</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="SKS" />
-                        <select id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                        <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="SKS" />
+                        <select id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                             <option value="" disabled selected>Pilih Dosen...</option>
                             <option value="Dr. Budi Santoso, M.Si.">Dr. Budi Santoso, M.Si.</option>
                             <option value="Prof. Siti Aminah, Ph.D.">Prof. Siti Aminah, Ph.D.</option>
@@ -457,13 +458,13 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Tugas Baru</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1">Catat Deadline</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Catat Deadline</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Nama / Judul Tugas" />
-                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Nama / Judul Tugas" />
+                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="" disabled selected>Pilih Mata Kuliah Terkait...</option>
                         <option value="Sistem Politik Indonesia">Sistem Politik Indonesia</option>
                         <option value="Manajemen Strategi">Manajemen Strategi</option>
@@ -477,7 +478,7 @@
                     </select>
                     <div class="relative">
                         <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Tenggat Waktu</label>
-                        <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
+                        <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white" />
                     </div>
                     <button onclick="saveTugas()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Tugas</button>
                 </div>
@@ -488,12 +489,12 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Target Semester</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1">Tuliskan Mimpimu</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tuliskan Mimpimu</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Contoh: Lulus Semua Matkul A, Ikut Kepanitiaan..." />
+                    <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Contoh: Lulus Semua Matkul A, Ikut Kepanitiaan..." />
                     <button onclick="saveTarget()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Target</button>
                 </div>
             </div>
@@ -503,12 +504,12 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Jadwal Ujian</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1">Catat UTS / UAS</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Catat UTS / UAS</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
-                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="" disabled selected>Pilih Mata Kuliah...</option>
                         <option value="Sistem Politik Indonesia">Sistem Politik Indonesia</option>
                         <option value="Manajemen Strategi">Manajemen Strategi</option>
@@ -520,7 +521,7 @@
                         <option value="Keuangan Bisnis">Keuangan Bisnis</option>
                         <option value="Start Up Business">Start Up Business</option>
                     </select>
-                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
+                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="UTS">Ujian Tengah Semester (UTS)</option>
                         <option value="UAS">Ujian Akhir Semester (UAS)</option>
                         <option value="Kuis">Kuis / Ujian Susulan</option>
@@ -528,18 +529,18 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Tanggal</label>
-                            <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
+                            <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white" />
                         </div>
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Waktu</label>
                             <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
-                                <select id="in-u-waktu-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
-                                <span class="font-bold text-gray-400 px-0.5">:</span>
-                                <select id="in-u-waktu-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <select id="in-u-waktu-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-u-waktu-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                             </div>
                         </div>
                     </div>
-                    <input type="text" id="in-u-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Ruangan (Opsional)" />
+                    <input type="text" id="in-u-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Ruangan (Opsional)" />
                     <button onclick="saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Ujian</button>
                 </div>
             </div>
@@ -549,13 +550,13 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Input Nilai</h3>
-                        <p class="text-xs text-purple-500 dark:text-purple-400 font-bold tracking-widest uppercase mt-1" id="nilai-matkul-label">Mata Kuliah</p>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1" id="nilai-matkul-label">Mata Kuliah</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
                 </div>
                 <div class="space-y-4 text-left">
                     <input type="hidden" id="in-n-id" />
-                    <input type="number" id="in-n-nilai" min="0" max="100" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-2xl font-black text-center text-purple-700 dark:text-purple-300" placeholder="Skor (0-100)" />
+                    <input type="number" id="in-n-nilai" min="0" max="100" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-2xl font-black text-center text-purple-700 dark:text-purple-300 placeholder-gray-400 dark:placeholder-gray-400" placeholder="Skor (0-100)" />
                     <button onclick="saveNilai()" class="w-full bg-green-500 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-green-200 dark:shadow-none hover:bg-green-600 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Nilai</button>
                 </div>
             </div>
