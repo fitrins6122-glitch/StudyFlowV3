@@ -45,6 +45,16 @@
             background-color: #0f172a; /* Slate 900 */
         }
 
+        /* Perbaikan elemen native form (dropdown & calendar) untuk Mode Gelap */
+        html.dark {
+            color-scheme: dark;
+        }
+        
+        .dark select option {
+            background-color: #1e293b; /* bg-slate-800 */
+            color: #f8fafc; /* text-slate-50 */
+        }
+
         /* Animasi Transisi */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
