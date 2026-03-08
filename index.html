@@ -43,7 +43,6 @@
         .dark body { background-color: #0f172a; }
         html.dark { color-scheme: dark; }
         
-        /* Memastikan dropdown mudah dibaca di mode gelap */
         .dark select option { 
             background-color: #1e293b; 
             color: #f8fafc; 
@@ -86,7 +85,6 @@
             transition: background-image 0.5s ease-in-out;
         }
 
-        /* Latar belakang khusus mode gelap */
         html.dark body.bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg') !important;
             background-color: #0f172a;
@@ -124,10 +122,13 @@
             outline: none;
             background: transparent;
         }
+        
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-studyflow text-gray-800 dark:text-gray-100 min-h-screen relative overflow-x-hidden">
 
+    <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 flex items-center justify-center transition-opacity duration-500">
         <div class="text-center p-6">
             <div class="w-12 h-12 md:w-16 md:h-16 border-4 border-purple-200 dark:border-purple-900 border-t-purple-600 dark:border-t-purple-400 rounded-full animate-spin mx-auto mb-4"></div>
@@ -158,12 +159,13 @@
                 </button>
             </div>
             
-            <div id="conn-status" class="mt-4 min-h-[40px] w-full flex flex-col items-center justify-center text-center px-4 relative z-10 text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest"></div>
+            <div id="conn-status" class="mt-4 min-h-[40px] w-full flex flex-col items-center justify-center text-center px-4 relative z-10 text-xs font-bold text-purple-600 dark:text-purple-300 uppercase tracking-widest"></div>
         </div>
     </div>
 
     <!-- ================= MAIN DASHBOARD VIEW ================= -->
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
+        <!-- Sidebar Desktop -->
         <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
             <div class="flex items-center gap-4 mb-10 px-2 pt-4">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-white dark:border-slate-700" />
@@ -198,7 +200,9 @@
             </div>
         </aside>
 
+        <!-- Area Konten Utama -->
         <main class="flex-1 p-4 md:p-8 lg:p-10 pb-32 lg:pb-10 max-w-[1600px] mx-auto w-full overflow-y-auto h-screen relative z-10">
+            <!-- Header Atas -->
             <header class="flex justify-between items-center mb-8 bg-white/60 dark:bg-slate-800/60 p-3 md:p-5 rounded-[1.5rem] md:rounded-[2rem] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm transition-all hover:shadow-md">
                 <div class="flex items-center gap-3 md:gap-5 overflow-hidden">
                     <div class="relative">
@@ -244,16 +248,13 @@
                     <button onclick="exportToExcel()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2.5 md:px-6 md:py-3.5 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-300 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all text-xs md:text-sm active:scale-95 group">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 md:w-5 md:h-5 group-hover:animate-bounce"></i> <span class="hidden sm:inline">Export Excel</span>
                     </button>
-                    
-                    <button onclick="logout()" class="lg:hidden bg-white dark:bg-slate-700 p-2.5 rounded-xl shadow-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Keluar">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
-                    </button>
                 </div>
             </header>
 
             <div id="content-area" class="animate-fade relative z-0"></div>
         </main>
 
+        <!-- Bottom Nav Mobile -->
         <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-[72px] glass-card rounded-[2rem] shadow-2xl flex items-center justify-around px-2 z-[90] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl overflow-x-auto">
             <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="layout-grid"></i></button>
             <button onclick="navigate('matkul')" id="m-nav-matkul" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="book-open"></i></button>
@@ -304,7 +305,6 @@
                 </div>
             </div>
 
-            <!-- MODAL MATKUL -->
             <div id="modal-matkul" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
                 <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Mata Kuliah</h3></div><button onclick="closeModal()" class="text-gray-400 p-2 rounded-xl"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
@@ -327,7 +327,6 @@
                 </div>
             </div>
 
-            <!-- MODAL TUGAS -->
             <div id="modal-tugas" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
                 <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left">Tugas Baru</h3></div><button onclick="closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
@@ -338,7 +337,6 @@
                 </div>
             </div>
 
-            <!-- MODAL UJIAN -->
             <div id="modal-ujian" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
                 <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Jadwal Ujian</h3></div><button onclick="closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
@@ -399,7 +397,7 @@
         
         let dashboardChartInstance = null;
 
-        // FUNGSI setFontSize
+        // FUNGSI GLOBAL
         function setFontSize(size) {
             const root = document.querySelector(':root');
             const sizes = { small: '14px', medium: '16px', large: '18px' };
@@ -419,8 +417,8 @@
             lucide.createIcons();
             if(activeTab === 'dashboard') renderDashboard(document.getElementById('content-area'));
         }
-
         window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('studyflow_theme', isDarkMode ? 'dark' : 'light'); applyTheme(); };
+
         window.changeSemester = (val) => { currentSemester = val; localStorage.setItem('studyflow_semester', val); renderUI(); };
 
         function getSemesterData(colName) {
@@ -446,20 +444,6 @@
             ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); } });
         }
 
-        window.exportToExcel = () => {
-            const activeJadwal = getSemesterData('jadwal');
-            const activeMatkul = getSemesterData('matkul');
-            const activeTugas = getSemesterData('tugas');
-            const activeUjian = getSemesterData('ujian');
-            if (!activeJadwal.length && !activeMatkul.length && !activeTugas.length && !activeUjian.length) { alert("Oops! Belum ada data."); return; }
-            const wb = XLSX.utils.book_new();
-            if (activeJadwal.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeJadwal), "Jadwal");
-            if (activeMatkul.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeMatkul), "Matkul");
-            if (activeTugas.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeTugas), "Tugas");
-            if (activeUjian.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeUjian), "Ujian");
-            XLSX.writeFile(wb, `StudyFlow_Smt${currentSemester}.xlsx`);
-        };
-
         window.loginWithGoogle = async () => {
             const statusEl = document.getElementById('conn-status');
             statusEl.innerHTML = "Memproses login...";
@@ -467,7 +451,7 @@
             provider.setCustomParameters({ prompt: 'select_account' });
             try { await signInWithPopup(auth, provider); } catch (error) {
                 if (error.code === 'auth/popup-blocked') await signInWithRedirect(auth, provider);
-                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold uppercase">Domain Belum Diizinkan</span>`;
+                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold uppercase">Gagal Login</span>`;
             }
         };
 
@@ -516,6 +500,14 @@
             document.querySelectorAll('aside button').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('text-gray-500'); });
             const activeNav = document.getElementById('nav-' + activeTab);
             if(activeNav) activeNav.classList.add('active-nav');
+
+            document.querySelectorAll('nav.lg\\:hidden button').forEach(btn => {
+               btn.classList.remove('text-purple-600', 'bg-purple-100', 'dark:bg-slate-800');
+               btn.classList.add('text-gray-400');
+            });
+            const activeMob = document.getElementById('m-nav-' + activeTab);
+            if(activeMob) activeMob.classList.add('text-purple-600', 'bg-purple-100', 'dark:bg-slate-800');
+
             updateDynamicDropdowns();
             if (activeTab === 'dashboard') renderDashboard(container);
             else if (activeTab === 'matkul') renderMatkul(container);
@@ -528,82 +520,169 @@
 
         function renderDashboard(el) {
             const activeTugas = getSemesterData('tugas');
+            const activeMatkul = getSemesterData('matkul');
+            const activeUjian = getSemesterData('ujian');
+            const activeTarget = getSemesterData('target');
+            const activeJadwal = getSemesterData('jadwal');
+            
             const totalTugas = activeTugas.length;
             const selesai = activeTugas.filter(t => t.status).length;
             const urgent = activeTugas.filter(t => !t.status).map(t => ({...t, days: calculateDaysLeft(t.deadline)})).sort((a,b)=>a.days-b.days);
             
+            const targetDone = activeTarget.filter(t => t.selesai).length;
+            const targetProgress = activeTarget.length ? Math.round((targetDone / activeTarget.length) * 100) : 0;
+
+            const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const todayName = days[new Date().getDay()];
+            const todayClasses = activeJadwal.filter(j => j.hari === todayName);
+
             el.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="glass-card p-6 rounded-[2rem] flex flex-col items-center justify-center h-[280px] md:h-[320px]">
-                        <h3 class="font-black mb-2 text-gray-800 dark:text-white flex items-center gap-2 flex-shrink-0 text-sm">Progress Tugas</h3>
-                        <div class="relative w-full flex-1 min-h-0 pb-4 flex justify-center items-center">
-                            ${totalTugas > 0 ? `<canvas id="tugasChart"></canvas>` : `
-                                <div class="absolute inset-0 flex flex-col justify-center items-center text-gray-400 dark:text-slate-500">
-                                    <i data-lucide="check-circle-2" class="w-10 h-10 mx-auto mb-2 opacity-30"></i>
-                                    <p class="text-[10px] font-bold">Belum ada tugas</p>
-                                </div>
-                            `}
+                <div class="animate-fade">
+                    <!-- Top Stats Cards -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-blue-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Mata Kuliah</p>
+                           <p class="text-3xl font-black">${activeMatkul.length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-green-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Tugas Selesai</p>
+                           <p class="text-3xl font-black">${selesai}<span class="text-sm font-medium text-gray-400">/${totalTugas}</span></p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-orange-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Ujian Mendatang</p>
+                           <p class="text-3xl font-black">${activeUjian.filter(u => calculateDaysLeft(u.tanggal) >= 0).length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-purple-500 bg-purple-50/50 dark:bg-purple-900/10">
+                           <p class="text-[10px] font-bold uppercase text-purple-500">Target Semester</p>
+                           <p class="text-3xl font-black text-purple-700 dark:text-purple-300">${targetProgress}%</p>
                         </div>
                     </div>
-                    <div class="glass-card p-6 rounded-[2rem] h-[280px] md:h-[320px] overflow-hidden">
-                        <h3 class="font-black mb-4 dark:text-white text-sm">Deadline Terdekat</h3>
-                        <div class="space-y-3 overflow-y-auto max-h-[220px] pr-2">
-                            ${urgent.slice(0,5).map(t => `<div class="p-3 bg-white/40 dark:bg-slate-700/50 rounded-2xl flex justify-between items-center group transition-colors hover:bg-white/60"><div><p class="font-bold text-xs text-gray-800 dark:text-gray-100">${t.nama}</p><p class="text-[9px] text-gray-400">${t.matkul}</p></div><span class="text-[9px] font-black uppercase text-red-500">${t.days <= 0 ? 'HARI INI' : t.days + ' Hari'}</span></div>`).join('') || '<p class="text-center text-gray-400 py-10 text-xs">Semua aman! 🎉</p>'}
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Progress Donut (Small) -->
+                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col items-center justify-center min-h-[300px]">
+                            <h3 class="font-black mb-4 text-sm flex items-center gap-2 self-start"><i data-lucide="pie-chart" class="w-4 h-4 text-purple-500"></i> Progress Tugas</h3>
+                            <div class="relative w-full flex-1 min-h-0 flex justify-center items-center">
+                                ${totalTugas > 0 ? `<div style="width: 180px; height: 180px;"><canvas id="tugasChart"></canvas></div>` : `
+                                    <div class="flex flex-col items-center text-gray-400 opacity-50">
+                                        <i data-lucide="circle-slash" class="w-10 h-10 mb-2"></i>
+                                        <p class="text-[10px] font-bold">Belum Ada Data</p>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+
+                        <!-- Beban Tugas Bar Chart -->
+                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col min-h-[300px]">
+                            <h3 class="font-black mb-4 text-sm flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-500"></i> Beban Tugas</h3>
+                            <div class="flex-1 min-h-0 relative"><canvas id="bebanChart"></canvas></div>
+                        </div>
+
+                        <!-- Agenda Hari Ini -->
+                        <div class="glass-card p-6 rounded-[2.5rem] min-h-[300px]">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-black text-sm flex items-center gap-2"><i data-lucide="calendar-check" class="w-4 h-4 text-green-500"></i> Agenda Hari Ini</h3>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-gray-400">${todayName}</span>
+                            </div>
+                            <div class="space-y-3 overflow-y-auto scrollbar-hide max-h-[220px]">
+                                ${todayClasses.length > 0 ? todayClasses.map(j => `
+                                    <div class="p-3 bg-white/40 dark:bg-slate-700/50 rounded-2xl border-l-4 border-l-purple-500">
+                                        <p class="font-bold text-xs">${j.matkul}</p>
+                                        <p class="text-[10px] text-gray-500 mt-1 uppercase">${j.waktu}</p>
+                                    </div>
+                                `).join('') : `
+                                    <div class="py-10 text-center flex flex-col items-center opacity-30 grayscale">
+                                        <i data-lucide="coffee" class="w-10 h-10 mb-2"></i>
+                                        <p class="text-xs font-bold uppercase">Libur dulu ya!</p>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tugas Mendesak Section -->
+                    <div class="glass-card p-6 rounded-[2.5rem]">
+                        <h3 class="font-black mb-6 flex items-center gap-2"><i data-lucide="flame" class="text-red-500"></i> Tugas Mendesak (Countdown)</h3>
+                        <div class="space-y-3">
+                            ${urgent.length > 0 ? urgent.slice(0,5).map(t => `
+                                <div class="p-4 bg-white/40 dark:bg-slate-700/50 rounded-2xl flex justify-between items-center transition-all hover:bg-white/60">
+                                    <div class="text-left">
+                                        <p class="font-black text-sm text-gray-800 dark:text-gray-100">${t.nama}</p>
+                                        <p class="text-[10px] text-purple-500 font-bold uppercase tracking-wider">${t.matkul}</p>
+                                    </div>
+                                    <div class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter">
+                                        ${t.days <= 0 ? 'SEKARANG' : t.days + ' Hari Lagi'}
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="text-center text-gray-400 py-10 italic">Tidak ada tugas mendesak. Kerja bagus! ✨</p>'}
                         </div>
                     </div>
                 </div>`;
+
             if(totalTugas > 0) {
                 setTimeout(()=> {
                     const ctx = document.getElementById('tugasChart');
                     if (dashboardChartInstance) dashboardChartInstance.destroy();
                     dashboardChartInstance = new Chart(ctx, {
                         type: 'doughnut',
-                        data: { labels: ['Selesai', 'Belum'], datasets: [{ data: [selesai, totalTugas - selesai], backgroundColor: ['#10B981', '#F43F5E'], borderColor: isDarkMode ? '#1e293b' : '#ffffff', borderWidth: 2 }] },
+                        data: { 
+                            labels: ['Selesai', 'Belum'], 
+                            datasets: [{ 
+                                data: [selesai, totalTugas - selesai], 
+                                backgroundColor: ['#10B981', '#F43F5E'], 
+                                borderColor: isDarkMode ? '#1e293b' : '#ffffff', 
+                                borderWidth: 2 
+                            }] 
+                        },
                         options: { 
                             cutout: '80%', 
-                            maintainAspectRatio: false, 
-                            layout: { padding: 15 },
-                            plugins: { legend: { position: 'bottom', labels: { color: isDarkMode ? '#cbd5e1' : '#64748b', boxWidth: 8, font: { size: 9, family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' } } } } 
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
                         }
                     });
                 }, 50);
             }
+            
+            // Bar chart logic
+            setTimeout(() => {
+               const ctxBeban = document.getElementById('bebanChart');
+               new Chart(ctxBeban, {
+                   type: 'bar',
+                   data: {
+                       labels: ['Mgg Ini', 'Mgg Depan', 'Lainnya'],
+                       datasets: [{
+                           data: [
+                               activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) <= 7).length,
+                               activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) > 7 && calculateDaysLeft(t.deadline) <= 14).length,
+                               activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) > 14).length
+                           ],
+                           backgroundColor: '#3B82F6',
+                           borderRadius: 10
+                       }]
+                   },
+                   options: {
+                       responsive: true, maintainAspectRatio: false,
+                       plugins: { legend: { display: false } },
+                       scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: isDarkMode ? '#fff' : '#000' } }, x: { ticks: { color: isDarkMode ? '#fff' : '#000' } } }
+                   }
+               });
+            }, 50);
         }
 
-        function renderMatkul(el) {
-            const data = getSemesterData('matkul');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-start text-left relative overflow-hidden transition-all hover:scale-105"><div><h4 class="font-black text-gray-800 dark:text-white">${m.nama}</h4><p class="text-xs text-gray-500 mt-1">${m.dosen}</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2" size="18"></i></button></div>`).join('')}</div>`;
-        }
+        // FUNGSI NAVIGASI
+        window.navigate = (view) => { activeTab = view; renderUI(); };
 
-        function renderJadwal(el) {
-            const data = getSemesterData('jadwal');
-            const hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">${hari.map(h => `<div class="space-y-4"><h3 class="font-black border-b pb-2 dark:border-slate-700 dark:text-purple-400 text-purple-600 uppercase tracking-widest text-xs">${h}</h3>${data.filter(j => j.hari === h).map(j => `<div class="glass-card p-4 rounded-2xl relative overflow-hidden"><div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div><h5 class="font-bold text-gray-800 dark:text-gray-100 text-sm leading-tight">${j.matkul}</h5><p class="text-[10px] text-gray-400 font-bold mt-1 uppercase">${j.waktu}</p></div>`).join('') || '<p class="text-[10px] text-gray-300 italic">Libur</p>'}</div>`).join('')}</div>`;
-        }
-
-        function renderTugas(el) {
-            const data = getSemesterData('tugas');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Daftar Tugas</h2><button onclick="openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex flex-col justify-between h-full"><div class="flex justify-between items-start mb-4"><span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded">${t.matkul}</span><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="text-gray-300 hover:text-green-500"><i data-lucide="${t.status?'check-square':'square'}" size="20"></i></button></div><p class="font-bold dark:text-white ${t.status?'line-through opacity-50':''} leading-snug">${t.nama}</p><p class="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">${t.deadline}</p></div>`).join('')}</div>`;
-        }
-
-        function renderUjian(el) {
-            const data = getSemesterData('ujian');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Ujian & Nilai</h2><button onclick="openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-left"><div><span class="text-[10px] font-black bg-orange-100 dark:bg-orange-900/30 text-orange-600 px-2 py-0.5 rounded">${u.jenis}</span><h4 class="font-black mt-2 dark:text-white leading-tight">${u.matkul}</h4><p class="text-[10px] text-gray-500 mt-1 uppercase">${u.tanggal} • ${u.waktu}</p></div><div class="flex items-center gap-4">${u.nilai?`<span class="text-3xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="openModalNilai('${u.id}', '${u.matkul}')" class="text-[10px] font-black bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg uppercase transition-colors hover:bg-purple-200">Nilai</button>`}<button onclick="deleteItem('ujian', '${u.id}')" class="text-gray-300 hover:text-red-500"><i data-lucide="trash-2" size="16"></i></button></div></div>`).join('')}</div>`;
-        }
-
-        function renderTarget(el) {
-            const data = getSemesterData('target');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Target Semester</h2><button onclick="openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl text-xs font-bold uppercase">Tambah</button></div>
-            <div class="space-y-4 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center cursor-pointer group" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><p class="font-bold text-gray-700 dark:text-white ${t.selesai?'line-through opacity-50':''}">${t.teks}</p><i data-lucide="${t.selesai?'check-circle-2':'circle'}" class="${t.selesai?'text-green-500':'text-gray-300 group-hover:text-purple-400'}"></i></div>`).join('')}</div>`;
-        }
-
-        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; openModal('nilai'); };
+        // MODAL HANDLERS (EXPLICIT WINDOW ATTACHMENT)
+        window.openModal = (id) => { 
+            document.getElementById('modal-overlay').classList.remove('hidden'); 
+            document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); 
+            document.getElementById('modal-' + id).classList.remove('hidden'); 
+            updateDynamicDropdowns();
+        };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
-        
+        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; openModal('nilai'); };
+
+        // SAVE ACTIONS
         window.saveJadwal = async () => { 
             const matkul = document.getElementById('in-j-matkul').value; 
             const hM = document.getElementById('in-j-mulai-h').value; 
@@ -611,17 +690,80 @@
             const hS = document.getElementById('in-j-selesai-h').value; 
             const mS = document.getElementById('in-j-selesai-m').value;
             if(!matkul || !hM || !hS) { alert("Data belum lengkap!"); return; }
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${mM} - ${hS}:${mS}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, createdAt: serverTimestamp() });
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { 
+                matkul, 
+                sks: document.getElementById('in-j-sks').value, 
+                dosen: document.getElementById('in-j-dosen').value, 
+                hari: document.getElementById('in-j-hari').value, 
+                waktu: `${hM}:${mM} - ${hS}:${mS}`, 
+                ruang: document.getElementById('in-j-ruang').value, 
+                semester: currentSemester, 
+                createdAt: serverTimestamp() 
+            });
             closeModal();
         };
-        window.saveMatkul = async () => { const n = document.getElementById('in-m-nama').value; if(!n) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: document.getElementById('in-m-sks').value, dosen: document.getElementById('in-m-dosen').value, semester: currentSemester }); closeModal(); };
-        window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; if(!n) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: document.getElementById('in-t-matkul').value, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester }); closeModal(); };
-        window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, semester: currentSemester }); closeModal(); };
-        window.saveUjian = async () => { const m = document.getElementById('in-u-matkul').value; if(!m) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { matkul: m, jenis: document.getElementById('in-u-jenis').value, tanggal: document.getElementById('in-u-tanggal').value, waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, nilai: null, semester: currentSemester }); closeModal(); };
-        window.saveNilai = async () => { const id = document.getElementById('in-n-id').value; const v = document.getElementById('in-n-nilai').value; if(!v) return; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); closeModal(); };
-        window.toggleStatus = async (col, docId, s) => { await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
+
+        window.saveMatkul = async () => { 
+            const n = document.getElementById('in-m-nama').value; 
+            const d = document.getElementById('in-m-dosen').value;
+            if(!n || !d) { alert("Pilih Matkul dan Dosen!"); return; } 
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { 
+                nama: n, sks: document.getElementById('in-m-sks').value, dosen: d, semester: currentSemester 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveTugas = async () => { 
+            const n = document.getElementById('in-t-nama').value; 
+            const m = document.getElementById('in-t-matkul').value;
+            if(!n || !m) { alert("Lengkapi data tugas!"); return; } 
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { 
+                nama: n, matkul: m, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveTarget = async () => { 
+            const t = document.getElementById('in-tg-teks').value; 
+            if(!t) return; 
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { 
+                teks: t, selesai: false, semester: currentSemester 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveUjian = async () => { 
+            const m = document.getElementById('in-u-matkul').value; 
+            if(!m) return; 
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { 
+                matkul: m, 
+                jenis: document.getElementById('in-u-jenis').value, 
+                tanggal: document.getElementById('in-u-tanggal').value, 
+                waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, 
+                nilai: null, 
+                semester: currentSemester 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveNilai = async () => { 
+            const id = document.getElementById('in-n-id').value; 
+            const v = document.getElementById('in-n-nilai').value; 
+            if(!v) return; 
+            await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); 
+            closeModal(); 
+        };
+
+        window.toggleStatus = async (col, docId, s) => { 
+            await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); 
+        };
+
+        window.deleteItem = async (col, docId) => { 
+            if(confirm('Hapus item ini selamanya?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); 
+        };
+
         window.logout = async () => { await signOut(auth); window.location.reload(); };
+
     </script>
 </body>
 </html>
