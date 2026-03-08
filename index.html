@@ -13,6 +13,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Google Identity Services Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
@@ -123,10 +126,7 @@
             <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
             
             <div class="flex justify-center mb-6 overflow-hidden rounded-xl w-full max-w-[280px] mx-auto">
-                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-full shadow-sm hover:bg-gray-50 hover:shadow-md transition-all">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                    Lanjutkan dengan Google
-                </button>
+                <div id="google-signin-button"></div>
             </div>
             
             <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold">Menunggu login...</p>
@@ -183,7 +183,7 @@
                 
                 <div class="flex items-center gap-1.5 md:gap-3">
                     <!-- Dropdown Atur Font -->
-                    <div class="relative group">
+                    <div class="relative group hidden sm:block">
                         <button class="bg-white p-2 md:p-3 rounded-lg md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all focus:outline-none" title="Atur Tampilan">
                             <i data-lucide="type" size="18"></i>
                         </button>
@@ -202,12 +202,14 @@
                         </div>
                     </div>
 
-                    <button class="bg-white p-2 md:p-3 rounded-lg md:rounded-2xl shadow-sm text-gray-400 hover:text-purple-600 transition-all">
-                        <i data-lucide="bell" size="18"></i>
-                    </button>
                     <!-- Tombol Export Excel -->
                     <button onclick="exportToExcel()" class="bg-purple-600 text-white px-3 md:px-5 py-2 md:py-3 rounded-lg md:rounded-2xl font-bold flex items-center gap-1.5 md:gap-2 shadow-lg shadow-purple-200 hover:scale-105 transition-all text-[10px] md:text-sm active:scale-95">
                         <i data-lucide="download" size="16"></i> <span class="hidden sm:inline">Export Excel</span>
+                    </button>
+                    
+                    <!-- Tombol Logout Khusus Mobile -->
+                    <button onclick="logout()" class="lg:hidden bg-red-100 p-2 md:p-3 rounded-lg md:rounded-2xl shadow-sm text-red-600 hover:bg-red-500 hover:text-white transition-all focus:outline-none" title="Keluar">
+                        <i data-lucide="log-out" size="18"></i>
                     </button>
                 </div>
             </header>
@@ -300,7 +302,7 @@
     <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
@@ -413,16 +415,16 @@
             localStorage.setItem('studyflow_fontsize', size);
         };
 
-        // --- AUTHENTICATION PURE FIREBASE ---
-        const provider = new GoogleAuthProvider();
-
-        window.loginWithGoogle = async () => {
+        // --- AUTHENTICATION FIREBASE + GSI ---
+        window.handleCredentialResponse = async (response) => {
             try {
-                document.getElementById('conn-status').innerText = "Menghubungkan ke Google...";
-                await signInWithPopup(auth, provider);
+                document.getElementById('conn-status').innerText = "Menghubungkan ke database...";
+                // Ubah token GSI menjadi kredensial Firebase Auth
+                const credential = GoogleAuthProvider.credential(response.credential);
+                await signInWithCredential(auth, credential);
             } catch (error) {
-                console.error("Login failed:", error);
-                document.getElementById('conn-status').innerText = "Login gagal. Silakan coba lagi.";
+                console.error("Firebase Login Error:", error);
+                document.getElementById('conn-status').innerText = "Gagal login. Silakan coba lagi.";
             }
         };
 
@@ -697,6 +699,19 @@
             const savedSize = localStorage.getItem('studyflow_fontsize') || 'medium';
             window.setFontSize(savedSize);
             lucide.createIcons();
+
+            // Setup Google Identity Services Login
+            if (window.google) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: window.handleCredentialResponse,
+                    use_fedcm_for_prompt: true
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById("google-signin-button"),
+                    { theme: "outline", size: "large", width: 280, shape: "pill" }
+                );
+            }
         };
         window.setFontSize = setFontSize;
     </script>
