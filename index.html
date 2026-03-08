@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- KEAMANAN: Izin agar Google Login tidak error (FedCM) -->
-    <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
-    
     <title>StudyFlow - Smart Study Planner Semester 6</title>
     
     <!-- Dependencies: Tailwind CSS & Lucide Icons -->
@@ -358,15 +355,24 @@
                 }
 
                 const wb = window.XLSX.utils.book_new();
+                let hasSheets = false;
 
+                // 1. Ekspor Data Jadwal
                 const dataJadwal = store.jadwal.map(j => ({
                     "Mata Kuliah": j.matkul, "SKS": j.sks, "Dosen": j.dosen, "Hari": j.hari, "Waktu": j.waktu, "Ruangan": j.ruang
                 }));
 
+                // 2. Ekspor Data Mata Kuliah
+                const dataMatkul = store.matkul.map(m => ({
+                    "Mata Kuliah": m.nama, "SKS": m.sks, "Dosen": m.dosen
+                }));
+
+                // 3. Ekspor Data Tugas
                 const dataTugas = store.tugas.map(t => ({
                     "Nama Tugas": t.nama, "Mata Kuliah": t.matkul, "Deadline": t.deadline, "Status": t.status ? "Selesai" : "Belum Selesai"
                 }));
 
+                // Fungsi pengatur lebar kolom otomatis
                 const autoWidth = (data) => {
                     if (data.length === 0) return [];
                     const keys = Object.keys(data[0]);
@@ -380,19 +386,34 @@
                     const wsJadwal = window.XLSX.utils.json_to_sheet(dataJadwal);
                     wsJadwal["!cols"] = autoWidth(dataJadwal);
                     window.XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
+                    hasSheets = true;
+                }
+
+                if (dataMatkul.length > 0) {
+                    const wsMatkul = window.XLSX.utils.json_to_sheet(dataMatkul);
+                    wsMatkul["!cols"] = autoWidth(dataMatkul);
+                    window.XLSX.utils.book_append_sheet(wb, wsMatkul, "Daftar Matkul");
+                    hasSheets = true;
                 }
 
                 if (dataTugas.length > 0) {
                     const wsTugas = window.XLSX.utils.json_to_sheet(dataTugas);
                     wsTugas["!cols"] = autoWidth(dataTugas);
                     window.XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
+                    hasSheets = true;
+                }
+
+                // Jika lolos seleksi awal (ada data) tapi entah kenapa ketiga filter kosong
+                if (!hasSheets) {
+                    const wsKosong = window.XLSX.utils.json_to_sheet([{"Info": "Data masih kosong di sistem"}]);
+                    window.XLSX.utils.book_append_sheet(wb, wsKosong, "Data");
                 }
 
                 const fileName = `StudyFlow_Export_${new Date().toLocaleDateString('id-ID')}.xlsx`;
                 window.XLSX.writeFile(wb, fileName);
             } catch (error) {
                 console.error("Gagal Ekspor:", error);
-                alert("Terjadi kesalahan saat mengekspor data.");
+                alert("Terjadi kesalahan saat mengekspor data: " + error.message);
             }
         };
 
@@ -410,7 +431,6 @@
         };
 
         // --- AUTHENTICATION FIREBASE (POPUP / REDIRECT) ---
-        
         window.loginWithGoogle = async () => {
             const statusEl = document.getElementById('conn-status');
             statusEl.innerHTML = "Memproses login...";
