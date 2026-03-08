@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- KEAMANAN: Izin agar Google Login tidak error (FedCM) -->
+    <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
+    
     <title>StudyFlow - Smart Study Planner Semester 6</title>
     
     <!-- Dependencies: Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Identity Services Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -117,17 +123,14 @@
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
+            <p class="text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
             
             <div class="flex flex-col items-center gap-4 mb-6">
-                <!-- Tombol Login Google Asli Firebase -->
-                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white border border-gray-200 text-gray-700 font-bold py-3.5 px-4 rounded-full shadow-md hover:bg-gray-50 hover:shadow-lg transition-all active:scale-95 text-sm md:text-base">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                    Lanjutkan dengan Google
-                </button>
+                <!-- Tombol Google Identity Services (GSI) Utama Saja -->
+                <div id="google-signin-button" class="overflow-hidden rounded-xl bg-white shadow-sm hover:shadow transition-all w-full max-w-[280px] flex justify-center"></div>
             </div>
             
-            <div id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold mt-2 min-h-[32px] flex items-center justify-center">Menunggu login...</div>
+            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold mt-2 h-8 flex items-center justify-center">Menunggu login...</p>
         </div>
     </div>
 
@@ -300,11 +303,11 @@
     <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        // --- KONFIGURASI FIREBASE SESUAI PERMINTAAN ---
+        // --- KONFIGURASI FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY",
             authDomain: "studyflow-7afba.firebaseapp.com",
@@ -315,9 +318,10 @@
             measurementId: "G-FHQC3GCFW0"
         };
 
+        const GOOGLE_CLIENT_ID = "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com";
         const APP_ID_ROOT = 'studyflow-planner';
 
-        // Initialize Firebase
+        // Init Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
@@ -389,27 +393,32 @@
             localStorage.setItem('studyflow_fontsize', size);
         };
 
-        // --- AUTHENTICATION FIREBASE (POPUP) ---
+        // --- AUTHENTICATION FIREBASE + GSI ---
         
-        window.loginWithGoogle = async () => {
+        // Fungsi pembantu untuk menampilkan pesan error dengan jelas di UI
+        function handleErrorDisplay(error) {
+            console.error("Firebase Login Error:", error);
+            let errMsg = "Gagal login. Silakan coba lagi.";
+            
+            if (error.code === 'auth/unauthorized-domain') {
+                errMsg = "Domain Vercel ini belum diizinkan di Firebase Console!";
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                errMsg = "Login dibatalkan (Popup ditutup).";
+            } else {
+                errMsg = "Error: " + error.message;
+            }
+            
+            document.getElementById('conn-status').innerHTML = `<span class="text-red-500 font-bold bg-white/80 px-2 py-1 rounded shadow-sm">${errMsg}</span>`;
+        }
+
+        // Login menggunakan GSI (Tombol Utama)
+        window.handleCredentialResponse = async (response) => {
             try {
-                document.getElementById('conn-status').innerHTML = "Membuka halaman login...";
-                const provider = new GoogleAuthProvider();
-                await signInWithPopup(auth, provider);
+                document.getElementById('conn-status').innerText = "Menghubungkan ke database...";
+                const credential = GoogleAuthProvider.credential(response.credential);
+                await signInWithCredential(auth, credential);
             } catch (error) {
-                console.error("Firebase Login Error:", error);
-                let errMsg = "Gagal login. Silakan coba lagi.";
-                
-                // Menangkap error jika domain belum diotorisasi di Firebase Console
-                if (error.code === 'auth/unauthorized-domain') {
-                    errMsg = "⚠️ PENTING: Domain Vercel Anda belum diizinkan.<br/>Silakan ke Firebase Console > Authentication > Settings > Authorized Domains > Tambahkan 'study-flow-v3.vercel.app'";
-                } else if (error.code === 'auth/popup-closed-by-user') {
-                    errMsg = "Login dibatalkan (Popup ditutup).";
-                } else {
-                    errMsg = "Error: " + error.message;
-                }
-                
-                document.getElementById('conn-status').innerHTML = `<div class="bg-red-50 text-red-600 font-medium px-4 py-2 rounded-xl border border-red-200 shadow-sm block text-[11px] leading-relaxed max-w-[280px] text-center">${errMsg}</div>`;
+                handleErrorDisplay(error);
             }
         };
 
@@ -503,4 +512,202 @@
 
             el.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade">
-                    <div class="
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
+                            <h3 class="text-xl font-black mb-6 text-purple-700 flex items-center gap-2"><i data-lucide="calendar"></i> Jadwal Terbaru</h3>
+                            <div class="space-y-4">
+                                ${store.jadwal.slice(0, 3).map(j => `
+                                    <div class="flex items-center gap-4 p-4 rounded-3xl bg-white/50 border border-white">
+                                        <div class="flex-1 overflow-hidden text-left">
+                                            <p class="font-black text-gray-800 text-sm md:text-base mobile-truncate">${j.matkul}</p>
+                                            <p class="text-xs text-gray-500 font-medium">${j.hari}, ${j.waktu} • ${j.ruang}</p>
+                                            <p class="text-[9px] font-black text-purple-400 uppercase mt-1 tracking-widest">${j.dosen || 'Anonim'} • ${j.sks || '0'} SKS</p>
+                                        </div>
+                                    </div>
+                                `).join('') || '<p class="text-gray-400 italic text-sm">Belum ada jadwal kuliah.</p>'}
+                            </div>
+                        </div>
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
+                            <div class="flex justify-between items-end mb-4">
+                                <h3 class="text-xl font-black text-purple-700 text-base md:text-lg">Target Semester</h3>
+                                <p class="text-2xl font-black text-purple-600">${progress}%</p>
+                            </div>
+                            <div class="w-full bg-purple-100 h-4 rounded-full overflow-hidden shadow-inner">
+                                <div class="bg-gradient-to-r from-purple-600 to-indigo-500 h-full transition-all duration-1000" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-8">
+                        <div class="glass-card p-8 rounded-[2.5rem] shadow-xl border-t-4 border-red-400">
+                            <h3 class="text-xl font-black mb-6 text-red-500 flex items-center gap-2"><i data-lucide="alert-circle"></i> Deadline Terdekat</h3>
+                            <div class="space-y-4">
+                                ${urgentTasks.slice(0, 3).map(t => `
+                                    <div class="p-4 rounded-xl bg-red-50 border border-red-100 shadow-sm text-left">
+                                        <p class="font-bold text-gray-800 text-sm md:text-base mobile-truncate">${t.nama}</p>
+                                        <p class="text-[9px] md:text-[10px] font-black uppercase text-red-400 mt-1 tracking-widest">${t.daysLeft <= 0 ? 'HARI INI' : 'SISA ' + t.daysLeft + ' HARI'}</p>
+                                    </div>
+                                `).join('') || '<p class="text-gray-400 text-sm">Semua aman!</p>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMatkul(el) {
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800">Daftar Mata Kuliah</h2>
+                    <button onclick="openModal('matkul')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Matkul</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade">
+                    ${store.matkul.map(m => `
+                        <div class="glass-card p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-lg border-l-8 border-purple-500 flex justify-between items-start">
+                            <div class="overflow-hidden text-left">
+                                <h3 class="text-base md:text-lg font-black text-gray-800 mobile-truncate">${m.nama}</h3>
+                                <p class="text-gray-500 font-medium text-xs md:text-sm truncate">${m.dosen}</p>
+                                <p class="text-[9px] font-black text-purple-400 uppercase mt-2 tracking-widest">${m.sks} SKS • SEMESTER 6</p>
+                            </div>
+                            <button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors ml-2"><i data-lucide="trash-2" size="18"></i></button>
+                        </div>
+                    `).join('') || '<div class="col-span-full py-20 text-center text-gray-400 text-sm">Kosong</div>'}
+                </div>`;
+        }
+
+        function renderJadwal(el) {
+            const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800">Jadwal Mingguan</h2>
+                    <button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Jadwal</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-10">
+                    ${hariList.map(hari => `
+                        <div class="space-y-4">
+                            <h3 class="text-sm md:text-lg font-black text-purple-600 border-b border-purple-100 pb-2 flex items-center gap-2 uppercase tracking-widest text-xs md:text-sm"><i data-lucide="calendar" size="16"></i> ${hari}</h3>
+                            ${store.jadwal.filter(j => j.hari === hari).map(j => `
+                                <div class="glass-card p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-md border border-white group flex justify-between items-start hover:border-purple-200 transition-all">
+                                    <div class="flex-1 overflow-hidden">
+                                        <div class="flex justify-between items-start">
+                                            <p class="font-bold text-gray-800 leading-tight text-sm md:text-base mobile-truncate">${j.matkul}</p>
+                                            <span class="text-[8px] md:text-[10px] font-black text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-lg ml-2 flex-shrink-0 border border-purple-100">${j.sks} SKS</span>
+                                        </div>
+                                        <p class="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 italic truncate">${j.dosen}</p>
+                                        <div class="flex items-center gap-4 mt-3 text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                            <span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="deleteItem('jadwal', '${j.id}')" class="lg:opacity-0 group-hover:opacity-100 text-red-200 hover:text-red-500 transition-all ml-2 p-1"><i data-lucide="trash-2" size="16"></i></button>
+                                </div>
+                            `).join('') || '<p class="text-[10px] text-gray-300 italic px-2">Tidak ada kuliah.</p>'}
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
+        function renderTugas(el) {
+            const sortedTugas = [...store.tugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; });
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fade">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800">Tugas & Deadline</h2>
+                    <button onclick="openModal('tugas')" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-xl md:rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm"><i data-lucide="plus"></i> Tambah Tugas</button>
+                </div>
+                <div class="glass-card rounded-[2rem] overflow-x-auto shadow-xl border border-white animate-fade">
+                    <table class="w-full text-left min-w-[600px]">
+                        <thead class="bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-[0.2em] border-b border-purple-100">
+                            <tr>
+                                <th class="p-6">Tugas & Matkul</th>
+                                <th class="p-6 text-center">Sisa Waktu</th>
+                                <th class="p-6">Status</th>
+                                <th class="p-6 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-semibold text-gray-600">
+                            ${sortedTugas.map(t => `
+                                <tr class="border-b border-purple-50 hover:bg-white/50 transition-all ${t.status ? 'opacity-50' : ''}">
+                                    <td class="p-6">
+                                        <p class="font-bold text-gray-800 text-sm">${t.nama}</p>
+                                        <span class="text-[10px] text-purple-400 font-black uppercase tracking-tight text-[8px] tracking-widest">${t.matkul}</span>
+                                    </td>
+                                    <td class="p-6 text-center">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${t.daysLeft <= 3 ? 'bg-red-100 text-red-500' : 'bg-purple-100 text-purple-500'} text-[8px] tracking-widest">
+                                            ${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}
+                                        </span>
+                                    </td>
+                                    <td class="p-6">
+                                        <button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 ${t.status ? 'text-green-500':'text-gray-300 hover:text-purple-400'} transition-colors">
+                                            <i data-lucide="${t.status ? 'check-circle' : 'circle'}" size="18"></i>
+                                            <span class="uppercase text-[10px] font-black tracking-widest">${t.status ? 'Selesai' : 'Belum'}</span>
+                                        </button>
+                                    </td>
+                                    <td class="p-6 text-center">
+                                        <button onclick="deleteItem('tugas', '${t.id}')" class="text-red-200 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button>
+                                    </td>
+                                </tr>
+                            `).join('') || '<tr><td colspan="4" class="p-20 text-center text-gray-300 text-sm italic">Belum ada daftar tugas.</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        function renderTarget(el) {
+            el.innerHTML = `
+                <div class="max-w-2xl mx-auto py-4 md:py-10 animate-fade">
+                    <div class="flex justify-between items-center mb-8 md:mb-10">
+                        <h2 class="text-2xl md:text-4xl font-black tracking-tighter text-gray-800">Target Semester 6</h2>
+                        <button onclick="openModal('target')" class="bg-purple-600 text-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg hover:rotate-90 transition-all active:scale-95"><i data-lucide="plus"></i></button>
+                    </div>
+                    <div class="space-y-3 md:space-y-4">
+                        ${store.target.map(t => `
+                            <div class="glass-card p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 bg-green-50/20' : 'border-white'} transition-all">
+                                <div class="flex items-center gap-3 md:gap-4 cursor-pointer flex-1 text-left" onclick="toggleStatus('target', '${t.id}', ${t.selesai})">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-100' : 'border-purple-100 bg-white'} flex-shrink-0">
+                                        ${t.selesai ? '<i data-lucide="check" size="16"></i>' : ''}
+                                    </div>
+                                    <span class="text-sm md:text-lg font-bold ${t.selesai ? 'text-gray-400 line-through' : 'text-gray-700 tracking-tight'}">${t.teks}</span>
+                                </div>
+                                <button onclick="deleteItem('target', '${t.id}')" class="text-red-200 group-hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-4 md:w-5"></i></button>
+                            </div>
+                        `).join('') || '<p class="text-center text-gray-400 py-10 text-sm">Belum ada target yang dibuat.</p>'}
+                    </div>
+                </div>`;
+        }
+
+        window.openModal = (id) => { document.getElementById('modal-overlay').classList.remove('hidden'); document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); document.getElementById('modal-' + id).classList.remove('hidden'); };
+        window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
+
+        window.saveJadwal = async () => { const matkul = document.getElementById('in-j-matkul').value; const sks = document.getElementById('in-j-sks').value; const dosen = document.getElementById('in-j-dosen').value; const hari = document.getElementById('in-j-hari').value; const waktu = document.getElementById('in-j-waktu').value; const ruang = document.getElementById('in-j-ruang').value; if(!matkul || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: parseInt(sks) || 0, dosen, hari, waktu, ruang, createdAt: serverTimestamp() }); closeModal(); };
+        window.saveMatkul = async () => { const nama = document.getElementById('in-m-nama').value; const sks = document.getElementById('in-m-sks').value; const dosen = document.getElementById('in-m-dosen').value; if(!nama || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama, sks: parseInt(sks) || 0, dosen, semester: 6, createdAt: serverTimestamp() }); closeModal(); };
+        window.saveTugas = async () => { const nama = document.getElementById('in-t-nama').value; const matkul = document.getElementById('in-t-matkul').value; const deadline = document.getElementById('in-t-deadline').value; if(!nama || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama, matkul, deadline, status: false, createdAt: serverTimestamp() }); closeModal(); };
+        window.saveTarget = async () => { const teks = document.getElementById('in-tg-teks').value; if(!teks || !currentUserId) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks, selesai: false, createdAt: serverTimestamp() }); closeModal(); };
+        window.toggleStatus = async (col, docId, currentStatus) => { const field = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [field]: !currentStatus }); };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus data ini selamanya?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
+        
+        window.logout = async () => { 
+            await signOut(auth);
+            window.location.reload(); 
+        };
+
+        window.onload = () => {
+            const savedSize = localStorage.getItem('studyflow_fontsize') || 'medium';
+            window.setFontSize(savedSize);
+            lucide.createIcons();
+
+            // Setup Google Identity Services Login
+            if (window.google) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: window.handleCredentialResponse,
+                    use_fedcm_for_prompt: true
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById("google-signin-button"),
+                    { theme: "outline", size: "large", width: 280, shape: "pill" }
+                );
+            }
+        };
+        window.setFontSize = setFontSize;
+    </script>
+</body>
+</html>
