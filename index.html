@@ -43,7 +43,7 @@
         .dark body { background-color: #0f172a; }
         html.dark { color-scheme: dark; }
         
-        /* Dropdown style fix for Dark Mode */
+        /* Memastikan dropdown mudah dibaca di mode gelap */
         .dark select option { 
             background-color: #1e293b; 
             color: #f8fafc; 
@@ -211,7 +211,7 @@
                     </div>
                     <div class="overflow-hidden flex flex-col justify-center">
                         <h2 class="text-[9px] md:text-[10px] font-black text-purple-500 dark:text-purple-300 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-0.5">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
                             <h1 id="profile-name" class="text-sm md:text-xl font-black text-gray-800 dark:text-white tracking-tight truncate leading-tight">Memuat...</h1>
                             <div class="flex items-center gap-2">
                                 <span class="text-[8px] md:text-[10px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:inline-block">Periode Aktif:</span>
@@ -259,6 +259,10 @@
             <button onclick="navigate('tugas')" id="m-nav-tugas" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="check-square"></i></button>
             <button onclick="navigate('target')" id="m-nav-target" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="target"></i></button>
             <button onclick="navigate('ujian')" id="m-nav-ujian" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="award"></i></button>
+            <!-- Tombol Logout Mobile -->
+            <button onclick="logout()" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-red-500 dark:text-red-400">
+                <i data-lucide="log-out"></i>
+            </button>
         </nav>
     </div>
 
@@ -302,21 +306,21 @@
                 </div>
             </div>
 
-            <!-- Modal Matkul (TULIS MANUAL) -->
+            <!-- Modal Matkul -->
             <div id="modal-matkul" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
                 <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Mata Kuliah Baru</h3></div><button onclick="window.closeModal()" class="text-gray-400"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
                     <div class="relative">
-                        <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">Nama Mata Kuliah</label>
+                        <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Nama Mata Kuliah</label>
                         <input type="text" id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ketik nama matakuliah..." />
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative">
-                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">SKS</label>
-                             <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="0" />
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">SKS</label>
+                             <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600" placeholder="0" />
                         </div>
                         <div class="relative">
-                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">Nama Dosen</label>
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Nama Dosen</label>
                              <input type="text" id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ketik nama dosen..." />
                         </div>
                     </div>
@@ -324,33 +328,34 @@
                 </div>
             </div>
 
+            <!-- Modal Tugas -->
             <div id="modal-tugas" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Tugas Baru</h3></div><button onclick="window.closeModal()" class="text-gray-400"><i data-lucide="x"></i></button></div>
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left">Tugas Baru</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
-                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Nama Tugas" />
-                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"></select>
-                    <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" />
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Nama Tugas" />
+                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" />
                     <button onclick="window.saveTugas()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Tugas</button>
                 </div>
             </div>
 
             <div id="modal-target" class="hidden glass-card p-8 rounded-[2rem] w-full border dark:border-slate-700 text-gray-800 dark:text-white text-left">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Target Semester</h3></div><button onclick="window.closeModal()" class="text-gray-400"><i data-lucide="x"></i></button></div>
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left text-gray-800 dark:text-white">Target Semester</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
                 <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 mb-4 dark:text-white" placeholder="Target Semester..." />
                 <button onclick="window.saveTarget()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Target</button>
             </div>
 
             <div id="modal-ujian" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black">Jadwal Ujian</h3></div><button onclick="window.closeModal()" class="text-gray-400"><i data-lucide="x"></i></button></div>
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left">Jadwal Ujian</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
                 <div class="space-y-4">
-                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"></select>
-                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"><option>UTS</option><option>UAS</option><option>Kuis</option></select>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" />
+                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"><option>UTS</option><option>UAS</option><option>Kuis</option></select>
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" />
                         <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5">
-                            <select id="in-u-waktu-h" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            <select id="in-u-waktu-h" class="time-select w-full text-center text-sm dark:text-white"></select>
                             <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
-                            <select id="in-u-waktu-m" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            <select id="in-u-waktu-m" class="time-select w-full text-center text-sm dark:text-white"></select>
                         </div>
                     </div>
                     <button onclick="window.saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Ujian</button>
@@ -451,7 +456,7 @@
             if (activeTugas.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeTugas.map(t=>({Tugas:t.nama, Matkul:t.matkul, Deadline:t.deadline, Selesai:t.status?'Ya':'Tidak'}))), "Tugas");
             if (activeUjian.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeUjian.map(u=>({Jenis:u.jenis, Matkul:u.matkul, Tanggal:u.tanggal, Waktu:u.waktu, Nilai:u.nilai||'-'}))), "Ujian");
             
-            XLSX.writeFile(wb, `StudyFlow_Semester_${currentSemester}.xlsx`);
+            XLSX.writeFile(wb, `StudyFlow_Semester_${currentSemester}_Export.xlsx`);
         };
 
         window.loginWithGoogle = async () => {
@@ -461,7 +466,7 @@
             provider.setCustomParameters({ prompt: 'select_account' });
             try { await signInWithPopup(auth, provider); } catch (error) {
                 if (error.code === 'auth/popup-blocked') await signInWithRedirect(auth, provider);
-                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold uppercase">Gagal Login</span>`;
+                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold">Domain ${window.location.hostname} tidak diizinkan.</span>`;
             }
         };
 
@@ -525,8 +530,8 @@
             else if (activeTab === 'matkul') renderMatkul(container);
             else if (activeTab === 'jadwal') renderJadwal(container);
             else if (activeTab === 'tugas') renderTugas(container);
-            else if (activeTab === 'ujian') renderUjian(container);
             else if (activeTab === 'target') renderTarget(container);
+            else if (activeTab === 'ujian') renderUjian(container);
             lucide.createIcons();
         }
 
@@ -583,7 +588,7 @@
                         <div class="glass-card p-6 rounded-[2.5rem] min-h-[280px] overflow-hidden">
                             <h3 class="font-black mb-4 text-xs uppercase text-gray-400 flex justify-between">Agenda Hari Ini <span class="text-purple-500">${todayName}</span></h3>
                             <div class="space-y-3 overflow-y-auto scrollbar-hide max-h-[200px]">
-                                ${todayClasses.length > 0 ? todayClasses.map(j => `<div class="p-3 bg-white/40 dark:bg-slate-700/50 rounded-2xl border-l-4 border-l-purple-500 text-xs text-left"><p class="font-bold">${j.matkul}</p><p class="text-[10px] text-gray-500">${j.waktu}</p></div>`).join('') : `
+                                ${todayClasses.length > 0 ? todayClasses.map(j => `<div class="p-3 bg-white/40 dark:bg-slate-700/50 rounded-2xl border-l-4 border-l-purple-500 text-xs text-left text-gray-800 dark:text-white"><p class="font-bold">${j.matkul}</p><p class="text-[10px] text-gray-500">${j.waktu}</p></div>`).join('') : `
                                     <div class="py-10 text-center flex flex-col items-center opacity-30 grayscale">
                                         <i data-lucide="coffee" class="w-10 h-10 mb-2"></i>
                                         <p class="text-xs font-bold uppercase">Libur dulu ya!</p>
@@ -598,10 +603,10 @@
                         <div class="space-y-3">
                             ${urgent.length > 0 ? urgent.slice(0,5).map(t => `
                                 <div class="p-4 bg-white/40 dark:bg-slate-700/50 rounded-2xl flex justify-between items-center">
-                                    <div class="text-left"><p class="font-black text-sm text-gray-800 dark:text-gray-100">${t.nama}</p><p class="text-[10px] text-purple-500 font-bold">${t.matkul}</p></div>
+                                    <div class="text-left text-gray-800 dark:text-white"><p class="font-black text-sm">${t.nama}</p><p class="text-[10px] text-purple-500 font-bold">${t.matkul}</p></div>
                                     <div class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-xl text-[10px] font-black">${t.days <= 0 ? 'SEKARANG' : t.days + ' Hari Lagi'}</div>
                                 </div>
-                            `).join('') : '<p class="text-center text-gray-400 py-10 italic">Semua tugas aman! 🎉</p>'}
+                            `).join('') : '<p class="text-center text-gray-400 py-6 text-xs italic">Semua tugas aman! ✨</p>'}
                         </div>
                     </div>
                 </div>`;
@@ -629,58 +634,46 @@
         function renderMatkul(el) {
             const data = getSemesterData('matkul');
             el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Mata Kuliah</h2><button onclick="window.openModal('matkul')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-start text-left"><div><h4 class="font-black text-gray-800 dark:text-white">${m.nama}</h4><p class="text-xs text-gray-500 mt-1">${m.dosen}</p></div><button onclick="window.deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button></div>`).join('')}</div>`;
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-start text-left text-gray-800 dark:text-white"><div><h4 class="font-black">${m.nama}</h4><p class="text-xs text-gray-500 mt-1">${m.dosen}</p></div><button onclick="window.deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button></div>`).join('')}</div>`;
         }
 
         function renderJadwal(el) {
             const data = getSemesterData('jadwal'); const hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Jadwal Kuliah</h2><button onclick="window.openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">${hari.map(h => `<div class="space-y-4"><h3 class="font-black border-b pb-2 dark:border-slate-700 text-purple-600 uppercase text-xs">${h}</h3>${data.filter(j => j.hari === h).map(j => `<div class="glass-card p-4 rounded-2xl relative overflow-hidden"><div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div><div class="flex justify-between items-start"><h5 class="font-bold text-sm leading-tight text-gray-800 dark:text-white">${j.matkul}</h5><button onclick="window.deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500"><i data-lucide="trash-2" size="14"></i></button></div><p class="text-[10px] text-gray-400 mt-1 font-bold uppercase">${j.waktu}</p></div>`).join('') || '<p class="text-[10px] text-gray-300 italic">Libur</p>'}</div>`).join('')}</div>`;
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Jadwal Kuliah</h2><button onclick="window.openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">${hari.map(h => `<div class="space-y-4 text-gray-800 dark:text-white"><h3 class="font-black border-b pb-2 dark:border-slate-700 text-purple-600 uppercase text-xs">${h}</h3>${data.filter(j => j.hari === h).map(j => `<div class="glass-card p-4 rounded-2xl relative overflow-hidden"><div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div><div class="flex justify-between items-start"><h5 class="font-bold text-sm leading-tight">${j.matkul}</h5><button onclick="window.deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500"><i data-lucide="trash-2" size="14"></i></button></div><p class="text-[10px] text-gray-400 mt-1 font-bold uppercase">${j.waktu}</p></div>`).join('') || '<p class="text-[10px] text-gray-300 italic">Libur</p>'}</div>`).join('')}</div>`;
         }
 
         function renderTugas(el) {
             const data = getSemesterData('tugas');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Daftar Tugas</h2><button onclick="window.openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex flex-col justify-between h-full"><div class="flex justify-between items-start mb-4"><span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded">${t.matkul}</span><div class="flex gap-2"><button onclick="window.toggleStatus('tugas', '${t.id}', ${t.status})" class="text-gray-300 hover:text-green-500 transition-colors"><i data-lucide="${t.status?'check-square':'square'}" size="20"></i></button><button onclick="window.deleteItem('tugas', '${t.id}')" class="text-gray-200 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="16"></i></button></div></div><p class="font-bold text-gray-800 dark:text-white ${t.status?'line-through opacity-50':''} leading-snug">${t.nama}</p><p class="text-[10px] text-gray-400 mt-2 font-bold">${t.deadline}</p></div>`).join('')}</div>`;
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Daftar Tugas</h2><button onclick="window.openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex flex-col justify-between h-full text-gray-800 dark:text-white"><div class="flex justify-between items-start mb-4"><span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded">${t.matkul}</span><div class="flex gap-2"><button onclick="window.toggleStatus('tugas', '${t.id}', ${t.status})" class="text-gray-300 hover:text-green-500"><i data-lucide="${t.status?'check-square':'square'}" size="20"></i></button><button onclick="window.deleteItem('tugas', '${t.id}')" class="text-gray-200 hover:text-red-500"><i data-lucide="trash-2" size="16"></i></button></div></div><p class="font-bold ${t.status?'line-through opacity-50':''} leading-snug">${t.nama}</p><p class="text-[10px] text-gray-400 mt-2 font-bold">${t.deadline}</p></div>`).join('')}</div>`;
         }
 
         function renderTarget(el) {
             const data = getSemesterData('target');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Target Semester</h2><button onclick="window.openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
-            <div class="space-y-4 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center"><p class="font-bold text-gray-800 dark:text-white ${t.selesai?'line-through opacity-50':''}">${t.teks}</p><div class="flex gap-4"><button onclick="window.toggleStatus('target', '${t.id}', ${t.selesai})" class="text-green-500"><i data-lucide="${t.selesai?'check-circle-2':'circle'}" class="${t.selesai?'':'text-gray-300'}"></i></button><button onclick="window.deleteItem('target', '${t.id}')" class="text-gray-200 transition-colors hover:text-red-500"><i data-lucide="trash-2" size="18"></i></button></div></div>`).join('')}</div>`;
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Target Semester</h2><button onclick="window.openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
+            <div class="space-y-4 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-gray-800 dark:text-white"><p class="font-bold ${t.selesai?'line-through opacity-50':''}">${t.teks}</p><div class="flex gap-4"><button onclick="window.toggleStatus('target', '${t.id}', ${t.selesai})" class="text-green-500"><i data-lucide="${t.selesai?'check-circle-2':'circle'}" class="${t.selesai?'':'text-gray-300'}"></i></button><button onclick="window.deleteItem('target', '${t.id}')" class="text-gray-200 hover:text-red-500"><i data-lucide="trash-2" size="18"></i></button></div></div>`).join('')}</div>`;
         }
 
         function renderUjian(el) {
             const data = getSemesterData('ujian');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left"><h2 class="text-2xl font-black">Ujian & Nilai</h2><button onclick="window.openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center"><div><span class="text-[10px] font-black bg-orange-100 dark:bg-orange-900/30 text-orange-600 px-2 py-0.5 rounded">${u.jenis}</span><h4 class="font-black mt-2 text-gray-800 dark:text-white leading-tight">${u.matkul}</h4><p class="text-[10px] text-gray-500 mt-1 uppercase">${u.tanggal} • ${u.waktu}</p></div><div class="flex items-center gap-4">${u.nilai?`<span class="text-3xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="window.openModalNilai('${u.id}', '${u.matkul}')" class="text-[10px] font-black bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg uppercase">Nilai</button>`}<button onclick="window.deleteItem('ujian', '${u.id}')" class="text-gray-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="16"></i></button></div></div>`).join('')}</div>`;
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Ujian & Nilai</h2><button onclick="window.openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-gray-800 dark:text-white"><div><span class="text-[10px] font-black bg-orange-100 dark:bg-orange-900/30 text-orange-600 px-2 py-0.5 rounded">${u.jenis}</span><h4 class="font-black mt-2 leading-tight">${u.matkul}</h4><p class="text-[10px] text-gray-500 mt-1 uppercase">${u.tanggal} • ${u.waktu}</p></div><div class="flex items-center gap-4">${u.nilai?`<span class="text-3xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="window.openModalNilai('${u.id}', '${u.matkul}')" class="text-[10px] font-black bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg uppercase">Nilai</button>`}<button onclick="window.deleteItem('ujian', '${u.id}')" class="text-gray-300 hover:text-red-500"><i data-lucide="trash-2" size="16"></i></button></div></div>`).join('')}</div>`;
         }
 
-        // --- GLOBAL WRAPPERS UNTUK BUTTON ---
-        window.openModal = (id) => { 
-            document.getElementById('modal-overlay').classList.remove('hidden'); 
-            document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); 
-            document.getElementById('modal-' + id).classList.remove('hidden'); 
-            updateDynamicDropdowns();
-        };
+        // --- GLOBAL WRAPPERS ---
+        window.openModal = (id) => { document.getElementById('modal-overlay').classList.remove('hidden'); document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); document.getElementById('modal-' + id).classList.remove('hidden'); updateDynamicDropdowns(); };
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
         window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; window.openModal('nilai'); };
 
         window.saveJadwal = async () => { 
             const matkul = document.getElementById('in-j-matkul').value; 
-            const hM = document.getElementById('in-j-mulai-h').value; const mM = document.getElementById('in-j-mulai-m').value;
-            const hS = document.getElementById('in-j-selesai-h').value; const mS = document.getElementById('in-j-selesai-m').value;
+            const hM = document.getElementById('in-j-mulai-h').value; const hS = document.getElementById('in-j-selesai-h').value;
             if(!matkul || !hM || !hS) { alert("Lengkapi data!"); return; }
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${mM} - ${hS}:${mS}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, createdAt: serverTimestamp() });
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${document.getElementById('in-j-mulai-m').value} - ${hS}:${document.getElementById('in-j-selesai-m').value}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, createdAt: serverTimestamp() });
             window.closeModal();
         };
-        window.saveMatkul = async () => { 
-            const n = document.getElementById('in-m-nama').value; 
-            const d = document.getElementById('in-m-dosen').value; 
-            if(!n || !d) { alert("Lengkapi!"); return; } 
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: document.getElementById('in-m-sks').value, dosen: d, semester: currentSemester }); 
-            window.closeModal(); 
-        };
+        window.saveMatkul = async () => { const n = document.getElementById('in-m-nama').value; const d = document.getElementById('in-m-dosen').value; if(!n || !d) { alert("Lengkapi!"); return; } await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: document.getElementById('in-m-sks').value, dosen: d, semester: currentSemester }); window.closeModal(); };
         window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; const m = document.getElementById('in-t-matkul').value; if(!n || !m) { alert("Lengkapi!"); return; } await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: m, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester }); window.closeModal(); };
         window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, semester: currentSemester }); window.closeModal(); };
         window.saveUjian = async () => { const m = document.getElementById('in-u-matkul').value; if(!m) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { matkul: m, jenis: document.getElementById('in-u-jenis').value, tanggal: document.getElementById('in-u-tanggal').value, waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, nilai: null, semester: currentSemester }); window.closeModal(); };
