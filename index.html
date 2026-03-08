@@ -123,13 +123,26 @@
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
+            <p class="text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
             
-            <div class="flex justify-center mb-6 overflow-hidden rounded-xl w-full max-w-[280px] mx-auto">
-                <div id="google-signin-button"></div>
+            <div class="flex flex-col items-center gap-4 mb-6">
+                <!-- Tombol Google Identity Services (GSI) Utama -->
+                <div id="google-signin-button" class="overflow-hidden rounded-xl bg-white shadow-sm hover:shadow transition-all w-full max-w-[280px] flex justify-center"></div>
+                
+                <div class="relative flex items-center w-full max-w-[280px]">
+                    <div class="flex-grow border-t border-purple-200/50"></div>
+                    <span class="flex-shrink-0 mx-4 text-purple-400 font-bold text-[10px] uppercase tracking-widest">Atau</span>
+                    <div class="flex-grow border-t border-purple-200/50"></div>
+                </div>
+
+                <!-- Tombol Cadangan jika GSI error karena browser policy -->
+                <button onclick="loginWithPopupFallback()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white border border-purple-100 text-gray-700 font-bold py-2.5 px-4 rounded-full shadow-sm hover:bg-purple-50 hover:text-purple-700 transition-all text-sm">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-4 h-4">
+                    Login Popup Alternatif
+                </button>
             </div>
             
-            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold">Menunggu login...</p>
+            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold mt-2 h-8 flex items-center justify-center">Menunggu login...</p>
         </div>
     </div>
 
@@ -302,7 +315,7 @@
     <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithCredential, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
@@ -340,60 +353,39 @@
             }
 
             try {
-                // Buat workbook baru
                 const wb = XLSX.utils.book_new();
 
-                // 1. Persiapkan Data Jadwal
                 const dataJadwal = store.jadwal.map(j => ({
-                    "Mata Kuliah": j.matkul,
-                    "SKS": j.sks,
-                    "Dosen": j.dosen,
-                    "Hari": j.hari,
-                    "Waktu": j.waktu,
-                    "Ruangan": j.ruang
+                    "Mata Kuliah": j.matkul, "SKS": j.sks, "Dosen": j.dosen, "Hari": j.hari, "Waktu": j.waktu, "Ruangan": j.ruang
                 }));
 
-                // 2. Persiapkan Data Tugas
                 const dataTugas = store.tugas.map(t => ({
-                    "Nama Tugas": t.nama,
-                    "Mata Kuliah": t.matkul,
-                    "Deadline": t.deadline,
-                    "Status": t.status ? "Selesai" : "Belum Selesai"
+                    "Nama Tugas": t.nama, "Mata Kuliah": t.matkul, "Deadline": t.deadline, "Status": t.status ? "Selesai" : "Belum Selesai"
                 }));
 
-                // Fungsi Internal untuk Menghitung Auto-Width
                 const autoWidth = (data) => {
                     if (data.length === 0) return [];
                     const keys = Object.keys(data[0]);
                     return keys.map(key => {
-                        // Cari baris terpanjang di setiap kolom (termasuk header)
-                        const maxLen = Math.max(
-                            key.length, // Panjang karakter header
-                            ...data.map(obj => obj[key]?.toString().length || 0) // Karakter data
-                        );
-                        return { wch: maxLen + 3 }; // Beri padding sedikit (3 karakter)
+                        const maxLen = Math.max(key.length, ...data.map(obj => obj[key]?.toString().length || 0));
+                        return { wch: maxLen + 3 };
                     });
                 };
 
-                // Buat Sheet Jadwal & Atur Lebar
                 if (dataJadwal.length > 0) {
                     const wsJadwal = XLSX.utils.json_to_sheet(dataJadwal);
                     wsJadwal["!cols"] = autoWidth(dataJadwal);
                     XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
                 }
 
-                // Buat Sheet Tugas & Atur Lebar
                 if (dataTugas.length > 0) {
                     const wsTugas = XLSX.utils.json_to_sheet(dataTugas);
                     wsTugas["!cols"] = autoWidth(dataTugas);
                     XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
                 }
 
-                // Download File
                 const fileName = `StudyFlow_Export_${new Date().toLocaleDateString('id-ID')}.xlsx`;
                 XLSX.writeFile(wb, fileName);
-                
-                console.log("Ekspor Excel Berhasil!");
             } catch (error) {
                 console.error("Gagal Ekspor:", error);
                 alert("Terjadi kesalahan saat mengekspor data.");
@@ -406,9 +398,7 @@
             const sizes = { small: '14px', medium: '16px', large: '18px' };
             root.style.setProperty('--base-font-size', sizes[size]);
 
-            document.querySelectorAll('[id^="btn-font-"]').forEach(btn => {
-                btn.classList.remove('font-opt-active');
-            });
+            document.querySelectorAll('[id^="btn-font-"]').forEach(btn => btn.classList.remove('font-opt-active'));
             const activeBtn = document.getElementById(`btn-font-${size}`);
             if (activeBtn) activeBtn.classList.add('font-opt-active');
             
@@ -416,15 +406,42 @@
         };
 
         // --- AUTHENTICATION FIREBASE + GSI ---
+        
+        // Fungsi pembantu untuk menampilkan pesan error dengan jelas di UI
+        function handleErrorDisplay(error) {
+            console.error("Firebase Login Error:", error);
+            let errMsg = "Gagal login. Silakan coba lagi.";
+            
+            if (error.code === 'auth/unauthorized-domain') {
+                errMsg = "Domain Vercel ini belum diizinkan di Firebase Console!";
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                errMsg = "Login dibatalkan (Popup ditutup).";
+            } else {
+                errMsg = "Error: " + error.message;
+            }
+            
+            document.getElementById('conn-status').innerHTML = `<span class="text-red-500 font-bold bg-white/80 px-2 py-1 rounded shadow-sm">${errMsg}</span>`;
+        }
+
+        // Login menggunakan GSI (Tombol Utama)
         window.handleCredentialResponse = async (response) => {
             try {
                 document.getElementById('conn-status').innerText = "Menghubungkan ke database...";
-                // Ubah token GSI menjadi kredensial Firebase Auth
                 const credential = GoogleAuthProvider.credential(response.credential);
                 await signInWithCredential(auth, credential);
             } catch (error) {
-                console.error("Firebase Login Error:", error);
-                document.getElementById('conn-status').innerText = "Gagal login. Silakan coba lagi.";
+                handleErrorDisplay(error);
+            }
+        };
+
+        // Login alternatif menggunakan Popup langsung dari Firebase (Tombol Cadangan)
+        window.loginWithPopupFallback = async () => {
+            try {
+                document.getElementById('conn-status').innerText = "Membuka popup login...";
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                handleErrorDisplay(error);
             }
         };
 
