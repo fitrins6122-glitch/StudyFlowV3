@@ -4,17 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- KEAMANAN: Izin agar Google Login tidak error (FedCM) -->
-    <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
-    
     <title>StudyFlow - Smart Study Planner Semester 6</title>
     
     <!-- Dependencies: Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Google Identity Services Library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -123,14 +117,17 @@
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-gray-900">
                 Study<span class="text-purple-600">Flow</span>
             </h1>
-            <p class="text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
+            <p class="text-gray-600 mb-8 md:mb-10 font-medium leading-relaxed px-2 text-sm md:text-base">Kelola jadwal, tugas, dan target semestermu secara otomatis.</p>
             
             <div class="flex flex-col items-center gap-4 mb-6">
-                <!-- Tombol Google Identity Services (GSI) Utama Saja -->
-                <div id="google-signin-button" class="overflow-hidden rounded-xl bg-white shadow-sm hover:shadow transition-all w-full max-w-[280px] flex justify-center"></div>
+                <!-- Tombol Login Google Asli Firebase -->
+                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white border border-gray-200 text-gray-700 font-bold py-3.5 px-4 rounded-full shadow-md hover:bg-gray-50 hover:shadow-lg transition-all active:scale-95 text-sm md:text-base">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                    Lanjutkan dengan Google
+                </button>
             </div>
             
-            <p id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold mt-2 h-8 flex items-center justify-center">Menunggu login...</p>
+            <div id="conn-status" class="text-[10px] text-purple-400 uppercase tracking-widest font-bold mt-2 min-h-[32px] flex items-center justify-center">Menunggu login...</div>
         </div>
     </div>
 
@@ -303,7 +300,7 @@
     <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
@@ -318,7 +315,6 @@
             measurementId: "G-FHQC3GCFW0"
         };
 
-        const GOOGLE_CLIENT_ID = "78272411326-gt4cobigqctk4t0e4n1b29q522j827of.apps.googleusercontent.com";
         const APP_ID_ROOT = 'studyflow-planner';
 
         // Init Firebase
@@ -393,32 +389,26 @@
             localStorage.setItem('studyflow_fontsize', size);
         };
 
-        // --- AUTHENTICATION FIREBASE + GSI ---
+        // --- AUTHENTICATION FIREBASE (POPUP) ---
         
-        // Fungsi pembantu untuk menampilkan pesan error dengan jelas di UI
-        function handleErrorDisplay(error) {
-            console.error("Firebase Login Error:", error);
-            let errMsg = "Gagal login. Silakan coba lagi.";
-            
-            if (error.code === 'auth/unauthorized-domain') {
-                errMsg = "Domain Vercel ini belum diizinkan di Firebase Console!";
-            } else if (error.code === 'auth/popup-closed-by-user') {
-                errMsg = "Login dibatalkan (Popup ditutup).";
-            } else {
-                errMsg = "Error: " + error.message;
-            }
-            
-            document.getElementById('conn-status').innerHTML = `<span class="text-red-500 font-bold bg-white/80 px-2 py-1 rounded shadow-sm">${errMsg}</span>`;
-        }
-
-        // Login menggunakan GSI (Tombol Utama)
-        window.handleCredentialResponse = async (response) => {
+        window.loginWithGoogle = async () => {
             try {
-                document.getElementById('conn-status').innerText = "Menghubungkan ke database...";
-                const credential = GoogleAuthProvider.credential(response.credential);
-                await signInWithCredential(auth, credential);
+                document.getElementById('conn-status').innerHTML = "Membuka halaman login...";
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
             } catch (error) {
-                handleErrorDisplay(error);
+                console.error("Firebase Login Error:", error);
+                let errMsg = "Gagal login. Silakan coba lagi.";
+                
+                if (error.code === 'auth/unauthorized-domain') {
+                    errMsg = "⚠️ PENTING: Domain Vercel Anda belum diizinkan.<br/>Silakan ke Firebase Console > Authentication > Settings > Authorized Domains > Tambahkan 'study-flow-v3.vercel.app'";
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    errMsg = "Login dibatalkan (Popup ditutup).";
+                } else {
+                    errMsg = "Error: " + error.message;
+                }
+                
+                document.getElementById('conn-status').innerHTML = `<div class="bg-red-50 text-red-600 font-medium px-4 py-2 rounded-xl border border-red-200 shadow-sm block text-[11px] leading-relaxed max-w-[280px] text-center">${errMsg}</div>`;
             }
         };
 
@@ -693,19 +683,6 @@
             const savedSize = localStorage.getItem('studyflow_fontsize') || 'medium';
             window.setFontSize(savedSize);
             lucide.createIcons();
-
-            // Setup Google Identity Services Login
-            if (window.google) {
-                google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
-                    callback: window.handleCredentialResponse,
-                    use_fedcm_for_prompt: true
-                });
-                google.accounts.id.renderButton(
-                    document.getElementById("google-signin-button"),
-                    { theme: "outline", size: "large", width: 280, shape: "pill" }
-                );
-            }
         };
         window.setFontSize = setFontSize;
     </script>
