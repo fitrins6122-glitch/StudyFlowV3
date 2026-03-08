@@ -143,6 +143,18 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* Styling Time Pickers Select */
+        select.time-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            background: transparent;
+        }
+        /* Sembunyikan ikon panah default pada select untuk tampilan clean time picker */
+        select.time-select::-ms-expand { display: none; }
     </style>
 </head>
 <body class="bg-studyflow text-gray-800 dark:text-gray-100 min-h-screen relative overflow-x-hidden">
@@ -239,15 +251,15 @@
                         <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                             <h1 id="profile-name" class="text-sm md:text-xl font-black text-gray-800 dark:text-white tracking-tight truncate leading-tight">Memuat...</h1>
                             <!-- Pilihan Semester -->
-                            <select id="semester-select" onchange="changeSemester(this.value)" class="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-bold text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-lg border-none outline-none cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-800/40 transition-colors appearance-none">
-                                <option value="1">Smt. 1</option>
-                                <option value="2">Smt. 2</option>
-                                <option value="3">Smt. 3</option>
-                                <option value="4">Smt. 4</option>
-                                <option value="5">Smt. 5</option>
-                                <option value="6">Smt. 6</option>
-                                <option value="7">Smt. 7</option>
-                                <option value="8">Smt. 8</option>
+                            <select id="semester-select" onchange="changeSemester(this.value)" class="bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-bold text-xs md:text-sm px-3 py-1.5 md:px-4 rounded-xl border border-purple-200 dark:border-purple-800 outline-none cursor-pointer hover:bg-purple-200 dark:hover:bg-purple-800/80 transition-colors shadow-sm">
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
                             </select>
                         </div>
                     </div>
@@ -364,17 +376,27 @@
                     <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white">
                         <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
                     </select>
-                    <!-- Time Picker Kombinasi -->
+                    
+                    <!-- Time Picker Kombinasi 24 Jam Murni (Tanpa AM/PM OS) -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative">
-                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Mulai</label>
-                            <input type="time" id="in-j-waktu-mulai" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
+                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Mulai</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 px-0.5">:</span>
+                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                            </div>
                         </div>
                         <div class="relative">
-                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Selesai</label>
-                            <input type="time" id="in-j-waktu-selesai" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
+                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Selesai</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 px-0.5">:</span>
+                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                            </div>
                         </div>
                     </div>
+
                     <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Ruangan Kelas" />
                     <button onclick="saveJadwal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Jadwal</button>
                 </div>
@@ -499,7 +521,14 @@
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Tanggal</label>
                             <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
                         </div>
-                        <input type="time" id="in-u-waktu" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-700 dark:text-white" />
+                        <div class="relative">
+                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Waktu</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <select id="in-u-waktu-h" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 px-0.5">:</span>
+                                <select id="in-u-waktu-m" class="time-select w-full text-center text-sm font-medium text-gray-700 dark:text-white"></select>
+                            </div>
+                        </div>
                     </div>
                     <input type="text" id="in-u-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium dark:text-white" placeholder="Ruangan (Opsional)" />
                     <button onclick="saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Ujian</button>
@@ -589,10 +618,29 @@
             renderUI();
         };
 
-        // Helper untuk filter data per semester (Mendukung data lama yang belum punya field semester)
+        // Helper untuk filter data per semester
         function getSemesterData(colName) {
             return store[colName].filter(item => {
                 return String(item.semester) === String(currentSemester) || (!item.semester && String(currentSemester) === '6');
+            });
+        }
+
+        // Generate Time Select Options (Otomatis Pilih Jam Tanpa AM/PM)
+        function populateTimeSelects() {
+            const hours = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0'));
+            const minutes = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, '0')); // 00, 05, 10, ... 55
+            
+            const selectsH = ['in-j-mulai-h', 'in-j-selesai-h', 'in-u-waktu-h'];
+            const selectsM = ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'];
+            
+            selectsH.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.innerHTML = ''; hours.forEach(h => el.add(new Option(h, h))); }
+            });
+            
+            selectsM.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); }
             });
         }
 
@@ -707,6 +755,7 @@
                 // Set initial UI Values
                 document.getElementById('semester-select').value = currentSemester;
                 applyTheme();
+                populateTimeSelects();
 
                 initDataListeners();
                 navigate('dashboard');
@@ -1309,12 +1358,16 @@
             const sks = document.getElementById('in-j-sks').value; 
             const dosen = document.getElementById('in-j-dosen').value; 
             const hari = document.getElementById('in-j-hari').value; 
-            const waktuMulai = document.getElementById('in-j-waktu-mulai').value; 
-            const waktuSelesai = document.getElementById('in-j-waktu-selesai').value; 
+            const hMulai = document.getElementById('in-j-waktu-mulai-h').value; 
+            const mMulai = document.getElementById('in-j-waktu-mulai-m').value; 
+            const hSelesai = document.getElementById('in-j-waktu-selesai-h').value; 
+            const mSelesai = document.getElementById('in-j-waktu-selesai-m').value; 
             const ruang = document.getElementById('in-j-ruang').value; 
-            if(!matkul || !waktuMulai || !waktuSelesai || !currentUserId) return; 
+            
+            if(!matkul || !hMulai || !hSelesai || !currentUserId) return; 
+            
             await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { 
-                matkul, sks: parseInt(sks) || 0, dosen, hari, waktu: `${waktuMulai} - ${waktuSelesai}`, ruang, semester: currentSemester, createdAt: serverTimestamp() 
+                matkul, sks: parseInt(sks) || 0, dosen, hari, waktu: `${hMulai}:${mMulai} - ${hSelesai}:${mSelesai}`, ruang, semester: currentSemester, createdAt: serverTimestamp() 
             }); 
             closeModal(); 
         };
@@ -1354,11 +1407,14 @@
             const matkul = document.getElementById('in-u-matkul').value; 
             const jenis = document.getElementById('in-u-jenis').value; 
             const tanggal = document.getElementById('in-u-tanggal').value; 
-            const waktu = document.getElementById('in-u-waktu').value; 
+            const hUjian = document.getElementById('in-u-waktu-h').value; 
+            const mUjian = document.getElementById('in-u-waktu-m').value; 
             const ruang = document.getElementById('in-u-ruang').value; 
+            
             if(!matkul || !tanggal || !currentUserId) return; 
+            
             await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { 
-                matkul, jenis, tanggal, waktu, ruang, nilai: null, semester: currentSemester, createdAt: serverTimestamp() 
+                matkul, jenis, tanggal, waktu: `${hUjian}:${mUjian}`, ruang, nilai: null, semester: currentSemester, createdAt: serverTimestamp() 
             }); 
             closeModal(); 
         };
