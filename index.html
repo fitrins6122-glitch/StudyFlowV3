@@ -13,7 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Mengaktifkan mode gelap berbasis class
         }
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -25,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style id="dynamic-font-style">
+        /* Default Font Size: Sedang */
         :root { --base-font-size: 16px; }
         html { font-size: var(--base-font-size); }
     </style>
@@ -40,13 +41,25 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .dark body { background-color: #0f172a; }
-        html.dark { color-scheme: dark; }
-        .dark select option { background-color: #1e293b; color: #f8fafc; }
+        .dark body {
+            background-color: #0f172a; /* Slate 900 */
+        }
 
+        /* Perbaikan elemen native form (dropdown & calendar) untuk Mode Gelap */
+        html.dark {
+            color-scheme: dark;
+        }
+        
+        .dark select option {
+            background-color: #1e293b; /* bg-slate-800 */
+            color: #f8fafc; /* text-slate-50 */
+        }
+
+        /* Animasi Transisi */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
         
+        /* Efek Glassmorphism Premium */
         .glass-card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(16px);
@@ -57,7 +70,7 @@
         }
 
         .dark .glass-card {
-            background: rgba(30, 41, 59, 0.75);
+            background: rgba(30, 41, 59, 0.75); /* Slate 800 */
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
         }
@@ -69,10 +82,11 @@
         }
 
         .dark .glass-sidebar {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.85); /* Slate 900 */
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        /* Background Dinamis */
         .bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png');
             background-size: cover;
@@ -81,10 +95,20 @@
             transition: background-image 0.5s ease-in-out;
         }
 
+        /* Perbaikan Background Mode Gelap */
         html.dark body.bg-studyflow {
             background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg') !important;
             background-color: #0f172a;
+            background-blend-mode: normal;
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D8B4FE; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9333EA; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
         .active-nav {
             background: linear-gradient(135deg, #8B5CF6, #6D28D9);
@@ -93,11 +117,32 @@
             transform: scale(1.02);
         }
 
-        #modal-overlay { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
-        .dark #modal-overlay { background: rgba(0, 0, 0, 0.7); }
-        .font-opt-active { background-color: #7C3AED !important; color: white !important; }
-        #loading-screen { background: white; z-index: 1000; }
+        #modal-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .dark #modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .font-opt-active {
+            background-color: #7C3AED !important;
+            color: white !important;
+        }
+
+        #loading-screen {
+            background: white;
+            z-index: 1000;
+        }
         .dark #loading-screen { background: #0f172a; }
+
+        .mobile-truncate {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
         .text-gradient {
             background: linear-gradient(to right, #7C3AED, #DB2777);
@@ -111,17 +156,22 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Styling Time Pickers Select */
         select.time-select {
             -webkit-appearance: none;
+            -moz-appearance: none;
             appearance: none;
             cursor: pointer;
             outline: none;
             background: transparent;
         }
+        /* Sembunyikan ikon panah default pada select untuk tampilan clean time picker */
+        select.time-select::-ms-expand { display: none; }
     </style>
 </head>
 <body class="bg-studyflow text-gray-800 dark:text-gray-100 min-h-screen relative overflow-x-hidden">
 
+    <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 flex items-center justify-center">
         <div class="text-center p-6">
             <div class="w-12 h-12 md:w-16 md:h-16 border-4 border-purple-200 dark:border-purple-900 border-t-purple-600 dark:border-t-purple-400 rounded-full animate-spin mx-auto mb-4"></div>
@@ -129,15 +179,18 @@
         </div>
     </div>
 
+    <!-- Overlay tipis -->
     <div class="fixed inset-0 bg-white/30 dark:bg-black/40 pointer-events-none z-0 transition-colors duration-300"></div>
 
     <!-- ================= VIEW LOGIN ================= -->
     <div id="login-view" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="glass-card p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl w-full max-w-md text-center animate-fade flex flex-col justify-center items-center border-t border-l relative overflow-hidden">
-            <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-400 rounded-full filter blur-2xl opacity-30 animate-pulse"></div>
-            
+            <!-- Dekorasi Login -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-400 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-2xl opacity-30 animate-pulse"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-400 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-2xl opacity-30 animate-pulse delay-700"></div>
+
             <div class="mb-8 relative z-10">
-                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 md:w-28 md:h-28 rounded-3xl mx-auto shadow-xl border-4 border-white dark:border-slate-700 object-cover transform hover:rotate-6 transition-transform duration-500" />
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 md:w-28 md:h-28 rounded-3xl mx-auto shadow-2xl border-4 border-white dark:border-slate-700 object-cover transform hover:rotate-6 transition-transform duration-500" />
             </div>
             
             <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3 text-gray-900 dark:text-white relative z-10">
@@ -146,18 +199,21 @@
             <p class="text-gray-500 dark:text-gray-300 mb-8 font-medium leading-relaxed px-2 text-sm md:text-base relative z-10">Ruang belajar pintarmu. Kelola jadwal, tugas, dan ujian secara otomatis.</p>
             
             <div class="flex flex-col items-center gap-4 mb-4 w-full relative z-10">
+                <!-- Tombol Login Google Asli Firebase -->
                 <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white dark:bg-slate-800 border-2 border-purple-50 dark:border-slate-700 text-gray-700 dark:text-white font-bold py-3.5 px-4 rounded-2xl shadow-xl shadow-purple-100 dark:shadow-none hover:bg-purple-50 dark:hover:bg-slate-700 transition-all active:scale-95 text-sm md:text-base group">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 group-hover:scale-110 transition-transform">
                     Lanjutkan dengan Google
                 </button>
             </div>
             
-            <div id="conn-status" class="mt-4 min-h-[40px] w-full flex flex-col items-center justify-center text-center px-4 relative z-10"></div>
+            <div id="conn-status" class="text-[10px] text-purple-500 dark:text-purple-300 uppercase tracking-widest font-bold mt-4 min-h-[32px] w-full flex items-center justify-center text-center px-4 relative z-10"></div>
         </div>
     </div>
 
     <!-- ================= MAIN DASHBOARD VIEW ================= -->
     <div id="app-view" class="hidden flex min-h-screen relative z-10">
+        
+        <!-- Sidebar Desktop (Hidden on mobile/tablet) -->
         <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
             <div class="flex items-center gap-4 mb-10 px-2 pt-4">
                 <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-white dark:border-slate-700" />
@@ -192,7 +248,10 @@
             </div>
         </aside>
 
+        <!-- Main Content Area -->
         <main class="flex-1 p-4 md:p-8 lg:p-10 pb-32 lg:pb-10 max-w-[1600px] mx-auto w-full overflow-y-auto h-screen relative z-10">
+            
+            <!-- Top Header (Responsive) -->
             <header class="flex justify-between items-center mb-8 bg-white/60 dark:bg-slate-800/60 p-3 md:p-5 rounded-[1.5rem] md:rounded-[2rem] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm transition-all hover:shadow-md">
                 <div class="flex items-center gap-3 md:gap-5 overflow-hidden">
                     <div class="relative">
@@ -200,16 +259,24 @@
                         <div class="absolute bottom-0 right-0 w-3 h-3 md:w-3.5 md:h-3.5 bg-green-400 border-2 border-white dark:border-slate-700 rounded-full"></div>
                     </div>
                     <div class="overflow-hidden flex flex-col justify-center">
-                        <h2 class="text-[9px] md:text-[10px] font-black text-purple-500 dark:text-purple-300 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
+                        <h2 class="text-[9px] md:text-xs font-black text-purple-500 dark:text-purple-300 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
                         
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-0.5">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-0.5">
                             <h1 id="profile-name" class="text-xs md:text-xl font-black text-gray-800 dark:text-white tracking-tight truncate leading-tight">Memuat...</h1>
+                            
+                            <!-- Pilihan Semester yang Lebih Intuitif -->
                             <div class="flex items-center gap-1.5 md:gap-2">
                                 <span class="text-[8px] md:text-[10px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:inline-block">Periode Aktif:</span>
                                 <div class="relative flex items-center group">
                                     <select id="semester-select" onchange="changeSemester(this.value)" class="bg-purple-100 dark:bg-slate-700 text-purple-700 dark:text-white font-bold text-[10px] md:text-xs px-2 py-1 md:py-1.5 md:px-3 md:pr-8 pr-6 rounded-lg md:rounded-xl border border-purple-200 dark:border-slate-600 outline-none cursor-pointer hover:bg-purple-200 dark:hover:bg-slate-600 transition-all shadow-sm appearance-none focus:ring-2 focus:ring-purple-400">
-                                        <option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option>
-                                        <option value="5">Semester 5</option><option value="6">Semester 6</option><option value="7">Semester 7</option><option value="8">Semester 8</option>
+                                        <option value="1">Semester 1</option>
+                                        <option value="2">Semester 2</option>
+                                        <option value="3">Semester 3</option>
+                                        <option value="4">Semester 4</option>
+                                        <option value="5">Semester 5</option>
+                                        <option value="6">Semester 6</option>
+                                        <option value="7">Semester 7</option>
+                                        <option value="8">Semester 8</option>
                                     </select>
                                     <i data-lucide="chevron-down" class="absolute right-1.5 md:right-2 w-3 h-3 md:w-3.5 md:h-3.5 text-purple-600 dark:text-white pointer-events-none group-hover:translate-y-0.5 transition-transform"></i>
                                 </div>
@@ -219,153 +286,272 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-3">
+                    <!-- Tombol Dark Mode -->
                     <button onclick="toggleTheme()" class="bg-white dark:bg-slate-700 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl shadow-sm text-gray-400 dark:text-yellow-400 hover:text-purple-600 dark:hover:text-yellow-300 hover:bg-purple-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Ganti Tema">
                         <i data-lucide="moon" id="theme-icon" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
 
+                    <!-- Dropdown Atur Font (SEKARANG MUNCUL DI MOBILE JUGA) -->
                     <div class="relative group block">
                         <button class="bg-white dark:bg-slate-700 p-2.5 md:p-3.5 rounded-xl md:rounded-2xl shadow-sm text-gray-400 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white hover:bg-purple-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Atur Tampilan">
                             <i data-lucide="type" class="w-4 h-4 md:w-5 md:h-5"></i>
                         </button>
                         <div class="absolute right-0 top-full mt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible glass-card rounded-2xl p-2 w-40 shadow-2xl z-[100] border border-purple-100 dark:border-slate-600 transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
                             <p class="text-[9px] font-black text-purple-400 dark:text-purple-300 uppercase px-3 py-2 mb-1 tracking-widest border-b border-purple-50 dark:border-slate-700">Ukuran Teks</p>
-                            <button onclick="setFontSize('small')" id="btn-font-small" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between mb-1 text-gray-600 dark:text-gray-200">Kecil <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">14px</span></button>
-                            <button onclick="setFontSize('medium')" id="btn-font-medium" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between mb-1 text-gray-600 dark:text-gray-200 font-opt-active">Sedang <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">16px</span></button>
-                            <button onclick="setFontSize('large')" id="btn-font-large" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between text-gray-600 dark:text-gray-200">Besar <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">18px</span></button>
+                            <button onclick="setFontSize('small')" id="btn-font-small" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between mb-1 text-gray-600 dark:text-gray-200">
+                                Kecil <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">14px</span>
+                            </button>
+                            <button onclick="setFontSize('medium')" id="btn-font-medium" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between mb-1 text-gray-600 dark:text-gray-200 font-opt-active">
+                                Sedang <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">16px</span>
+                            </button>
+                            <button onclick="setFontSize('large')" id="btn-font-large" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 transition-all flex items-center justify-between text-gray-600 dark:text-gray-200">
+                                Besar <span class="text-[10px] opacity-40 bg-gray-100 dark:bg-slate-600 px-1.5 py-0.5 rounded">18px</span>
+                            </button>
                         </div>
                     </div>
 
+                    <!-- Tombol Export Excel -->
                     <button onclick="exportToExcel()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2.5 md:px-6 md:py-3.5 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-300 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all text-xs md:text-sm active:scale-95 group">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 md:w-5 md:h-5 group-hover:animate-bounce"></i> <span class="hidden sm:inline">Export Excel</span>
                     </button>
                     
+                    <!-- Tombol Logout Khusus Mobile -->
                     <button onclick="logout()" class="lg:hidden bg-white dark:bg-slate-700 p-2.5 rounded-xl shadow-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-600 hover:shadow-md transition-all focus:outline-none" title="Keluar">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
                 </div>
             </header>
 
+            <!-- Content Area -->
             <div id="content-area" class="animate-fade relative z-0"></div>
         </main>
 
+        <!-- Bottom Nav Mobile (Visible on Mobile & Tablet) -->
         <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-[72px] glass-card rounded-[2rem] shadow-2xl flex items-center justify-around px-2 z-[90] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl overflow-x-auto">
-            <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="layout-grid"></i></button>
-            <button onclick="navigate('matkul')" id="m-nav-matkul" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="book-open"></i></button>
-            <button onclick="navigate('jadwal')" id="m-nav-jadwal" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="calendar"></i></button>
-            <button onclick="navigate('tugas')" id="m-nav-tugas" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="check-square"></i></button>
-            <button onclick="navigate('ujian')" id="m-nav-ujian" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="award"></i></button>
+            <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="p-3.5 transition-all rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400 dark:text-gray-400">
+                <i data-lucide="layout-grid" class="group-hover:scale-110 transition-transform"></i>
+                <span class="text-[8px] font-bold opacity-0 h-0 group-[.text-purple-600]:opacity-100 group-[.text-purple-600]:h-auto transition-all">Dasbor</span>
+            </button>
+            <button onclick="navigate('matkul')" id="m-nav-matkul" class="p-3.5 transition-all rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400 dark:text-gray-400">
+                <i data-lucide="book-open" class="group-hover:scale-110 transition-transform"></i>
+                <span class="text-[8px] font-bold opacity-0 h-0 group-[.text-purple-600]:opacity-100 group-[.text-purple-600]:h-auto transition-all">Matkul</span>
+            </button>
+            <button onclick="navigate('jadwal')" id="m-nav-jadwal" class="p-3.5 transition-all rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400 dark:text-gray-400">
+                <i data-lucide="calendar" class="group-hover:scale-110 transition-transform"></i>
+                <span class="text-[8px] font-bold opacity-0 h-0 group-[.text-purple-600]:opacity-100 group-[.text-purple-600]:h-auto transition-all">Jadwal</span>
+            </button>
+            <button onclick="navigate('tugas')" id="m-nav-tugas" class="p-3.5 transition-all rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400 dark:text-gray-400">
+                <i data-lucide="check-square" class="group-hover:scale-110 transition-transform"></i>
+                <span class="text-[8px] font-bold opacity-0 h-0 group-[.text-purple-600]:opacity-100 group-[.text-purple-600]:h-auto transition-all">Tugas</span>
+            </button>
+            <button onclick="navigate('ujian')" id="m-nav-ujian" class="p-3.5 transition-all rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400 dark:text-gray-400">
+                <i data-lucide="award" class="group-hover:scale-110 transition-transform"></i>
+                <span class="text-[8px] font-bold opacity-0 h-0 group-[.text-purple-600]:opacity-100 group-[.text-purple-600]:h-auto transition-all">Ujian</span>
+            </button>
         </nav>
     </div>
 
-    <!-- ================= MODALS ================= -->
+    <!-- ================= MODALS (Responsive sizing) ================= -->
     <div id="modal-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Modal Content Wrapper -->
         <div id="modal-content-wrapper" class="w-full max-w-md animate-fade transform scale-95 transition-transform duration-300">
+            
+            <!-- Modal Jadwal -->
             <div id="modal-jadwal" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
                 <div class="flex justify-between items-center mb-6">
-                    <div><h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Jadwal Baru</h3></div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
-                </div>
-                <div class="space-y-4">
-                    <select id="in-j-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"></select>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="in-j-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="SKS" />
-                        <select id="in-j-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Jadwal Baru</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tambah Kelas</p>
                     </div>
-                    <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white">
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <!-- Dropdown Matkul Dinamis -->
+                    <select id="in-j-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
+                        <!-- Pilihan otomatis dari daftar matkul -->
+                    </select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="in-j-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Jumlah SKS" />
+                        <!-- Dropdown Dosen Dinamis -->
+                        <select id="in-j-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
+                            <!-- Pilihan otomatis dari daftar matkul -->
+                        </select>
+                    </div>
+                    <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
                     </select>
+                    
+                    <!-- Time Picker Kombinasi 24 Jam Murni -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Mulai</label>
-                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5">
-                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <!-- ID diperbaiki menjadi in-j-mulai-h dan in-j-mulai-m agar dikenali oleh script JS -->
+                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                                 <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
-                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                             </div>
                         </div>
                         <div class="relative">
                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Selesai</label>
-                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5">
-                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                                 <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
-                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
                             </div>
                         </div>
                     </div>
-                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ruangan" />
-                    <button onclick="saveJadwal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black active:scale-95 text-sm uppercase tracking-widest">Simpan Jadwal</button>
+
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Ruangan Kelas" />
+                    <button onclick="saveJadwal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Jadwal</button>
                 </div>
             </div>
 
-            <div id="modal-matkul" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black dark:text-white">Mata Kuliah</h3></div><button onclick="closeModal()" class="text-gray-400 p-2 rounded-xl"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4">
-                    <select id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm dark:text-white">
+            <!-- Modal Matkul -->
+            <div id="modal-matkul" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Mata Kuliah</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tambah Data</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <select id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                         <option value="" disabled selected>Pilih Mata Kuliah...</option>
-                        <option>Sistem Politik Indonesia</option><option>Manajemen Strategi</option><option>Bahasa Korea IV</option>
-                        <option>Bahasa Inggris IV</option><option>Strategi dan Kebijakan Pemasaran</option><option>Manajemen Perubahan</option>
-                        <option>Riset Operasi Bisnis</option><option>Keuangan Bisnis</option><option>Start Up Business</option>
+                        <option value="Sistem Politik Indonesia">Sistem Politik Indonesia</option>
+                        <option value="Manajemen Strategi">Manajemen Strategi</option>
+                        <option value="Bahasa Korea IV">Bahasa Korea IV</option>
+                        <option value="Bahasa Inggris IV">Bahasa Inggris IV</option>
+                        <option value="Strategi dan Kebijakan Pemasaran">Strategi dan Kebijakan Pemasaran</option>
+                        <option value="Manajemen Perubahan">Manajemen Perubahan</option>
+                        <option value="Riset Operasi Bisnis">Riset Operasi Bisnis</option>
+                        <option value="Keuangan Bisnis">Keuangan Bisnis</option>
+                        <option value="Start Up Business">Start Up Business</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white" placeholder="SKS" />
-                        <select id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm dark:text-white">
+                        <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="SKS" />
+                        <select id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
                             <option value="" disabled selected>Pilih Dosen...</option>
-                            <option>Dr. Budi Santoso, M.Si.</option><option>Prof. Siti Aminah, Ph.D.</option><option>Mr. Kim Jong Kook, M.A.</option>
-                            <option>Ms. Sarah Johnson, M.Ed.</option><option>Dr. Andi Wijaya, M.B.A.</option><option>Dr. Rina Marlina, M.M.</option>
-                            <option>Ir. Hendra Gunawan, M.T.</option><option>Dr. Dewi Lestari, S.E., M.Ak.</option><option>Bpk. Reza Rahadian, M.B.A.</option>
+                            <option value="Dr. Budi Santoso, M.Si.">Dr. Budi Santoso, M.Si.</option>
+                            <option value="Prof. Siti Aminah, Ph.D.">Prof. Siti Aminah, Ph.D.</option>
+                            <option value="Mr. Kim Jong Kook, M.A.">Mr. Kim Jong Kook, M.A.</option>
+                            <option value="Ms. Sarah Johnson, M.Ed.">Ms. Sarah Johnson, M.Ed.</option>
+                            <option value="Dr. Andi Wijaya, M.B.A.">Dr. Andi Wijaya, M.B.A.</option>
+                            <option value="Dr. Rina Marlina, M.M.">Dr. Rina Marlina, M.M.</option>
+                            <option value="Ir. Hendra Gunawan, M.T.">Ir. Hendra Gunawan, M.T.</option>
+                            <option value="Dr. Dewi Lestari, S.E., M.Ak.">Dr. Dewi Lestari, S.E., M.Ak.</option>
+                            <option value="Bpk. Reza Rahadian, M.B.A.">Bpk. Reza Rahadian, M.B.A.</option>
                         </select>
                     </div>
-                    <button onclick="saveMatkul()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase">Simpan</button>
+                    <button onclick="saveMatkul()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Mata Kuliah</button>
                 </div>
             </div>
 
-            <div id="modal-tugas" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black dark:text-white">Tugas Baru</h3></div><button onclick="closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4">
-                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white" placeholder="Nama Tugas" />
-                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white"></select>
-                    <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white" />
-                    <button onclick="saveTugas()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase">Simpan</button>
+            <!-- Modal Tugas -->
+            <div id="modal-tugas" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Tugas Baru</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Catat Deadline</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Nama / Judul Tugas" />
+                    
+                    <!-- Dropdown Matkul Dinamis -->
+                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
+                        <!-- Pilihan otomatis dari daftar matkul -->
+                    </select>
+                    
+                    <div class="relative">
+                        <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Tenggat Waktu</label>
+                        <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white" />
+                    </div>
+                    <button onclick="saveTugas()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Tugas</button>
                 </div>
             </div>
 
-            <div id="modal-ujian" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700">
-                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black dark:text-white">Jadwal Ujian</h3></div><button onclick="closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
-                <div class="space-y-4">
-                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white"></select>
-                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white"><option>UTS</option><option>UAS</option><option>Kuis</option></select>
+            <!-- Modal Target -->
+            <div id="modal-target" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Target Semester</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Tuliskan Mimpimu</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Contoh: Lulus Semua Matkul A, Ikut Kepanitiaan..." />
+                    <button onclick="saveTarget()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Target</button>
+                </div>
+            </div>
+
+            <!-- Modal Ujian -->
+            <div id="modal-ujian" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Jadwal Ujian</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1">Catat UTS / UAS</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <!-- Dropdown Matkul Dinamis -->
+                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
+                        <!-- Pilihan otomatis dari daftar matkul -->
+                    </select>
+                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white">
+                        <option value="UTS">Ujian Tengah Semester (UTS)</option>
+                        <option value="UAS">Ujian Akhir Semester (UAS)</option>
+                        <option value="Kuis">Kuis / Ujian Susulan</option>
+                    </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 dark:text-white" />
-                        <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5">
-                            <select id="in-u-waktu-h" class="time-select w-full text-center text-sm dark:text-white"></select>
-                            <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
-                            <select id="in-u-waktu-m" class="time-select w-full text-center text-sm dark:text-white"></select>
+                        <div class="relative">
+                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider">Tanggal</label>
+                            <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white" />
+                        </div>
+                        <div class="relative">
+                            <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Waktu</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-2 py-3.5 focus-within:ring-2 focus-within:ring-purple-400 transition-all">
+                                <select id="in-u-waktu-h" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-u-waktu-m" class="time-select w-full text-center text-sm font-medium text-gray-800 dark:text-white"></select>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase">Simpan</button>
+                    <input type="text" id="in-u-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-sm font-medium text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-300" placeholder="Ruangan (Opsional)" />
+                    <button onclick="saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Ujian</button>
                 </div>
             </div>
 
-            <div id="modal-target" class="hidden glass-card p-8 rounded-[2rem] w-full border dark:border-slate-700">
-                <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 dark:text-white border mb-4" placeholder="Target Semester..." />
-                <button onclick="saveTarget()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase">Simpan</button>
-            </div>
-
-             <div id="modal-nilai" class="hidden glass-card p-8 rounded-[2rem] w-full border dark:border-slate-700 text-center">
-                <input type="hidden" id="in-n-id" /><p id="nilai-matkul-label" class="mb-4 font-bold dark:text-white"></p>
-                <input type="number" id="in-n-nilai" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:text-white text-center text-2xl font-black mb-4" placeholder="0-100" />
-                <button onclick="saveNilai()" class="w-full bg-green-500 text-white py-4 rounded-xl font-black uppercase">Simpan</button>
+             <!-- Modal Input Nilai -->
+             <div id="modal-nilai" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white tracking-tight">Input Nilai</h3>
+                        <p class="text-xs text-purple-500 dark:text-purple-300 font-bold tracking-widest uppercase mt-1" id="nilai-matkul-label">Mata Kuliah</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4 text-left">
+                    <input type="hidden" id="in-n-id" />
+                    <input type="number" id="in-n-nilai" min="0" max="100" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white dark:focus:bg-slate-600 transition-all text-2xl font-black text-center text-purple-700 dark:text-purple-300 placeholder-gray-400 dark:placeholder-gray-400" placeholder="Skor (0-100)" />
+                    <button onclick="saveNilai()" class="w-full bg-green-500 text-white py-4 mt-2 rounded-xl font-black shadow-lg shadow-green-200 dark:shadow-none hover:bg-green-600 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 text-sm uppercase tracking-widest">Simpan Nilai</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT ================= -->
+    <!-- ================= JAVASCRIPT MODULE ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
+        // --- KONFIGURASI FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY",
             authDomain: "studyflow-7afba.firebaseapp.com",
@@ -375,20 +561,167 @@
             appId: "1:1034032440737:web:030cffaa62db47b3f997e0",
             measurementId: "G-FHQC3GCFW0"
         };
+
         const APP_ID_ROOT = 'studyflow-planner';
+
+        // Init Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- STATE GLOBAL ---
         let currentUserId = null;
         let activeTab = 'dashboard';
         let store = { matkul: [], jadwal: [], tugas: [], target: [], ujian: [] };
         let listeners = [];
+        
+        let dashboardChartInstance = null; 
+        let taskLoadChartInstance = null;
+
+        // Semester State Management
         let currentSemester = localStorage.getItem('studyflow_semester') || '6';
+        
+        // Theme State Management
         let isDarkMode = localStorage.getItem('studyflow_theme') === 'dark';
 
-        // DEFINISI FUNGSI setFontSize SEBAGAI FUNGSI MODUL
-        function setFontSize(size) {
+        function applyTheme() {
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+            if(activeTab === 'dashboard') renderDashboard(document.getElementById('content-area')); // Rerender untuk ganti warna teks chart
+        }
+
+        window.toggleTheme = () => {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('studyflow_theme', isDarkMode ? 'dark' : 'light');
+            applyTheme();
+        };
+
+        window.changeSemester = (val) => {
+            currentSemester = val;
+            localStorage.setItem('studyflow_semester', val);
+            renderUI();
+        };
+
+        // Helper untuk filter data per semester
+        function getSemesterData(colName) {
+            return store[colName].filter(item => {
+                return String(item.semester) === String(currentSemester) || (!item.semester && String(currentSemester) === '6');
+            });
+        }
+
+        // --- PEMBARUAN DROPDOWN DINAMIS (MATKUL & DOSEN) ---
+        function updateDynamicDropdowns() {
+            const activeMatkul = getSemesterData('matkul');
+            
+            // HTML Options untuk Matkul
+            const matkulHTML = activeMatkul.length > 0 
+                ? `<option value="" disabled selected>Pilih Mata Kuliah...</option>` + 
+                  activeMatkul.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')
+                : `<option value="" disabled selected>⚠️ Input Matkul dulu</option>`;
+                
+            // Update dropdown Jadwal, Tugas, Ujian
+            const matkulSelects = ['in-j-matkul', 'in-t-matkul', 'in-u-matkul'];
+            matkulSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = matkulHTML;
+            });
+
+            // HTML Options untuk Dosen (Hanya menampilkan dosen yang ada di daftar Matkul aktif)
+            const activeDosen = [...new Set(activeMatkul.map(m => m.dosen).filter(Boolean))];
+            const dosenHTML = activeDosen.length > 0
+                ? `<option value="" disabled selected>Pilih Dosen...</option>` + 
+                  activeDosen.map(d => `<option value="${d}">${d}</option>`).join('')
+                : `<option value="" disabled selected>⚠️ Input Matkul dulu</option>`;
+                
+            const elDosen = document.getElementById('in-j-dosen');
+            if (elDosen) elDosen.innerHTML = dosenHTML;
+        }
+
+        // Generate Time Select Options (Otomatis Pilih Jam Tanpa AM/PM)
+        function populateTimeSelects() {
+            const hours = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0'));
+            const minutes = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, '0')); // 00, 05, 10, ... 55
+            
+            const selectsH = ['in-j-mulai-h', 'in-j-selesai-h', 'in-u-waktu-h'];
+            const selectsM = ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'];
+            
+            selectsH.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.innerHTML = ''; hours.forEach(h => el.add(new Option(h, h))); }
+            });
+            
+            selectsM.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); }
+            });
+        }
+
+        // --- CEK HASIL LOGIN REDIRECT ---
+        getRedirectResult(auth).catch((error) => {
+            const statusEl = document.getElementById('conn-status');
+            if (error.code === 'auth/unauthorized-domain') {
+                statusEl.innerHTML = `<div class="bg-red-50 text-red-600 font-bold px-3 py-2 rounded-xl border border-red-200 mt-2 text-[10px]">Domain Vercel belum diizinkan di Firebase Console.</div>`;
+            } else if (error.code === 'auth/operation-not-allowed') {
+                statusEl.innerHTML = `<div class="bg-red-50 text-red-600 font-bold px-3 py-2 rounded-xl border border-red-200 mt-2 text-[10px]">Metode 'Google Sign-In' BELUM AKTIF di Firebase Console.</div>`;
+            }
+        });
+
+        // --- FITUR EKSPOR EXCEL DENGAN AUTO-WIDTH ---
+        window.exportToExcel = () => {
+            const activeJadwal = getSemesterData('jadwal');
+            const activeMatkul = getSemesterData('matkul');
+            const activeTugas = getSemesterData('tugas');
+            const activeUjian = getSemesterData('ujian');
+
+            if (!activeJadwal.length && !activeMatkul.length && !activeTugas.length && !activeUjian.length) {
+                alert("Oops! Belum ada data untuk Semester " + currentSemester + " yang bisa diekspor.");
+                return;
+            }
+
+            try {
+                if (typeof XLSX === 'undefined') {
+                    alert("Library Excel sedang disiapkan. Silakan coba dalam beberapa detik.");
+                    return;
+                }
+
+                const wb = XLSX.utils.book_new();
+                let hasSheets = false;
+
+                const dataJadwal = activeJadwal.map(j => ({ "Mata Kuliah": j.matkul || "-", "SKS": j.sks || 0, "Dosen": j.dosen || "-", "Hari": j.hari || "-", "Waktu": j.waktu || "-", "Ruangan": j.ruang || "-" }));
+                const dataMatkul = activeMatkul.map(m => ({ "Mata Kuliah": m.nama || "-", "SKS": m.sks || 0, "Dosen": m.dosen || "-" }));
+                const dataTugas = activeTugas.map(t => ({ "Nama Tugas": t.nama || "-", "Mata Kuliah": t.matkul || "-", "Deadline": t.deadline || "-", "Status": t.status ? "Selesai" : "Belum Selesai" }));
+                const dataUjian = activeUjian.map(u => ({ "Mata Kuliah": u.matkul || "-", "Jenis": u.jenis || "-", "Tanggal": u.tanggal || "-", "Waktu": u.waktu || "-", "Ruangan": u.ruang || "-", "Nilai": u.nilai || "-" }));
+
+                const autoWidth = (data) => {
+                    if (!data || data.length === 0) return [];
+                    const keys = Object.keys(data[0]);
+                    return keys.map(key => {
+                        const maxLen = Math.max(key.length, ...data.map(obj => (obj[key] !== null && obj[key] !== undefined) ? obj[key].toString().length : 0));
+                        return { wch: maxLen + 3 };
+                    });
+                };
+
+                if (dataJadwal.length > 0) { const ws = XLSX.utils.json_to_sheet(dataJadwal); ws["!cols"] = autoWidth(dataJadwal); XLSX.utils.book_append_sheet(wb, ws, "Jadwal Kuliah"); hasSheets = true; }
+                if (dataMatkul.length > 0) { const ws = XLSX.utils.json_to_sheet(dataMatkul); ws["!cols"] = autoWidth(dataMatkul); XLSX.utils.book_append_sheet(wb, ws, "Daftar Matkul"); hasSheets = true; }
+                if (dataTugas.length > 0) { const ws = XLSX.utils.json_to_sheet(dataTugas); ws["!cols"] = autoWidth(dataTugas); XLSX.utils.book_append_sheet(wb, ws, "Daftar Tugas"); hasSheets = true; }
+                if (dataUjian.length > 0) { const ws = XLSX.utils.json_to_sheet(dataUjian); ws["!cols"] = autoWidth(dataUjian); XLSX.utils.book_append_sheet(wb, ws, "Daftar Ujian"); hasSheets = true; }
+
+                const fileName = `StudyFlow_Smt${currentSemester}_Export_${new Date().toISOString().slice(0,10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+            } catch (error) {
+                console.error("Gagal Ekspor:", error);
+                alert("Terjadi kesalahan teknis saat membuat file Excel: " + error.message);
+            }
+        };
+
+        window.setFontSize = (size) => {
             const root = document.querySelector(':root');
             const sizes = { small: '14px', medium: '16px', large: '18px' };
             root.style.setProperty('--base-font-size', sizes[size]);
@@ -398,96 +731,128 @@
             if (activeBtn) activeBtn.classList.add('font-opt-active', 'text-purple-600', 'dark:text-purple-400');
             
             localStorage.setItem('studyflow_fontsize', size);
-        }
-        // Pasang ke window agar bisa diakses HTML onclick
-        window.setFontSize = setFontSize;
-
-        function applyTheme() {
-            if (isDarkMode) { document.documentElement.classList.add('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'sun'); } 
-            else { document.documentElement.classList.remove('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'moon'); }
-            lucide.createIcons();
-            if(activeTab === 'dashboard') renderDashboard(document.getElementById('content-area'));
-        }
-
-        window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('studyflow_theme', isDarkMode ? 'dark' : 'light'); applyTheme(); };
-        window.changeSemester = (val) => { currentSemester = val; localStorage.setItem('studyflow_semester', val); renderUI(); };
-
-        function getSemesterData(colName) {
-            return store[colName].filter(item => String(item.semester) === String(currentSemester) || (!item.semester && String(currentSemester) === '6'));
-        }
-
-        function updateDynamicDropdowns() {
-            const activeMatkul = getSemesterData('matkul');
-            const matkulHTML = activeMatkul.length > 0 
-                ? `<option value="" disabled selected>Pilih Mata Kuliah...</option>` + activeMatkul.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')
-                : `<option value="" disabled selected>⚠️ Input Matkul dulu</option>`;
-            ['in-j-matkul', 'in-t-matkul', 'in-u-matkul'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = matkulHTML; });
-            const activeDosen = [...new Set(activeMatkul.map(m => m.dosen).filter(Boolean))];
-            const dosenHTML = activeDosen.length > 0 ? `<option value="" disabled selected>Pilih Dosen...</option>` + activeDosen.map(d => `<option value="${d}">${d}</option>`).join('') : `<option value="" disabled selected>⚠️ Input Matkul dulu</option>`;
-            const elDosen = document.getElementById('in-j-dosen');
-            if (elDosen) elDosen.innerHTML = dosenHTML;
-        }
-
-        function populateTimeSelects() {
-            const hours = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0'));
-            const minutes = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, '0'));
-            ['in-j-mulai-h', 'in-j-selesai-h', 'in-u-waktu-h'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; hours.forEach(h => el.add(new Option(h, h))); } });
-            ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); } });
-        }
-
-        window.exportToExcel = () => {
-            const activeJadwal = getSemesterData('jadwal');
-            const activeMatkul = getSemesterData('matkul');
-            const activeTugas = getSemesterData('tugas');
-            const activeUjian = getSemesterData('ujian');
-            if (!activeJadwal.length && !activeMatkul.length && !activeTugas.length && !activeUjian.length) { alert("Oops! Belum ada data."); return; }
-            const wb = XLSX.utils.book_new();
-            if (activeJadwal.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeJadwal), "Jadwal");
-            if (activeMatkul.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeMatkul), "Matkul");
-            if (activeTugas.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeTugas), "Tugas");
-            if (activeUjian.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeUjian), "Ujian");
-            XLSX.writeFile(wb, `StudyFlow_Smt${currentSemester}.xlsx`);
         };
 
+        // --- AUTHENTICATION FIREBASE ---
         window.loginWithGoogle = async () => {
             const statusEl = document.getElementById('conn-status');
             statusEl.innerHTML = "Memproses login...";
+            
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            try { await signInWithPopup(auth, provider); } catch (error) {
-                if (error.code === 'auth/popup-blocked') await signInWithRedirect(auth, provider);
-                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold">Domain ${window.location.hostname} belum diizinkan di Firebase Console > Auth > Settings > Authorized Domains.</span>`;
+
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Firebase Login Error:", error);
+                if (error.code === 'auth/popup-blocked') {
+                    statusEl.innerHTML = "Popup diblokir, mengalihkan halaman...";
+                    await signInWithRedirect(auth, provider);
+                } 
+                else if (error.code === 'auth/popup-closed-by-user') {
+                    statusEl.innerHTML = `<span class="text-red-500">Login Dibatalkan</span>`;
+                } 
+                else if (error.code === 'auth/unauthorized-domain') {
+                    statusEl.innerHTML = `<div class="bg-red-50 text-red-600 px-3 py-2 rounded-xl border border-red-200 mt-2 leading-tight">Domain Vercel belum diizinkan di Firebase Authentication > Settings > Authorized Domains</div>`;
+                } 
+                else {
+                    statusEl.innerHTML = `<div class="bg-red-50 text-red-600 px-3 py-2 rounded-xl border border-red-200 mt-2">Gagal: ${error.message}</div>`;
+                }
             }
         };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserId = user.uid;
-                document.getElementById('profile-name').innerText = user.displayName;
-                document.getElementById('profile-pic').src = user.photoURL;
+                document.getElementById('profile-name').innerText = user.displayName || 'Pengguna';
+                document.getElementById('profile-pic').src = user.photoURL || 'https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff';
+                
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('app-view').classList.remove('hidden');
                 document.getElementById('loading-screen').classList.add('hidden');
+                
+                // Set initial UI Values
                 document.getElementById('semester-select').value = currentSemester;
-                const savedSize = localStorage.getItem('studyflow_fontsize') || 'medium';
-                setFontSize(savedSize);
-                applyTheme(); populateTimeSelects(); initDataListeners(); navigate('dashboard');
+                applyTheme();
+                populateTimeSelects();
+
+                initDataListeners();
+                navigate('dashboard');
             } else {
-                currentUserId = null; document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('app-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden');
+                currentUserId = null;
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('app-view').classList.add('hidden');
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('conn-status').innerText = "";
             }
         });
 
+        // --- DATA LISTENERS ---
         function initDataListeners() {
-            if (!currentUserId) return; listeners.forEach(unsub => unsub());
-            ['matkul', 'jadwal', 'tugas', 'target', 'ujian'].forEach(colName => {
+            if (!currentUserId) return;
+            listeners.forEach(unsub => unsub());
+
+            const collections = ['matkul', 'jadwal', 'tugas', 'target', 'ujian'];
+            collections.forEach(colName => {
                 const q = collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, colName);
-                const unsub = onSnapshot(q, (snapshot) => { store[colName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); renderUI(); });
+                const unsub = onSnapshot(q, (snapshot) => {
+                    store[colName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderUI(); 
+                });
                 listeners.push(unsub);
             });
         }
 
-        window.navigate = (view) => { activeTab = view; renderUI(); };
+        // --- NAVIGATION ---
+        window.navigate = (view) => {
+            const content = document.getElementById('content-area');
+            if(content) content.classList.remove('animate-fade');
+
+            activeTab = view;
+            setTimeout(() => { renderUI(); }, 10); 
+        };
+
+        function renderUI() {
+            const container = document.getElementById('content-area');
+            if (!container) return;
+
+            document.querySelectorAll('aside button').forEach(btn => {
+                btn.classList.remove('active-nav', 'text-purple-700', 'bg-purple-100', 'dark:bg-slate-800', 'dark:text-purple-300');
+                btn.classList.add('text-gray-500', 'dark:text-gray-400');
+            });
+            const activeNav = document.getElementById('nav-' + activeTab);
+            if(activeNav) {
+                activeNav.classList.add('active-nav');
+                activeNav.classList.remove('text-gray-500', 'dark:text-gray-400');
+            }
+
+            const mobileIcons = ['dashboard', 'matkul', 'jadwal', 'tugas', 'ujian', 'target'];
+            mobileIcons.forEach(icon => {
+                const btn = document.getElementById('m-nav-' + icon);
+                if (btn) {
+                    if (activeTab === icon) {
+                        btn.classList.add('text-purple-600', 'bg-purple-100', 'dark:text-purple-400', 'dark:bg-slate-800');
+                        btn.classList.remove('text-gray-400', 'dark:text-gray-400');
+                    } else {
+                        btn.classList.remove('text-purple-600', 'bg-purple-100', 'dark:text-purple-400', 'dark:bg-slate-800');
+                        btn.classList.add('text-gray-400', 'dark:text-gray-400');
+                    }
+                }
+            });
+
+            // Perbarui Dropdown Otomatis Berdasarkan Matkul Yang Sudah Disimpan!
+            updateDynamicDropdowns();
+
+            if (activeTab === 'dashboard') renderDashboard(container);
+            else if (activeTab === 'matkul') renderMatkul(container);
+            else if (activeTab === 'jadwal') renderJadwal(container);
+            else if (activeTab === 'tugas') renderTugas(container);
+            else if (activeTab === 'ujian') renderUjian(container);
+            else if (activeTab === 'target') renderTarget(container);
+
+            lucide.createIcons();
+            container.classList.add('animate-fade');
+        }
 
         function calculateDaysLeft(dateStr) {
             if (!dateStr) return 999;
@@ -499,106 +864,619 @@
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        function renderUI() {
-            const container = document.getElementById('content-area');
-            if (!container) return;
-            document.querySelectorAll('aside button').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('text-gray-500'); });
-            const activeNav = document.getElementById('nav-' + activeTab);
-            if(activeNav) activeNav.classList.add('active-nav');
-            updateDynamicDropdowns();
-            if (activeTab === 'dashboard') renderDashboard(container);
-            else if (activeTab === 'matkul') renderMatkul(container);
-            else if (activeTab === 'jadwal') renderJadwal(container);
-            else if (activeTab === 'tugas') renderTugas(container);
-            else if (activeTab === 'ujian') renderUjian(container);
-            else if (activeTab === 'target') renderTarget(container);
-            lucide.createIcons();
+        function getTodayName() {
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            return days[new Date().getDay()];
         }
 
-        let dashboardChartInstance = null;
+        // ================= RENDERING VIEWS ================= //
+
         function renderDashboard(el) {
+            const activeMatkul = getSemesterData('matkul');
             const activeTugas = getSemesterData('tugas');
-            const totalTugas = activeTugas.length;
-            const selesai = activeTugas.filter(t => t.status).length;
-            const urgent = activeTugas.filter(t => !t.status).map(t => ({...t, days: calculateDaysLeft(t.deadline)})).sort((a,b)=>a.days-b.days);
+            const activeUjian = getSemesterData('ujian');
+            const activeTarget = getSemesterData('target');
+            const activeJadwal = getSemesterData('jadwal');
+
+            // Kalkulasi Target
+            const targetDone = activeTarget.filter(t => t.selesai).length;
+            const progress = activeTarget.length ? Math.round((targetDone / activeTarget.length) * 100) : 0;
             
+            // Kalkulasi Tugas
+            const tugasSelesai = activeTugas.filter(t => t.status).length;
+            const tugasBelum = activeTugas.filter(t => !t.status).length;
+            const totalTugas = tugasSelesai + tugasBelum;
+            const urgentTasks = [...activeTugas].filter(t => !t.status).map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => a.daysLeft - b.daysLeft);
+            
+            // Kalkulasi Beban Tugas (Berdasarkan Minggu)
+            let bebanMingguIni = 0;
+            let bebanMingguDepan = 0;
+            let bebanSelanjutnya = 0;
+            activeTugas.forEach(t => {
+                if(t.status) return;
+                let days = calculateDaysLeft(t.deadline);
+                if (days >= 0 && days <= 7) bebanMingguIni++;
+                else if (days > 7 && days <= 14) bebanMingguDepan++;
+                else if (days > 14) bebanSelanjutnya++;
+            });
+
+            // Kalkulasi Ujian
+            const upcomingExams = activeUjian.map(u => ({ ...u, daysLeft: calculateDaysLeft(u.tanggal) })).filter(u => u.daysLeft >= 0).sort((a,b) => a.daysLeft - b.daysLeft);
+            const ujianDekat = upcomingExams.filter(u => u.daysLeft <= 7);
+            const todaySchedule = activeJadwal.filter(j => j.hari === getTodayName());
+
             el.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="glass-card p-6 rounded-[2rem] flex flex-col items-center justify-center min-h-[300px]">
-                        <h3 class="font-black mb-4">Progress Tugas</h3>
-                        <div class="relative w-full h-full max-h-[220px] flex justify-center"><canvas id="tugasChart"></canvas></div>
-                    </div>
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <h3 class="font-black mb-4">Deadline Terdekat</h3>
-                        <div class="space-y-3">
-                            ${urgent.slice(0,3).map(t => `<div class="p-4 bg-white/40 dark:bg-slate-700/50 rounded-2xl flex justify-between"><div><p class="font-bold text-sm">${t.nama}</p><p class="text-[10px] text-gray-400">${t.matkul}</p></div><span class="text-[10px] font-black uppercase text-red-500">${t.days} Hari</span></div>`).join('') || '<p class="text-center text-gray-400 py-10">Santai dulu!</p>'}
+                <div class="space-y-6 md:space-y-8">
+                    
+                    <!-- Top Statistics Row -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <div class="glass-card p-5 rounded-3xl shadow-sm border-l-4 border-l-blue-500 flex flex-col justify-center">
+                            <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Mata Kuliah</p>
+                            <p class="text-2xl md:text-3xl font-black text-gray-800 dark:text-white">${activeMatkul.length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl shadow-sm border-l-4 border-l-green-500 flex flex-col justify-center">
+                            <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Tugas Selesai</p>
+                            <p class="text-2xl md:text-3xl font-black text-gray-800 dark:text-white">${tugasSelesai} <span class="text-sm font-medium text-gray-400 dark:text-slate-500">/ ${totalTugas}</span></p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl shadow-sm border-l-4 border-l-orange-500 flex flex-col justify-center">
+                            <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Ujian Mendatang</p>
+                            <p class="text-2xl md:text-3xl font-black text-gray-800 dark:text-white">${upcomingExams.length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl shadow-sm border-l-4 border-l-purple-500 flex flex-col justify-center relative overflow-hidden bg-purple-50/50 dark:bg-purple-900/10">
+                            <p class="text-[10px] md:text-xs text-purple-500 dark:text-purple-400 font-bold uppercase tracking-widest mb-1 relative z-10">Target Tercapai</p>
+                            <p class="text-2xl md:text-3xl font-black text-purple-700 dark:text-purple-300 relative z-10">${progress}%</p>
+                            <div class="absolute bottom-0 left-0 h-1 bg-purple-500 transition-all duration-1000" style="width: ${progress}%"></div>
                         </div>
                     </div>
-                </div>`;
-            if(totalTugas > 0) {
-                setTimeout(()=> {
-                    const ctx = document.getElementById('tugasChart');
-                    if (dashboardChartInstance) dashboardChartInstance.destroy();
-                    dashboardChartInstance = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: { labels: ['Selesai', 'Belum'], datasets: [{ data: [selesai, totalTugas - selesai], backgroundColor: ['#10B981', '#F43F5E'], borderWidth: 0 }] },
-                        options: { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: isDarkMode ? '#fff' : '#000' } } } }
-                    });
-                }, 50);
-            }
+
+                    <!-- Notifikasi Ujian Dekat (Tampil jika <= 7 hari) -->
+                    ${ujianDekat.length > 0 ? `
+                        <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-5 md:p-6 text-white shadow-lg flex items-center justify-between animate-fade">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-white/20 p-3 rounded-2xl"><i data-lucide="bell-ring" class="animate-bounce"></i></div>
+                                <div>
+                                    <h3 class="font-black text-lg">Peringatan Ujian!</h3>
+                                    <p class="text-sm text-white/90">Kamu memiliki ${ujianDekat.length} ujian dalam 7 hari ke depan. Waktunya belajar ekstra!</p>
+                                </div>
+                            </div>
+                            <button onclick="navigate('ujian')" class="hidden md:block bg-white text-red-500 font-bold px-4 py-2 rounded-xl text-sm hover:scale-105 transition-transform">Lihat Ujian</button>
+                        </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                        
+                        <!-- Kolom Kiri: Charts & Visuals -->
+                        <div class="space-y-6 md:space-y-8 lg:col-span-2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Grafik Penyelesaian Tugas -->
+                                <div class="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-md flex flex-col h-[300px]">
+                                    <h3 class="text-base font-black mb-4 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="pie-chart" class="text-purple-500" size="18"></i> Progress Tugas</h3>
+                                    <div class="flex-1 relative w-full flex justify-center items-center">
+                                        ${totalTugas > 0 ? `<canvas id="tugasChart" class="w-full h-full"></canvas>` : `
+                                            <div class="text-center text-gray-400 dark:text-slate-500">
+                                                <i data-lucide="check-circle-2" class="w-12 h-12 mx-auto mb-2 opacity-30"></i>
+                                                <p class="text-xs font-bold">Belum ada tugas</p>
+                                            </div>
+                                        `}
+                                    </div>
+                                </div>
+
+                                <!-- Grafik Analisis Beban Tugas -->
+                                <div class="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-md flex flex-col h-[300px]">
+                                    <h3 class="text-base font-black mb-4 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-blue-500" size="18"></i> Beban Tugas</h3>
+                                    <div class="flex-1 relative w-full flex justify-center items-center">
+                                        ${bebanMingguIni > 0 || bebanMingguDepan > 0 || bebanSelanjutnya > 0 ? `<canvas id="bebanChart" class="w-full h-full"></canvas>` : `
+                                            <div class="text-center text-gray-400 dark:text-slate-500">
+                                                <i data-lucide="smile" class="w-12 h-12 mx-auto mb-2 opacity-30"></i>
+                                                <p class="text-xs font-bold">Beban kosong. Santai dulu!</p>
+                                            </div>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- List Tugas Mendesak -->
+                            <div class="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-md">
+                                <h3 class="text-lg font-black mb-5 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="flame" class="text-pink-500"></i> Tugas Mendesak (Countdown)</h3>
+                                <div class="space-y-3">
+                                    ${urgentTasks.slice(0, 4).map(t => `
+                                        <div class="p-4 rounded-2xl bg-white dark:bg-slate-700/50 border border-gray-100 dark:border-slate-600 shadow-sm hover:border-pink-200 transition-colors flex justify-between items-center group">
+                                            <div class="overflow-hidden pr-2">
+                                                <p class="font-bold text-gray-800 dark:text-white text-sm truncate">${t.nama}</p>
+                                                <p class="text-[10px] text-gray-400 dark:text-slate-400 font-medium truncate">${t.matkul}</p>
+                                            </div>
+                                            <span class="text-[10px] font-black uppercase px-3 py-1.5 rounded-xl flex-shrink-0 ${t.daysLeft <= 1 ? 'bg-red-500 text-white shadow-md shadow-red-200 dark:shadow-none' : (t.daysLeft <= 3 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300')}">
+                                                ${t.daysLeft < 0 ? 'TERLAMBAT' : (t.daysLeft === 0 ? 'HARI INI' : t.daysLeft + ' HARI')}
+                                            </span>
+                                        </div>
+                                    `).join('') || '<p class="text-gray-400 text-sm text-center py-6 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-dashed dark:border-slate-700">Semua tugas aman terkendali! 🎉</p>'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan: Jadwal/Kalender Mini -->
+                        <div class="space-y-6 lg:col-span-1">
+                            <div class="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-md border-t-4 border-t-purple-500">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-base font-black text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="calendar-check" class="text-purple-600 dark:text-purple-400" size="18"></i> Agenda Hari Ini</h3>
+                                    <span class="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 font-bold px-3 py-1 rounded-full text-[9px] uppercase tracking-widest">${getTodayName()}</span>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    ${todaySchedule.length > 0 ? todaySchedule.map(j => `
+                                        <div class="flex gap-3">
+                                            <div class="w-12 flex flex-col items-center pt-1">
+                                                <div class="w-3 h-3 rounded-full bg-purple-500 border-2 border-purple-200 dark:border-purple-800"></div>
+                                                <div class="w-0.5 flex-1 bg-purple-100 dark:bg-purple-900 my-1"></div>
+                                            </div>
+                                            <div class="flex-1 bg-white dark:bg-slate-700 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-slate-600 pb-5">
+                                                <p class="text-[10px] font-black text-purple-500 dark:text-purple-400 mb-1">${j.waktu}</p>
+                                                <p class="font-bold text-gray-800 dark:text-white text-sm leading-tight">${j.matkul}</p>
+                                                <p class="text-[10px] text-gray-500 dark:text-slate-400 mt-1 flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</p>
+                                            </div>
+                                        </div>
+                                    `).join('') : `
+                                        <div class="text-center py-8">
+                                            <div class="w-16 h-16 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="coffee" class="text-gray-400 dark:text-slate-500"></i></div>
+                                            <p class="text-gray-500 dark:text-gray-400 font-bold text-sm">Tidak ada kelas hari ini!</p>
+                                        </div>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+
+            // Eksekusi Chart.js
+            setTimeout(() => {
+                const chartTextColor = isDarkMode ? '#cbd5e1' : '#64748b'; // slate-300 : slate-500
+
+                // Chart Progress Tugas
+                if (totalTugas > 0) {
+                    const ctx1 = document.getElementById('tugasChart');
+                    if (ctx1) {
+                        if (dashboardChartInstance) dashboardChartInstance.destroy();
+                        dashboardChartInstance = new Chart(ctx1, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Selesai', 'Belum'],
+                                datasets: [{
+                                    data: [tugasSelesai, tugasBelum],
+                                    backgroundColor: ['#10B981', '#F43F5E'],
+                                    borderColor: isDarkMode ? '#1e293b' : '#ffffff',
+                                    borderWidth: 2,
+                                    hoverOffset: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false, cutout: '75%',
+                                plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, padding: 15, font: { size: 10, family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' } } } }
+                            }
+                        });
+                    }
+                }
+
+                // Chart Beban Tugas (Mingguan)
+                if (bebanMingguIni > 0 || bebanMingguDepan > 0 || bebanSelanjutnya > 0) {
+                    const ctx2 = document.getElementById('bebanChart');
+                    if (ctx2) {
+                        if (taskLoadChartInstance) taskLoadChartInstance.destroy();
+                        taskLoadChartInstance = new Chart(ctx2, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Mgg Ini', 'Mgg Depan', 'Lainnya'],
+                                datasets: [{
+                                    label: 'Jumlah Tugas',
+                                    data: [bebanMingguIni, bebanMingguDepan, bebanSelanjutnya],
+                                    backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6'],
+                                    borderRadius: 8,
+                                    barThickness: 24
+                                }]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                scales: { 
+                                    y: { beginAtZero: true, ticks: { color: chartTextColor, stepSize: 1, font: {size: 10} }, grid: {display:false} }, 
+                                    x: { grid: {display:false}, ticks: {color: chartTextColor, font: {size: 10, weight: 'bold'}} } 
+                                },
+                                plugins: { legend: { display: false } }
+                            }
+                        });
+                    }
+                }
+            }, 100);
         }
 
         function renderMatkul(el) {
-            const data = getSemesterData('matkul');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Mata Kuliah</h2><button onclick="openModal('matkul')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between"><div><h4 class="font-black">${m.nama}</h4><p class="text-xs text-gray-500">${m.dosen}</p></div><button onclick="deleteItem('matkul', '${m.id}')" class="text-red-300"><i data-lucide="trash-2"></i></button></div>`).join('')}</div>`;
+            const activeMatkul = getSemesterData('matkul');
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800 dark:text-white">Daftar Mata Kuliah</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Total SKS Semester ${currentSemester}: <span class="font-bold text-purple-600 dark:text-purple-400">${activeMatkul.reduce((a, b) => a + parseInt(b.sks||0), 0)}</span></p>
+                    </div>
+                    <button onclick="openModal('matkul')" class="w-full sm:w-auto bg-gray-900 dark:bg-purple-600 text-white px-6 py-3.5 rounded-2xl font-bold shadow-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition-all flex items-center justify-center gap-2 text-sm active:scale-95"><i data-lucide="plus"></i> Tambah Matkul</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 animate-fade">
+                    ${activeMatkul.map(m => `
+                        <div class="glass-card p-6 rounded-[2rem] shadow-sm hover:shadow-xl border border-white dark:border-slate-700 hover:border-purple-100 dark:hover:border-purple-500/50 flex flex-col justify-between items-start group transition-all relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                            
+                            <div class="w-full text-left mb-6 relative z-10">
+                                <div class="flex justify-between items-start w-full">
+                                    <h3 class="text-lg font-black text-gray-800 dark:text-white mobile-truncate flex-1 pr-2 leading-tight">${m.nama}</h3>
+                                    <span class="bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-[10px] font-black px-2 py-1 rounded-lg flex-shrink-0 border border-gray-200 dark:border-slate-600">${m.sks} SKS</span>
+                                </div>
+                                <p class="text-gray-500 dark:text-slate-400 font-medium text-xs mt-2 flex items-center gap-1.5"><i data-lucide="user" size="14"></i> ${m.dosen}</p>
+                            </div>
+                            
+                            <div class="w-full flex justify-between items-center border-t border-gray-100 dark:border-slate-700 pt-4 relative z-10">
+                                <span class="text-[9px] font-bold text-purple-400 uppercase tracking-widest">Smt. ${currentSemester}</span>
+                                <button onclick="deleteItem('matkul', '${m.id}')" class="text-gray-300 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded-xl transition-colors shadow-sm border border-gray-100 dark:border-slate-700"><i data-lucide="trash-2" size="16"></i></button>
+                            </div>
+                        </div>
+                    `).join('') || `
+                        <div class="col-span-full py-20 text-center">
+                            <img src="https://www.svgrepo.com/show/400407/books.svg" class="w-32 h-32 mx-auto opacity-30 mb-4 grayscale">
+                            <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400">Belum Ada Mata Kuliah</h3>
+                            <p class="text-gray-400 dark:text-slate-500 text-sm mt-1">Tambahkan mata kuliah untuk semester ini.</p>
+                        </div>
+                    `}
+                </div>`;
         }
 
         function renderJadwal(el) {
-            const data = getSemesterData('jadwal');
-            const hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Jadwal Kuliah</h2><button onclick="openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${hari.map(h => `<div class="space-y-4"><h3 class="font-black border-b pb-2 dark:border-slate-700">${h}</h3>${data.filter(j => j.hari === h).map(j => `<div class="glass-card p-4 rounded-2xl"><h5>${j.matkul}</h5><p class="text-[10px] text-gray-400">${j.waktu}</p></div>`).join('')}</div>`).join('')}</div>`;
+            const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const activeJadwal = getSemesterData('jadwal');
+            
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800 dark:text-white">Jadwal Mingguan</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Pantau rutinitas kelas semester ${currentSemester}.</p>
+                    </div>
+                    <button onclick="openModal('jadwal')" class="w-full sm:w-auto bg-gray-900 dark:bg-purple-600 text-white px-6 py-3.5 rounded-2xl font-bold shadow-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition-all flex items-center justify-center gap-2 text-sm active:scale-95"><i data-lucide="plus"></i> Tambah Jadwal</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-fade text-left pb-10">
+                    ${hariList.map(hari => {
+                        const jadwalHariIni = activeJadwal.filter(j => j.hari === hari).sort((a,b) => a.waktu.localeCompare(b.waktu));
+                        return `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b-2 border-purple-100 dark:border-slate-700 pb-2">
+                                <h3 class="text-sm md:text-base font-black text-purple-600 dark:text-purple-400 flex items-center gap-2 uppercase tracking-widest"><i data-lucide="calendar-days" size="18"></i> ${hari}</h3>
+                                <span class="text-xs font-bold text-gray-400 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-lg">${jadwalHariIni.length}</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                ${jadwalHariIni.length > 0 ? jadwalHariIni.map(j => `
+                                    <div class="glass-card p-5 rounded-[1.5rem] shadow-sm hover:shadow-lg border border-white dark:border-slate-700 hover:border-purple-200 dark:hover:border-purple-500 transition-all group flex justify-between items-center relative overflow-hidden bg-white/40 dark:bg-slate-800/40">
+                                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <div class="flex-1 pr-3">
+                                            <p class="font-black text-gray-800 dark:text-white text-sm md:text-base leading-tight mb-1 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">${j.matkul}</p>
+                                            <p class="text-[10px] md:text-xs text-gray-500 dark:text-slate-400 font-semibold truncate mb-2">${j.dosen}</p>
+                                            <div class="flex flex-wrap items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">
+                                                <span class="flex items-center gap-1 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 px-2 py-1 rounded-md border border-purple-100 dark:border-purple-800"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
+                                                <span class="flex items-center gap-1 bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-slate-300 px-2 py-1 rounded-md border border-gray-200 dark:border-slate-600"><i data-lucide="map-pin" size="10"></i> ${j.ruang}</span>
+                                            </div>
+                                        </div>
+                                        <button onclick="deleteItem('jadwal', '${j.id}')" class="text-gray-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded-xl transition-all shadow-sm border border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800"><i data-lucide="trash-2" size="16"></i></button>
+                                    </div>
+                                `).join('') : `
+                                    <div class="p-6 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-[1.5rem] text-center bg-gray-50/50 dark:bg-slate-800/50">
+                                        <p class="text-xs text-gray-400 dark:text-slate-500 font-bold uppercase tracking-widest">Kosong</p>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `}).join('')}
+                </div>`;
         }
 
         function renderTugas(el) {
-            const data = getSemesterData('tugas');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Tugas</h2><button onclick="openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(t => `<div class="glass-card p-6 rounded-[2rem]"><div class="flex justify-between mb-4"><span class="text-[10px] font-black uppercase text-purple-500">${t.matkul}</span><button onclick="toggleStatus('tugas', '${t.id}', ${t.status})"><i data-lucide="${t.status?'check-square':'square'}"></i></button></div><p class="font-bold ${t.status?'line-through opacity-50':''}">${t.nama}</p></div>`).join('')}</div>`;
+            const activeTugas = getSemesterData('tugas');
+            const sortedTugas = [...activeTugas].map(t => ({ ...t, daysLeft: calculateDaysLeft(t.deadline) })).sort((a, b) => { if (a.status !== b.status) return a.status ? 1 : -1; return a.daysLeft - b.daysLeft; });
+            
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800 dark:text-white">Tugas & Deadline</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Selesaikan tugas semester ${currentSemester} tepat waktu!</p>
+                    </div>
+                    <button onclick="openModal('tugas')" class="w-full sm:w-auto bg-gray-900 dark:bg-purple-600 text-white px-6 py-3.5 rounded-2xl font-bold shadow-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition-all flex items-center justify-center gap-2 text-sm active:scale-95"><i data-lucide="plus"></i> Tambah Tugas</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-fade">
+                    ${sortedTugas.length > 0 ? sortedTugas.map(t => `
+                        <div class="glass-card p-6 rounded-[2rem] shadow-sm hover:shadow-lg border-2 ${t.status ? 'border-green-100 dark:border-green-900/50 bg-green-50/30 dark:bg-green-900/10' : 'border-white dark:border-slate-700 hover:border-purple-100 dark:hover:border-purple-500/50'} transition-all flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <span class="text-[10px] font-black uppercase tracking-[0.2em] ${t.status ? 'text-green-500' : 'text-purple-500 dark:text-purple-400'} truncate pr-2">${t.matkul}</span>
+                                    ${!t.status ? `<span class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${t.daysLeft <= 1 ? 'bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 animate-pulse' : (t.daysLeft <= 3 ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-300')}">${t.daysLeft <= 0 ? 'SEKARANG' : t.daysLeft + ' HARI'}</span>` : ''}
+                                </div>
+                                <h3 class="font-black text-lg text-gray-800 dark:text-white leading-tight mb-4 ${t.status ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${t.nama}</h3>
+                                <div class="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-6 bg-white/60 dark:bg-slate-800/60 w-max px-3 py-1.5 rounded-xl border border-gray-100 dark:border-slate-700">
+                                    <i data-lucide="calendar-clock" size="14"></i> ${new Date(t.deadline).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})}
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center pt-4 border-t ${t.status ? 'border-green-200 dark:border-green-900/50' : 'border-gray-100 dark:border-slate-700'}">
+                                <button onclick="toggleStatus('tugas', '${t.id}', ${t.status})" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${t.status ? 'bg-green-500 text-white shadow-md shadow-green-200 dark:shadow-none' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 border border-gray-200 dark:border-slate-600'}">
+                                    <i data-lucide="${t.status ? 'check-square' : 'square'}" size="16"></i>
+                                    ${t.status ? 'Selesai' : 'Tandai Selesai'}
+                                </button>
+                                <button onclick="deleteItem('tugas', '${t.id}')" class="text-gray-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors bg-white dark:bg-slate-800 shadow-sm border border-gray-100 dark:border-slate-700"><i data-lucide="trash-2" size="16"></i></button>
+                            </div>
+                        </div>
+                    `).join('') : `
+                        <div class="col-span-full py-20 text-center">
+                            <img src="https://www.svgrepo.com/show/400405/party-popper.svg" class="w-32 h-32 mx-auto mb-4 opacity-50 grayscale">
+                            <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400">Tidak Ada Tugas!</h3>
+                            <p class="text-gray-400 dark:text-slate-500 text-sm mt-1">Belum ada tugas untuk semester ini.</p>
+                        </div>
+                    `}
+                </div>`;
         }
 
         function renderUjian(el) {
-            const data = getSemesterData('ujian');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Ujian</h2><button onclick="openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl">Tambah</button></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between"><div><span class="text-[10px] font-black bg-orange-100 text-orange-600 px-2 py-0.5 rounded">${u.jenis}</span><h4 class="font-black mt-2">${u.matkul}</h4><p class="text-xs text-gray-500">${u.tanggal} - ${u.waktu}</p></div><div>${u.nilai?`<span class="text-2xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="openModalNilai('${u.id}', '${u.matkul}')" class="text-xs font-bold bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg">Nilai</button>`}</div></div>`).join('')}</div>`;
+            const activeUjian = getSemesterData('ujian');
+            const ujianDenganNilai = activeUjian.filter(u => u.nilai !== undefined && u.nilai !== "");
+            let avgNilai = 0;
+            let predikat = "-";
+            let warnaPredikat = "text-gray-400 dark:text-slate-500";
+            
+            if (ujianDenganNilai.length > 0) {
+                const total = ujianDenganNilai.reduce((acc, curr) => acc + parseInt(curr.nilai), 0);
+                avgNilai = (total / ujianDenganNilai.length).toFixed(1);
+                
+                if(avgNilai >= 85) { predikat = "A"; warnaPredikat = "text-green-500"; }
+                else if(avgNilai >= 70) { predikat = "B"; warnaPredikat = "text-blue-500"; }
+                else if(avgNilai >= 55) { predikat = "C"; warnaPredikat = "text-yellow-500"; }
+                else if(avgNilai >= 40) { predikat = "D"; warnaPredikat = "text-orange-500"; }
+                else { predikat = "E"; warnaPredikat = "text-red-500"; }
+            }
+
+            const upcomingExams = activeUjian.map(u => ({ ...u, daysLeft: calculateDaysLeft(u.tanggal) })).filter(u => u.daysLeft >= 0).sort((a,b) => a.daysLeft - b.daysLeft);
+            const pastExams = activeUjian.map(u => ({ ...u, daysLeft: calculateDaysLeft(u.tanggal) })).filter(u => u.daysLeft < 0).sort((a,b) => a.tanggal.localeCompare(b.tanggal));
+
+            el.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-800 dark:text-white">Ujian & Nilai</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Siapkan ujian semester ${currentSemester} dan pantau hasilmu.</p>
+                    </div>
+                    <button onclick="openModal('ujian')" class="w-full sm:w-auto bg-gray-900 dark:bg-purple-600 text-white px-6 py-3.5 rounded-2xl font-bold shadow-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition-all flex items-center justify-center gap-2 text-sm active:scale-95"><i data-lucide="plus"></i> Tambah Ujian</button>
+                </div>
+
+                <!-- Prediksi Nilai -->
+                <div class="glass-card p-6 md:p-8 rounded-[2rem] shadow-lg mb-8 bg-gradient-to-br from-white to-purple-50 dark:from-slate-800 dark:to-purple-900/20 flex items-center gap-6 animate-fade relative overflow-hidden border border-white dark:border-slate-700">
+                    <div class="absolute right-0 top-0 w-32 h-32 bg-purple-200 dark:bg-purple-900 rounded-full blur-3xl opacity-50"></div>
+                    <div class="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-white dark:bg-slate-700 shadow-md border-2 border-purple-100 dark:border-slate-600 flex items-center justify-center flex-shrink-0 relative z-10">
+                        <span class="text-4xl md:text-5xl font-black ${warnaPredikat}">${predikat}</span>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-sm font-bold text-purple-500 dark:text-purple-400 uppercase tracking-widest mb-1">Prediksi Indeks Nilai</h3>
+                        <p class="text-2xl font-black text-gray-800 dark:text-white leading-tight">Rata-rata: ${avgNilai}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Berdasarkan ${ujianDenganNilai.length} ujian di semester ini.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade">
+                    <!-- Ujian Mendatang -->
+                    <div>
+                        <h3 class="text-lg font-black text-gray-800 dark:text-white mb-4 border-b-2 border-purple-100 dark:border-slate-700 pb-2">Menunggu Jadwal ⏳</h3>
+                        <div class="space-y-4">
+                            ${upcomingExams.length > 0 ? upcomingExams.map(u => `
+                                <div class="glass-card p-5 rounded-2xl border-l-8 border-l-orange-400 dark:border-l-orange-500 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group hover:shadow-md transition-all border border-white dark:border-slate-700">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-[9px] font-black bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded uppercase tracking-widest">${u.jenis}</span>
+                                            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500"><i data-lucide="calendar" size="10" class="inline"></i> ${new Date(u.tanggal).toLocaleDateString('id-ID')}</span>
+                                        </div>
+                                        <h4 class="font-black text-gray-800 dark:text-white text-lg">${u.matkul}</h4>
+                                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1"><i data-lucide="clock" size="12" class="inline"></i> ${u.waktu} • <i data-lucide="map-pin" size="12" class="inline"></i> ${u.ruang || '-'}</p>
+                                    </div>
+                                    <div class="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-gray-100 dark:border-slate-700 sm:border-0">
+                                        <span class="text-xl font-black ${u.daysLeft <= 3 ? 'text-red-500 animate-pulse' : 'text-purple-600 dark:text-purple-400'}">${u.daysLeft} <span class="text-xs font-bold text-gray-400 uppercase">Hari</span></span>
+                                        <button onclick="deleteItem('ujian', '${u.id}')" class="text-gray-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors ml-auto sm:ml-0"><i data-lucide="trash-2" size="16"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="text-sm text-gray-400 italic text-center py-6 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white dark:border-slate-700">Belum ada jadwal ujian.</p>'}
+                        </div>
+                    </div>
+
+                    <!-- Ujian Selesai / Input Nilai -->
+                    <div>
+                        <h3 class="text-lg font-black text-gray-800 dark:text-white mb-4 border-b-2 border-green-100 dark:border-slate-700 pb-2">Ujian Selesai & Nilai ✅</h3>
+                        <div class="space-y-4">
+                            ${pastExams.length > 0 ? pastExams.map(u => `
+                                <div class="glass-card p-5 rounded-2xl shadow-sm flex items-center justify-between group hover:shadow-md transition-all border border-gray-100 dark:border-slate-700">
+                                    <div class="flex-1 overflow-hidden pr-3">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-[9px] font-black bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded uppercase tracking-widest">${u.jenis}</span>
+                                        </div>
+                                        <h4 class="font-bold text-gray-700 dark:text-gray-200 text-base truncate">${u.matkul}</h4>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        ${u.nilai ? `
+                                            <div class="text-center px-4 border-l border-gray-100 dark:border-slate-700">
+                                                <span class="block text-2xl font-black text-green-600 dark:text-green-400">${u.nilai}</span>
+                                            </div>
+                                        ` : `
+                                            <button onclick="openModalNilai('${u.id}', '${u.matkul} - ${u.jenis}')" class="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-600 dark:hover:bg-purple-500 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors border border-purple-200 dark:border-purple-800">Input Nilai</button>
+                                        `}
+                                        <button onclick="deleteItem('ujian', '${u.id}')" class="text-gray-200 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="trash-2" size="16"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="text-sm text-gray-400 italic text-center py-6 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white dark:border-slate-700">Belum ada ujian yang lewat.</p>'}
+                        </div>
+                    </div>
+                </div>`;
         }
 
         function renderTarget(el) {
-            const data = getSemesterData('target');
-            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Target Semester</h2><button onclick="openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white p-3 rounded-2xl">Tambah</button></div>
-            <div class="space-y-4">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between" onclick="toggleStatus('target', '${t.id}', ${t.selesai})"><p class="font-bold ${t.selesai?'line-through opacity-50':''}">${t.teks}</p><i data-lucide="${t.selesai?'check-circle':'circle'}"></i></div>`).join('')}</div>`;
+            const activeTarget = getSemesterData('target');
+            const completedCount = activeTarget.filter(t => t.selesai).length;
+            const percentage = activeTarget.length === 0 ? 0 : Math.round((completedCount / activeTarget.length) * 100);
+
+            el.innerHTML = `
+                <div class="max-w-3xl mx-auto py-6 animate-fade">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6 glass-card p-6 md:p-8 rounded-[2rem] border border-white dark:border-slate-700 shadow-xl">
+                        <div class="text-center md:text-left">
+                            <h2 class="text-2xl md:text-4xl font-black tracking-tighter text-gray-800 dark:text-white mb-2">Target Semester ${currentSemester}</h2>
+                            <p class="text-gray-500 dark:text-gray-400 font-medium">Progress saat ini: <span class="font-bold text-purple-600 dark:text-purple-400">${percentage}%</span> tercapai.</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-100 dark:bg-slate-700 h-3 rounded-full mt-4 overflow-hidden border border-gray-200 dark:border-slate-600 w-64 md:w-80 mx-auto md:mx-0">
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <button onclick="openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white p-4 rounded-2xl shadow-lg hover:shadow-purple-300 dark:hover:shadow-none hover:bg-purple-700 dark:hover:bg-purple-500 hover:rotate-90 transition-all active:scale-95 flex-shrink-0"><i data-lucide="plus" size="24"></i></button>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${activeTarget.map(t => `
+                            <div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-[2rem] flex items-center justify-between group border-2 ${t.selesai ? 'border-green-200 dark:border-green-900/50 bg-green-50/40 dark:bg-green-900/10 shadow-sm' : 'border-white dark:border-slate-700 hover:border-purple-200 dark:hover:border-purple-500 hover:shadow-lg'} transition-all overflow-hidden relative">
+                                ${t.selesai ? '<div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent pointer-events-none"></div>' : ''}
+                                
+                                <div class="flex items-center gap-4 md:gap-5 cursor-pointer flex-1 text-left relative z-10" onclick="toggleStatus('target', '${t.id}', ${t.selesai})">
+                                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center border-2 transition-all ${t.selesai ? 'bg-gradient-to-br from-green-400 to-green-500 border-transparent text-white shadow-lg shadow-green-200 dark:shadow-none scale-110' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 group-hover:border-purple-400 text-gray-300 dark:text-gray-500'} flex-shrink-0">
+                                        <i data-lucide="check" size="20" class="${t.selesai ? 'opacity-100' : 'opacity-0'} transition-opacity"></i>
+                                    </div>
+                                    <span class="text-base md:text-xl font-bold ${t.selesai ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-700 dark:text-white tracking-tight'}">${t.teks}</span>
+                                </div>
+                                <button onclick="deleteItem('target', '${t.id}')" class="text-gray-300 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 p-3 rounded-xl transition-all shadow-sm border border-gray-100 dark:border-slate-700 relative z-10 opacity-100 md:opacity-0 group-hover:opacity-100"><i data-lucide="trash-2" size="18"></i></button>
+                            </div>
+                        `).join('') || `
+                            <div class="py-16 text-center">
+                                <img src="https://www.svgrepo.com/show/398418/target.svg" class="w-24 h-24 mx-auto mb-4 opacity-40 grayscale">
+                                <p class="text-gray-400 dark:text-slate-500 font-bold text-lg">Belum ada target.</p>
+                                <p class="text-gray-400 dark:text-slate-500 text-sm">Tulis tujuan besarmu semester ini!</p>
+                            </div>
+                        `}
+                    </div>
+                </div>`;
         }
 
-        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; openModal('nilai'); };
-        window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
-        window.saveJadwal = async () => { 
-            const matkul = document.getElementById('in-j-matkul').value; 
-            const hM = document.getElementById('in-j-mulai-h').value; 
-            const mM = document.getElementById('in-j-mulai-m').value;
-            const hS = document.getElementById('in-j-selesai-h').value; 
-            const mS = document.getElementById('in-j-selesai-m').value;
-            if(!matkul || !hM || !hS) { alert("Data belum lengkap!"); return; }
-            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${mM} - ${hS}:${mS}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, createdAt: serverTimestamp() });
-            closeModal();
+        // ================= ACTION HANDLERS ================= //
+        window.openModal = (id) => { 
+            document.getElementById('modal-overlay').classList.remove('hidden'); 
+            document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); 
+            document.getElementById('modal-' + id).classList.remove('hidden'); 
         };
-        window.saveMatkul = async () => { const n = document.getElementById('in-m-nama').value; if(!n) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { nama: n, sks: document.getElementById('in-m-sks').value, dosen: document.getElementById('in-m-dosen').value, semester: currentSemester }); closeModal(); };
-        window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; if(!n) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { nama: n, matkul: document.getElementById('in-t-matkul').value, deadline: document.getElementById('in-t-deadline').value, status: false, semester: currentSemester }); closeModal(); };
-        window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { teks: t, selesai: false, semester: currentSemester }); closeModal(); };
-        window.saveUjian = async () => { const m = document.getElementById('in-u-matkul').value; if(!m) return; await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { matkul: m, jenis: document.getElementById('in-u-jenis').value, tanggal: document.getElementById('in-u-tanggal').value, waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, nilai: null, semester: currentSemester }); closeModal(); };
-        window.saveNilai = async () => { const id = document.getElementById('in-n-id').value; const v = document.getElementById('in-n-nilai').value; if(!v) return; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); closeModal(); };
-        window.toggleStatus = async (col, docId, s) => { await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); };
-        window.deleteItem = async (col, docId) => { if(confirm('Hapus?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
-        window.logout = async () => { await signOut(auth); window.location.reload(); };
+        window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
+
+        window.openModalNilai = (id, label) => {
+            document.getElementById('in-n-id').value = id;
+            document.getElementById('nilai-matkul-label').innerText = label;
+            openModal('nilai');
+        };
+
+        // Menyimpan data dengan field semester yang aktif
+        window.saveJadwal = async () => { 
+            const elMatkul = document.getElementById('in-j-matkul');
+            const matkul = elMatkul ? elMatkul.value : ''; 
+            const sks = document.getElementById('in-j-sks').value; 
+            const dosen = document.getElementById('in-j-dosen').value; 
+            const hari = document.getElementById('in-j-hari').value; 
+            
+            // PERBAIKAN: Membaca dari ID yang benar (in-j-mulai-h)
+            const hMulai = document.getElementById('in-j-mulai-h').value; 
+            const mMulai = document.getElementById('in-j-mulai-m').value; 
+            const hSelesai = document.getElementById('in-j-selesai-h').value; 
+            const mSelesai = document.getElementById('in-j-selesai-m').value; 
+            const ruang = document.getElementById('in-j-ruang').value; 
+            
+            if(!matkul) { alert("Pilih Mata Kuliah terlebih dahulu!"); return; }
+            if(!hMulai || !hSelesai) { alert("Harap isi waktu mulai dan selesai!"); return; }
+            if(!currentUserId) return; 
+            
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { 
+                matkul, sks: parseInt(sks) || 0, dosen, hari, waktu: `${hMulai}:${mMulai} - ${hSelesai}:${mSelesai}`, ruang, semester: currentSemester, createdAt: serverTimestamp() 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveMatkul = async () => { 
+            const nama = document.getElementById('in-m-nama').value; 
+            const sks = document.getElementById('in-m-sks').value; 
+            const dosen = document.getElementById('in-m-dosen').value; 
+            
+            if(!nama) { alert("Pilih Mata Kuliah terlebih dahulu!"); return; }
+            if(!currentUserId) return; 
+            
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), { 
+                nama, sks: parseInt(sks) || 0, dosen, semester: currentSemester, createdAt: serverTimestamp() 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveTugas = async () => { 
+            const nama = document.getElementById('in-t-nama').value; 
+            const elMatkul = document.getElementById('in-t-matkul');
+            const matkul = elMatkul ? elMatkul.value : ''; 
+            const deadline = document.getElementById('in-t-deadline').value; 
+            
+            if(!nama) { alert("Isi Nama Tugas!"); return; }
+            if(!matkul) { alert("Pilih Mata Kuliah terkait!"); return; }
+            if(!deadline) { alert("Tentukan Tenggat Waktu!"); return; }
+            if(!currentUserId) return; 
+            
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { 
+                nama, matkul, deadline, status: false, semester: currentSemester, createdAt: serverTimestamp() 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveTarget = async () => { 
+            const teks = document.getElementById('in-tg-teks').value; 
+            
+            if(!teks) { alert("Target tidak boleh kosong!"); return; }
+            if(!currentUserId) return; 
+            
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { 
+                teks, selesai: false, semester: currentSemester, createdAt: serverTimestamp() 
+            }); 
+            closeModal(); 
+        };
+        
+        window.saveUjian = async () => { 
+            const elMatkul = document.getElementById('in-u-matkul');
+            const matkul = elMatkul ? elMatkul.value : ''; 
+            const jenis = document.getElementById('in-u-jenis').value; 
+            const tanggal = document.getElementById('in-u-tanggal').value; 
+            const hUjian = document.getElementById('in-u-waktu-h').value; 
+            const mUjian = document.getElementById('in-u-waktu-m').value; 
+            const ruang = document.getElementById('in-u-ruang').value; 
+            
+            if(!matkul) { alert("Pilih Mata Kuliah terlebih dahulu!"); return; }
+            if(!tanggal) { alert("Tentukan Tanggal Ujian!"); return; }
+            if(!currentUserId) return; 
+            
+            await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { 
+                matkul, jenis, tanggal, waktu: `${hUjian}:${mUjian}`, ruang, nilai: null, semester: currentSemester, createdAt: serverTimestamp() 
+            }); 
+            closeModal(); 
+        };
+
+        window.saveNilai = async () => {
+            const id = document.getElementById('in-n-id').value;
+            const nilai = document.getElementById('in-n-nilai').value;
+            if(!id || !nilai || !currentUserId) return;
+            await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: parseInt(nilai) });
+            closeModal();
+            document.getElementById('in-n-nilai').value = ''; // reset
+        }
+
+        window.toggleStatus = async (col, docId, currentStatus) => { const field = col === 'tugas' ? 'status' : 'selesai'; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [field]: !currentStatus }); };
+        window.deleteItem = async (col, docId) => { if(confirm('Yakin ingin menghapus data ini?')) { await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); } };
+        
+        window.logout = async () => { 
+            await signOut(auth);
+            window.location.reload(); 
+        };
     </script>
 </body>
 </html>
