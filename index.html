@@ -11,7 +11,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Menggunakan versi terbaru dan lebih stabil -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
     <style id="dynamic-font-style">
         /* Default Font Size: Sedang */
@@ -348,72 +349,91 @@
             }
 
             try {
-                // Gunakan XLSX dari window karena di-load via script tag
-                if (typeof window.XLSX === 'undefined') {
-                    alert("Library Excel belum siap. Silakan tunggu sebentar.");
+                // Memastikan XLSX tersedia dari library SheetJS
+                if (typeof XLSX === 'undefined') {
+                    alert("Library Excel belum siap. Silakan tunggu sebentar atau muat ulang halaman.");
                     return;
                 }
 
-                const wb = window.XLSX.utils.book_new();
+                // Membuat workbook baru
+                const wb = XLSX.utils.book_new();
                 let hasSheets = false;
 
                 // 1. Ekspor Data Jadwal
                 const dataJadwal = store.jadwal.map(j => ({
-                    "Mata Kuliah": j.matkul, "SKS": j.sks, "Dosen": j.dosen, "Hari": j.hari, "Waktu": j.waktu, "Ruangan": j.ruang
+                    "Mata Kuliah": j.matkul || "-",
+                    "SKS": j.sks || 0,
+                    "Dosen": j.dosen || "-",
+                    "Hari": j.hari || "-",
+                    "Waktu": j.waktu || "-",
+                    "Ruangan": j.ruang || "-"
                 }));
 
                 // 2. Ekspor Data Mata Kuliah
                 const dataMatkul = store.matkul.map(m => ({
-                    "Mata Kuliah": m.nama, "SKS": m.sks, "Dosen": m.dosen
+                    "Mata Kuliah": m.nama || "-",
+                    "SKS": m.sks || 0,
+                    "Dosen": m.dosen || "-"
                 }));
 
                 // 3. Ekspor Data Tugas
                 const dataTugas = store.tugas.map(t => ({
-                    "Nama Tugas": t.nama, "Mata Kuliah": t.matkul, "Deadline": t.deadline, "Status": t.status ? "Selesai" : "Belum Selesai"
+                    "Nama Tugas": t.nama || "-",
+                    "Mata Kuliah": t.matkul || "-",
+                    "Deadline": t.deadline || "-",
+                    "Status": t.status ? "Selesai" : "Belum Selesai"
                 }));
 
                 // Fungsi pengatur lebar kolom otomatis
                 const autoWidth = (data) => {
-                    if (data.length === 0) return [];
+                    if (!data || data.length === 0) return [];
                     const keys = Object.keys(data[0]);
                     return keys.map(key => {
-                        const maxLen = Math.max(key.length, ...data.map(obj => obj[key]?.toString().length || 0));
-                        return { wch: maxLen + 3 };
+                        const maxLen = Math.max(
+                            key.length, 
+                            ...data.map(obj => (obj[key] !== null && obj[key] !== undefined) ? obj[key].toString().length : 0)
+                        );
+                        return { wch: maxLen + 3 }; // Menambahkan sedikit padding
                     });
                 };
 
+                // Menambahkan Sheet Jadwal jika ada data
                 if (dataJadwal.length > 0) {
-                    const wsJadwal = window.XLSX.utils.json_to_sheet(dataJadwal);
+                    const wsJadwal = XLSX.utils.json_to_sheet(dataJadwal);
                     wsJadwal["!cols"] = autoWidth(dataJadwal);
-                    window.XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
+                    XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
                     hasSheets = true;
                 }
 
+                // Menambahkan Sheet Matkul jika ada data
                 if (dataMatkul.length > 0) {
-                    const wsMatkul = window.XLSX.utils.json_to_sheet(dataMatkul);
+                    const wsMatkul = XLSX.utils.json_to_sheet(dataMatkul);
                     wsMatkul["!cols"] = autoWidth(dataMatkul);
-                    window.XLSX.utils.book_append_sheet(wb, wsMatkul, "Daftar Matkul");
+                    XLSX.utils.book_append_sheet(wb, wsMatkul, "Daftar Matkul");
                     hasSheets = true;
                 }
 
+                // Menambahkan Sheet Tugas jika ada data
                 if (dataTugas.length > 0) {
-                    const wsTugas = window.XLSX.utils.json_to_sheet(dataTugas);
+                    const wsTugas = XLSX.utils.json_to_sheet(dataTugas);
                     wsTugas["!cols"] = autoWidth(dataTugas);
-                    window.XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
+                    XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
                     hasSheets = true;
                 }
 
-                // Jika lolos seleksi awal (ada data) tapi entah kenapa ketiga filter kosong
+                // Jika tidak ada satupun data yang terekspor (misal array kosong meski store.xxx.length lolos cek)
                 if (!hasSheets) {
-                    const wsKosong = window.XLSX.utils.json_to_sheet([{"Info": "Data masih kosong di sistem"}]);
-                    window.XLSX.utils.book_append_sheet(wb, wsKosong, "Data");
+                     const wsKosong = XLSX.utils.json_to_sheet([{"Info": "Data kosong saat proses ekspor"}]);
+                     XLSX.utils.book_append_sheet(wb, wsKosong, "Info Data");
                 }
 
-                const fileName = `StudyFlow_Export_${new Date().toLocaleDateString('id-ID')}.xlsx`;
-                window.XLSX.writeFile(wb, fileName);
+                // Menyimpan file Excel
+                const fileName = `StudyFlow_Export_${new Date().toISOString().slice(0,10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
             } catch (error) {
                 console.error("Gagal Ekspor:", error);
-                alert("Terjadi kesalahan saat mengekspor data: " + error.message);
+                alert("Terjadi kesalahan teknis saat membuat file Excel: " + error.message);
             }
         };
 
