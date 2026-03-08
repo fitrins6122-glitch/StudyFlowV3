@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style id="dynamic-font-style">
         /* Default Font Size: Sedang */
@@ -351,7 +351,13 @@
             }
 
             try {
-                const wb = XLSX.utils.book_new();
+                // Gunakan XLSX dari window karena di-load via script tag
+                if (typeof window.XLSX === 'undefined') {
+                    alert("Library Excel belum siap. Silakan tunggu sebentar.");
+                    return;
+                }
+
+                const wb = window.XLSX.utils.book_new();
 
                 const dataJadwal = store.jadwal.map(j => ({
                     "Mata Kuliah": j.matkul, "SKS": j.sks, "Dosen": j.dosen, "Hari": j.hari, "Waktu": j.waktu, "Ruangan": j.ruang
@@ -371,19 +377,19 @@
                 };
 
                 if (dataJadwal.length > 0) {
-                    const wsJadwal = XLSX.utils.json_to_sheet(dataJadwal);
+                    const wsJadwal = window.XLSX.utils.json_to_sheet(dataJadwal);
                     wsJadwal["!cols"] = autoWidth(dataJadwal);
-                    XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
+                    window.XLSX.utils.book_append_sheet(wb, wsJadwal, "Jadwal Kuliah");
                 }
 
                 if (dataTugas.length > 0) {
-                    const wsTugas = XLSX.utils.json_to_sheet(dataTugas);
+                    const wsTugas = window.XLSX.utils.json_to_sheet(dataTugas);
                     wsTugas["!cols"] = autoWidth(dataTugas);
-                    XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
+                    window.XLSX.utils.book_append_sheet(wb, wsTugas, "Daftar Tugas");
                 }
 
                 const fileName = `StudyFlow_Export_${new Date().toLocaleDateString('id-ID')}.xlsx`;
-                XLSX.writeFile(wb, fileName);
+                window.XLSX.writeFile(wb, fileName);
             } catch (error) {
                 console.error("Gagal Ekspor:", error);
                 alert("Terjadi kesalahan saat mengekspor data.");
