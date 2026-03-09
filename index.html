@@ -3,650 +3,773 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Keuangan Bisnis</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & Babel -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- XLSX -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- KEAMANAN: Izin agar Google Login tidak error (FedCM) -->
+    <meta http-equiv="Permissions-Policy" content="identity-credentials-get=(self 'https://accounts.google.com')">
+    
+    <title>StudyFlow - Smart Academic Planner</title>
+    
+    <!-- Dependencies: Tailwind CSS & Lucide Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- EKSPOR EXCEL: Library SheetJS (XLSX) -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+    <!-- CHART.JS: Library untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style id="dynamic-font-style">
+        :root { --base-font-size: 16px; }
+        html { font-size: var(--base-font-size); }
+    </style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0;
+            background-color: #F8F7FF;
+            transition: background-color 0.3s, color 0.3s, font-size 0.2s ease-in-out;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .dark body { background-color: #0f172a; }
+        html.dark { color-scheme: dark; }
+        
+        .dark select option { 
+            background-color: #1e293b; 
+            color: #f8fafc; 
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 40px -10px rgba(124, 58, 237, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-sidebar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(124, 58, 237, 0.1);
+        }
+
+        .dark .glass-sidebar {
+            background: rgba(15, 23, 42, 0.85);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bg-studyflow {
+            background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856252/607beaa0-a843-4430-b9c5-1ca9f1905b85_jjufh2.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        html.dark body.bg-studyflow {
+            background-image: url('https://res.cloudinary.com/dfbkph06k/image/upload/v1772856163/uk2zWrj4lijCqPlE1e6A5GJ7H3ZqGKvNxSTJZAzZRQClBx9y6BzmBWrTjmBOBjwfc_VydIWuMaD8HDyAG35MqmvKtAte0n1xElZQxP5Xu7Y_wizbu7.jpg') !important;
+            background-color: #0f172a;
+        }
+
+        .active-nav {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white !important;
+            box-shadow: 0 10px 20px -5px rgba(109, 40, 217, 0.4);
+            transform: scale(1.02);
+        }
+
+        #modal-overlay { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
+        .dark #modal-overlay { background: rgba(0, 0, 0, 0.7); }
+        .font-opt-active { background-color: #7C3AED !important; color: white !important; }
+        #loading-screen { background: white; z-index: 1000; }
+        .dark #loading-screen { background: #0f172a; }
+
+        .text-gradient {
+            background: linear-gradient(to right, #7C3AED, #DB2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .dark .text-gradient {
+            background: linear-gradient(to right, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        select.time-select {
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            background: transparent;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-studyflow text-gray-800 dark:text-gray-100 min-h-screen relative overflow-x-hidden text-left">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 flex items-center justify-center transition-opacity duration-500">
+        <div class="text-center p-6">
+            <div class="w-12 h-12 md:w-16 md:h-16 border-4 border-purple-200 dark:border-purple-900 border-t-purple-600 dark:border-t-purple-400 rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-purple-600 dark:text-purple-400 font-bold animate-pulse text-sm md:text-base tracking-wide">Menyiapkan StudyFlow...</p>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 bg-white/30 dark:bg-black/40 pointer-events-none z-0 transition-colors duration-300"></div>
+
+    <!-- ================= VIEW LOGIN ================= -->
+    <div id="login-view" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 text-center">
+        <div class="glass-card p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] shadow-2xl w-full max-w-md animate-fade flex flex-col justify-center items-center border-t border-l relative overflow-hidden text-gray-800 dark:text-white">
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-400 rounded-full filter blur-2xl opacity-30 animate-pulse"></div>
+            
+            <div class="mb-8 relative z-10">
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" alt="StudyFlow Logo" class="w-24 h-24 md:w-28 md:h-28 rounded-3xl mx-auto shadow-xl border-4 border-white dark:border-slate-700 object-cover transform hover:rotate-6 transition-transform duration-500" />
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-3 relative z-10">
+                Study<span class="text-gradient">Flow</span>
+            </h1>
+            <p class="text-gray-500 dark:text-gray-300 mb-8 font-medium leading-relaxed px-2 text-sm md:text-base relative z-10">Ruang belajar pintarmu. Kelola jadwal, tugas, dan ujian secara otomatis.</p>
+            
+            <div class="flex flex-col items-center gap-4 mb-4 w-full relative z-10">
+                <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-3 w-full max-w-[280px] bg-white dark:bg-slate-800 border-2 border-purple-50 dark:border-slate-700 font-bold py-3.5 px-4 rounded-2xl shadow-xl shadow-purple-100 dark:shadow-none hover:bg-purple-50 dark:hover:bg-slate-700 transition-all active:scale-95 text-sm md:text-base group">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 group-hover:scale-110 transition-transform">
+                    Lanjutkan dengan Google
+                </button>
+            </div>
+            
+            <div id="conn-status" class="mt-4 min-h-[40px] w-full flex flex-col items-center justify-center text-center px-4 relative z-10 text-xs font-bold text-purple-600 dark:text-purple-300 uppercase tracking-widest"></div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN DASHBOARD VIEW ================= -->
+    <div id="app-view" class="hidden flex min-h-screen relative z-10">
+        <!-- Sidebar Desktop -->
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 glass-sidebar p-6 z-40">
+            <div class="flex items-center gap-4 mb-10 px-2 pt-4">
+                <img src="https://res.cloudinary.com/dfbkph06k/image/upload/v1772855204/ChatGPT_Image_Mar_7_2026_10_41_30_AM_bxqua9.png" class="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-white dark:border-slate-700" />
+                <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-700 to-pink-500 dark:from-purple-300 dark:to-pink-300 tracking-tighter">StudyFlow</h1>
+            </div>
+
+            <nav class="flex-1 space-y-2 overflow-y-auto pr-2 pb-10">
+                <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white active-nav text-sm">
+                    <i data-lucide="layout-grid"></i> Dashboard Analytics
+                </button>
+                <button onclick="navigate('matkul')" id="nav-matkul" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
+                    <i data-lucide="book-open"></i> Mata Kuliah
+                </button>
+                <button onclick="navigate('jadwal')" id="nav-jadwal" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
+                    <i data-lucide="calendar"></i> Jadwal Kuliah
+                </button>
+                <button onclick="navigate('tugas')" id="nav-tugas" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
+                    <i data-lucide="check-square"></i> Tugas & Deadline
+                </button>
+                <button onclick="navigate('target')" id="nav-target" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
+                    <i data-lucide="target"></i> Target Semester
+                </button>
+                <button onclick="navigate('ujian')" id="nav-ujian" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-bold text-gray-500 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-slate-800 hover:text-purple-700 dark:hover:text-white text-sm">
+                    <i data-lucide="award"></i> Ujian & Nilai
+                </button>
+            </nav>
+
+            <div class="pt-6 border-t border-purple-100/50 dark:border-slate-700/50 pb-4 text-left">
+                <button onclick="logout()" class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-inner transition-all font-bold text-sm">
+                    <i data-lucide="log-out"></i> Keluar
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 lg:p-10 pb-32 lg:pb-10 max-w-[1600px] mx-auto w-full overflow-y-auto h-screen relative z-10 text-left">
+            <header class="flex justify-between items-center mb-8 bg-white/60 dark:bg-slate-800/60 p-3 md:p-5 rounded-[1.5rem] md:rounded-[2rem] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+                <div class="flex items-center gap-3 md:gap-5 overflow-hidden">
+                    <div class="relative">
+                        <img id="profile-pic" src="" class="w-10 h-10 md:w-14 md:h-14 rounded-full border-4 border-white dark:border-slate-700 shadow-md object-cover flex-shrink-0" onerror="this.src='https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff'" />
+                        <div class="absolute bottom-0 right-0 w-3 h-3 md:w-3.5 md:h-3.5 bg-green-400 border-2 border-white dark:border-slate-700 rounded-full"></div>
+                    </div>
+                    <div class="overflow-hidden flex flex-col justify-center">
+                        <h2 class="text-[9px] md:text-[10px] font-black text-purple-500 dark:text-purple-300 uppercase tracking-[0.2em] truncate mb-0.5">Selamat Datang,</h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-0.5 text-left">
+                            <h1 id="profile-name" class="text-sm md:text-xl font-black text-gray-800 dark:text-white tracking-tight truncate leading-tight">Memuat...</h1>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[8px] md:text-[10px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:inline-block">Periode Aktif:</span>
+                                <div class="relative flex items-center group">
+                                    <select id="semester-select" onchange="changeSemester(this.value)" class="bg-purple-100 dark:bg-slate-700 text-purple-700 dark:text-white font-bold text-[10px] md:text-xs px-2 py-1 md:py-1.5 md:px-3 md:pr-8 pr-6 rounded-lg md:rounded-xl border border-purple-200 dark:border-slate-600 outline-none cursor-pointer appearance-none focus:ring-2 focus:ring-purple-400">
+                                        <option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option>
+                                        <option value="5">Semester 5</option><option value="6">Semester 6</option><option value="7">Semester 7</option><option value="8">Semester 8</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="absolute right-1.5 w-3 h-3 text-purple-600 dark:text-white pointer-events-none"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-3">
+                    <button onclick="toggleTheme()" class="bg-white dark:bg-slate-700 p-2.5 rounded-xl text-gray-400 dark:text-yellow-400 hover:bg-purple-50 dark:hover:bg-slate-600 transition-all shadow-sm">
+                        <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+                    </button>
+                    <div class="relative group">
+                        <button class="bg-white dark:bg-slate-700 p-2.5 rounded-xl text-gray-400 dark:text-gray-300 hover:bg-purple-50 transition-all shadow-sm">
+                            <i data-lucide="type" class="w-4 h-4"></i>
+                        </button>
+                        <div class="absolute right-0 top-full mt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible glass-card rounded-2xl p-2 w-40 shadow-2xl z-[100] border border-purple-100 dark:border-slate-600 transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
+                            <p class="text-[9px] font-black text-purple-400 dark:text-purple-300 uppercase px-3 py-2 mb-1 tracking-widest border-b border-purple-50 dark:border-slate-700">Ukuran Teks</p>
+                            <button onclick="setFontSize('small')" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 rounded-xl transition-all dark:text-white">Kecil (14px)</button>
+                            <button onclick="setFontSize('medium')" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 rounded-xl transition-all dark:text-white">Sedang (16px)</button>
+                            <button onclick="setFontSize('large')" class="w-full text-left px-3 py-2 text-xs font-bold hover:bg-purple-50 dark:hover:bg-slate-700 rounded-xl transition-all dark:text-white">Besar (18px)</button>
+                        </div>
+                    </div>
+                    <button onclick="exportToExcel()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg active:scale-95 group">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 group-hover:animate-bounce"></i> <span class="hidden md:inline text-[10px] uppercase font-black">Export Excel</span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="content-area" class="animate-fade min-h-[500px]"></div>
+        </main>
+
+        <!-- Bottom Nav Mobile -->
+        <nav class="lg:hidden fixed bottom-4 left-4 right-4 h-[72px] glass-card rounded-[2rem] shadow-2xl flex items-center justify-around px-2 z-[90] border border-white/80 dark:border-slate-700/80 backdrop-blur-xl overflow-x-auto">
+            <button onclick="navigate('dashboard')" id="m-nav-dashboard" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="layout-grid"></i></button>
+            <button onclick="navigate('matkul')" id="m-nav-matkul" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="book-open"></i></button>
+            <button onclick="navigate('jadwal')" id="m-nav-jadwal" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="calendar"></i></button>
+            <button onclick="navigate('tugas')" id="m-nav-tugas" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="check-square"></i></button>
+            <button onclick="navigate('target')" id="m-nav-target" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="target"></i></button>
+            <button onclick="navigate('ujian')" id="m-nav-ujian" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-gray-400"><i data-lucide="award"></i></button>
+            <button onclick="logout()" class="p-3.5 rounded-2xl flex flex-col items-center gap-1 group flex-shrink-0 text-red-500 dark:text-red-400"><i data-lucide="log-out"></i></button>
+        </nav>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div id="modal-content-wrapper" class="w-full max-w-md animate-fade transform scale-95 transition-transform duration-300">
+            
+            <!-- Modal Jadwal -->
+            <div id="modal-jadwal" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full shadow-2xl border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
+                <div class="flex justify-between items-center mb-6">
+                    <div><h3 class="text-xl md:text-2xl font-black tracking-tight" id="modal-jadwal-title">Jadwal Baru</h3></div>
+                    <button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Pilih Mata Kuliah</label>
+                        <select id="in-j-matkul" onchange="window.handleMatkulChange(this.value)" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative">
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">SKS</label>
+                             <input type="number" id="in-j-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="0" readonly />
+                        </div>
+                        <div class="relative">
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">Dosen</label>
+                             <input type="text" id="in-j-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" readonly />
+                        </div>
+                    </div>
+                    <select id="in-j-hari" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white">
+                        <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative"><label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">Mulai</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border rounded-xl px-2 py-3.5 dark:border-slate-600">
+                                <select id="in-j-mulai-h" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-j-mulai-m" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            </div>
+                        </div>
+                        <div class="relative"><label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase z-10">Selesai</label>
+                            <div class="flex items-center bg-gray-50 dark:bg-slate-700 border rounded-xl px-2 py-3.5 dark:border-slate-600">
+                                <select id="in-j-selesai-h" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                                <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                                <select id="in-j-selesai-m" class="time-select w-full text-center text-sm font-medium dark:text-white"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" id="in-j-ruang" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ruangan" />
+                    <button onclick="window.saveJadwal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 mt-2 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Jadwal</button>
+                </div>
+            </div>
+
+            <!-- Modal Matkul -->
+            <div id="modal-matkul" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border dark:border-slate-700 text-gray-800 dark:text-white text-left text-left">
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black" id="modal-matkul-title">Mata Kuliah Baru</h3></div><button onclick="window.closeModal()" class="text-gray-400"><i data-lucide="x"></i></button></div>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Nama Mata Kuliah</label>
+                        <input type="text" id="in-m-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ketik nama matakuliah..." />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative">
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">SKS</label>
+                             <input type="number" id="in-m-sks" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600" placeholder="0" />
+                        </div>
+                        <div class="relative">
+                             <label class="absolute -top-2 left-4 bg-white dark:bg-slate-800 px-1 text-[10px] font-bold text-purple-500 uppercase tracking-wider z-10">Nama Dosen</label>
+                             <input type="text" id="in-m-dosen" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Ketik nama dosen..." />
+                        </div>
+                    </div>
+                    <button onclick="window.saveMatkul()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Mata Kuliah</button>
+                </div>
+            </div>
+
+            <!-- Modal Tugas -->
+            <div id="modal-tugas" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left" id="modal-tugas-title">Tugas Baru</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
+                <div class="space-y-4">
+                    <input type="text" id="in-t-nama" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" placeholder="Nama Tugas" />
+                    <select id="in-t-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    <input type="date" id="in-t-deadline" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" />
+                    <button onclick="window.saveTugas()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Tugas</button>
+                </div>
+            </div>
+
+            <!-- Modal Target -->
+            <div id="modal-target" class="hidden glass-card p-8 rounded-[2rem] w-full border dark:border-slate-700 text-gray-800 dark:text-white text-left">
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left" id="modal-target-title">Target Semester</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
+                <input type="text" id="in-tg-teks" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 mb-4 dark:text-white" placeholder="Target Semester..." />
+                <button onclick="window.saveTarget()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Target</button>
+            </div>
+
+            <!-- Modal Ujian -->
+            <div id="modal-ujian" class="hidden glass-card bg-white/90 dark:bg-slate-800/95 p-6 md:p-8 rounded-[2rem] w-full border border-white dark:border-slate-700 text-gray-800 dark:text-white text-left">
+                <div class="flex justify-between items-center mb-6"><div><h3 class="text-xl md:text-2xl font-black text-left" id="modal-ujian-title">Jadwal Ujian</h3></div><button onclick="window.closeModal()" class="text-gray-400 p-2"><i data-lucide="x"></i></button></div>
+                <div class="space-y-4 text-left">
+                    <select id="in-u-matkul" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"></select>
+                    <select id="in-u-jenis" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white"><option>UTS</option><option>UAS</option><option>Kuis</option></select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="date" id="in-u-tanggal" class="w-full px-5 py-3.5 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-sm font-medium dark:text-white" />
+                        <div class="flex items-center bg-gray-50 dark:bg-slate-700 border rounded-xl px-2 py-3.5 dark:border-slate-600">
+                            <select id="in-u-waktu-h" class="time-select w-full text-center text-sm dark:text-white"></select>
+                            <span class="font-bold text-gray-400 dark:text-gray-300 px-0.5">:</span>
+                            <select id="in-u-waktu-m" class="time-select w-full text-center text-sm dark:text-white"></select>
+                        </div>
+                    </div>
+                    <button onclick="window.saveUjian()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Ujian</button>
+                </div>
+            </div>
+
+             <div id="modal-nilai" class="hidden glass-card p-8 rounded-[2rem] w-full border dark:border-slate-700 text-center text-gray-800 dark:text-white">
+                <input type="hidden" id="in-n-id" /><p id="nilai-matkul-label" class="mb-4 font-bold"></p>
+                <input type="number" id="in-n-nilai" class="w-full px-5 py-4 rounded-xl bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 text-center text-2xl font-black mb-4 dark:text-white" placeholder="0-100" />
+                <button onclick="window.saveNilai()" class="w-full bg-green-500 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">Simpan Nilai</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOO-C9UXIadukCG5Zl7n1qNtiVN-BaecY",
+            authDomain: "studyflow-7afba.firebaseapp.com",
+            projectId: "studyflow-7afba",
+            storageBucket: "studyflow-7afba.firebasestorage.app",
+            messagingSenderId: "1034032440737",
+            appId: "1:1034032440737:web:030cffaa62db47b3f997e0"
+        };
+        const APP_ID_ROOT = 'studyflow-planner';
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserId = null;
+        let activeTab = 'dashboard';
+        let store = { matkul: [], jadwal: [], tugas: [], target: [], ujian: [] };
+        let listeners = [];
+        let currentSemester = localStorage.getItem('studyflow_semester') || '6';
+        let isDarkMode = localStorage.getItem('studyflow_theme') === 'dark';
+        let editingId = null;
+        let dashboardChartInstance = null;
+
+        // FUNGSI setFontSize
+        function setFontSize(size) {
+            const root = document.querySelector(':root');
+            const sizes = { small: '14px', medium: '16px', large: '18px' };
+            root.style.setProperty('--base-font-size', sizes[size]);
+            document.querySelectorAll('[id^="btn-font-"]').forEach(btn => btn.classList.remove('font-opt-active', 'text-purple-600', 'dark:text-purple-400'));
+            localStorage.setItem('studyflow_fontsize', size);
+        }
+        window.setFontSize = setFontSize; 
+
+        function applyTheme() {
+            if (isDarkMode) { document.documentElement.classList.add('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'sun'); } 
+            else { document.documentElement.classList.remove('dark'); document.getElementById('theme-icon').setAttribute('data-lucide', 'moon'); }
+            lucide.createIcons();
+            if(activeTab === 'dashboard') {
+                const container = document.getElementById('content-area');
+                if(container) renderDashboard(container);
+            }
+        }
+        window.toggleTheme = () => { isDarkMode = !isDarkMode; localStorage.setItem('studyflow_theme', isDarkMode ? 'dark' : 'light'); applyTheme(); };
+
+        window.changeSemester = (val) => { currentSemester = val; localStorage.setItem('studyflow_semester', val); renderUI(); };
+
+        function getSemesterData(colName) {
+            return store[colName].filter(item => String(item.semester) === String(currentSemester) || (!item.semester && String(currentSemester) === '6'));
+        }
+
+        // FUNGSI EDIT ITEM GLOBAL
+        async function editItem(colName, id) {
+            editingId = id;
+            const docRef = doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, colName, id);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                window.openModal(colName);
+                
+                // Ubah Title Modal
+                const titleMap = { matkul: 'Edit Mata Kuliah', jadwal: 'Edit Jadwal', tugas: 'Edit Tugas', target: 'Edit Target', ujian: 'Edit Jadwal Ujian' };
+                const titleEl = document.getElementById(`modal-${colName}-title`);
+                if(titleEl) titleEl.innerText = titleMap[colName];
+
+                if (colName === 'matkul') {
+                    document.getElementById('in-m-nama').value = data.nama || '';
+                    document.getElementById('in-m-sks').value = data.sks || 0;
+                    document.getElementById('in-m-dosen').value = data.dosen || '';
+                } else if (colName === 'jadwal') {
+                    document.getElementById('in-j-matkul').value = data.matkul || '';
+                    handleMatkulChange(data.matkul); 
+                    document.getElementById('in-j-hari').value = data.hari || 'Senin';
+                    document.getElementById('in-j-ruang').value = data.ruang || '';
+                    if (data.waktu) {
+                        const times = data.waktu.split(' - ');
+                        if(times.length === 2) {
+                            const [hM, mM] = times[0].split(':');
+                            const [hS, mS] = times[1].split(':');
+                            document.getElementById('in-j-mulai-h').value = hM;
+                            document.getElementById('in-j-mulai-m').value = mM;
+                            document.getElementById('in-j-selesai-h').value = hS;
+                            document.getElementById('in-j-selesai-m').value = mS;
+                        }
+                    }
+                } else if (colName === 'tugas') {
+                    document.getElementById('in-t-nama').value = data.nama || '';
+                    document.getElementById('in-t-matkul').value = data.matkul || '';
+                    document.getElementById('in-t-deadline').value = data.deadline || '';
+                } else if (colName === 'target') {
+                    document.getElementById('in-tg-teks').value = data.teks || '';
+                } else if (colName === 'ujian') {
+                    document.getElementById('in-u-matkul').value = data.matkul || '';
+                    document.getElementById('in-u-jenis').value = data.jenis || 'UTS';
+                    document.getElementById('in-u-tanggal').value = data.tanggal || '';
+                    if (data.waktu) {
+                        const [h, m] = data.waktu.split(':');
+                        document.getElementById('in-u-waktu-h').value = h;
+                        document.getElementById('u-waktu-m').value = m;
+                    }
                 }
             }
         }
-    </script>
+        window.editItem = editItem;
 
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; transition: background-color 0.3s ease; }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
-        
-        select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+        // FUNGSI HANDLE MATKUL CHANGE (OTOMATIS SKS & DOSEN)
+        function handleMatkulChange(val) {
+            const activeMatkul = getSemesterData('matkul');
+            const match = activeMatkul.find(m => m.nama === val);
+            if (match) {
+                const sksInput = document.getElementById('in-j-sks');
+                const dosenInput = document.getElementById('in-j-dosen');
+                if (sksInput) sksInput.value = match.sks || 0;
+                if (dosenInput) dosenInput.value = match.dosen || '';
+            }
+        }
+        window.handleMatkulChange = handleMatkulChange;
+
+        function updateDynamicDropdowns() {
+            const activeMatkul = getSemesterData('matkul');
+            const matkulHTML = activeMatkul.length > 0 
+                ? `<option value="" disabled selected>Pilih Mata Kuliah...</option>` + activeMatkul.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')
+                : `<option value="" disabled selected>⚠️ Input Matkul dulu</option>`;
+            ['in-j-matkul', 'in-t-matkul', 'in-u-matkul'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = matkulHTML; });
         }
 
-        .view-transition {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        function populateTimeSelects() {
+            const hours = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0'));
+            const minutes = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, '0'));
+            ['in-j-mulai-h', 'in-j-selesai-h', 'in-u-waktu-h'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; hours.forEach(h => el.add(new Option(h, h))); } });
+            ['in-j-mulai-m', 'in-j-selesai-m', 'in-u-waktu-m'].forEach(id => { const el = document.getElementById(id); if(el) { el.innerHTML = ''; minutes.forEach(m => el.add(new Option(m, m))); } });
         }
 
-        /* Drag effect styling */
-        .dragging {
-            opacity: 0.4;
-            transform: scale(0.98);
-        }
-
-        /* Glassmorphism for Dark Mode */
-        .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-        }
-    </style>
-</head>
-<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, Fragment } = React;
-        
-        // --- FIXED SVG ICONS COMPONENT (Wrapped in Fragments) ---
-        const Icon = ({ name, className = "w-5 h-5", strokeWidth = 2.5 }) => {
-            const paths = {
-                users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
-                check: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11"/></>,
-                file: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></>,
-                calendar: <><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
-                search: <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
-                chart: <><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>,
-                clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
-                sun: <><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"/></>,
-                moon: <><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></>,
-                download: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>,
-                edit: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
-                x: <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
-                save: <><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>,
-                globe: <><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></>,
-                pin: <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>,
-                plus: <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
-                trash: <><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></>,
-                shuffle: <><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></>,
-                sync: <><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></>,
-                grip: <><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></>,
-                up: <polyline points="18 15 12 9 6 15"/>,
-                down: <polyline points="6 9 12 15 18 9"/>,
-                settings: <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></>
-            };
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-                    {paths[name]}
-                </svg>
-            );
+        window.exportToExcel = () => {
+            const activeJadwal = getSemesterData('jadwal');
+            const activeMatkul = getSemesterData('matkul');
+            const activeTugas = getSemesterData('tugas');
+            const activeUjian = getSemesterData('ujian');
+            if (!activeJadwal.length && !activeMatkul.length && !activeTugas.length && !activeUjian.length) { alert("Oops! Belum ada data."); return; }
+            const wb = XLSX.utils.book_new();
+            if (activeMatkul.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeMatkul.map(m=>({Matkul:m.nama, SKS:m.sks, Dosen:m.dosen}))), "Matakuliah");
+            if (activeJadwal.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeJadwal.map(j=>({Hari:j.hari, Waktu:j.waktu, Matkul:j.matkul, Ruang:j.ruang}))), "Jadwal");
+            if (activeTugas.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeTugas.map(t=>({Tugas:t.nama, Matkul:t.matkul, Deadline:t.deadline, Selesai:t.status?'Ya':'Tidak'}))), "Tugas");
+            if (activeUjian.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(activeUjian.map(u=>({Jenis:u.jenis, Matkul:u.matkul, Tanggal:u.tanggal, Waktu:u.waktu, Nilai:u.nilai||'-'}))), "Ujian");
+            XLSX.writeFile(wb, `StudyFlow_Semester_${currentSemester}_Export.xlsx`);
         };
 
-        const INITIAL_STUDENTS = [
-            { nim: "20924587", nama: "Tria Rahmah Zahra" },
-            { nim: "20924588", nama: "Trias Rachmi Kinanti Hapidin" },
-            { nim: "20924589", nama: "Ulfi Nur Awaliah" },
-            { nim: "20924590", nama: "Vina Andini" },
-            { nim: "20924591", nama: "Wildan Sami Kalamullah" },
-            { nim: "20924592", nama: "Wulandari Nur Fitri" },
-            { nim: "20924593", nama: "Yesi Septiani Nur Nafisah" },
-            { nim: "20924594", nama: "Yoga Wira Permana" },
-            { nim: "20924595", nama: "Yolla Puspita" },
-            { nim: "20924597", nama: "Zahra Nursaidah Mardatillah" },
-            { nim: "20924598", nama: "Zaky Muhammad" },
-            { nim: "20924599", nama: "Zalfaa Nursyifa Damaliyana" },
-            { nim: "20924524", nama: "Maulana Agrivanca" },
-            { nim: "20924832", nama: "Adi Herlambang" },
-            { nim: "20924833", nama: "Ai Wiwin Marlina" },
-            { nim: "20924834", nama: "Aina Salsabila" },
-            { nim: "20924835", nama: "Alfa Rizki Patiha" },
-            { nim: "20924836", nama: "Alifa Salamet Pajar" },
-            { nim: "20924837", nama: "Alya Anjani Mutiara Hati" },
-            { nim: "20924838", nama: "Amelia Kartika" },
-            { nim: "20924839", nama: "Andini Lisdayani" },
-            { nim: "20924840", nama: "Anisa Fitri Khaeriah" },
-            { nim: "20924841", nama: "Annisa Nurhaliza" },
-            { nim: "20924842", nama: "Aprian Maulana" },
-            { nim: "20924843", nama: "Aprilia Keysya Ananda Putri" },
-            { nim: "20924844", nama: "Arista Dinda Kusumawati" },
-            { nim: "20924845", nama: "Astia Amalia" },
-            { nim: "20924846", nama: "Deni Suryana" },
-            { nim: "20924847", nama: "Desti Dahab Mar Ati" },
-            { nim: "20924848", nama: "Devina Yunita Susanti" },
-            { nim: "20924849", nama: "Dian Nurul Aini" },
-            { nim: "20924850", nama: "Diana Ghifari Ruhendi" },
-            { nim: "20924851", nama: "Dimas Layadri Saputra" },
-            { nim: "20924852", nama: "Dina Amelia" },
-            { nim: "20924853", nama: "Fahiranisa Shalitsa Husada" },
-            { nim: "20924854", nama: "Fahri Fauzan" },
-            { nim: "20924855", nama: "Faldi Fahrizal" },
-            { nim: "20924856", nama: "Farhan Fitrahudin" },
-            { nim: "20924857", nama: "Fira Selomita" },
-            { nim: "20924858", nama: "Fitri Nuraeni Solihah" },
-            { nim: "20924860", nama: "Hadist Guida Herdiana" },
-        ];
+        window.loginWithGoogle = async () => {
+            const statusEl = document.getElementById('conn-status');
+            statusEl.innerHTML = "Memproses login...";
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            try { await signInWithPopup(auth, provider); } catch (error) {
+                if (error.code === 'auth/popup-blocked') await signInWithRedirect(auth, provider);
+                else statusEl.innerHTML = `<span class="text-red-500 text-[10px] font-bold">Domain ${window.location.hostname} tidak diizinkan.</span>`;
+            }
+        };
 
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('dashboard');
-            const [searchTerm, setSearchTerm] = useState('');
-            const [isDarkMode, setIsDarkMode] = useState(false);
-            const [viewSize, setViewSize] = useState('medium'); 
-            const [isSyncing, setIsSyncing] = useState(false);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                document.getElementById('profile-name').innerText = user.displayName;
+                document.getElementById('profile-pic').src = user.photoURL;
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('app-view').classList.remove('hidden');
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('semester-select').value = currentSemester;
+                setFontSize(localStorage.getItem('studyflow_fontsize') || 'medium');
+                applyTheme(); populateTimeSelects(); initDataListeners(); navigate('dashboard');
+            } else {
+                currentUserId = null; document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('app-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden');
+            }
+        });
+
+        function initDataListeners() {
+            if (!currentUserId) return; listeners.forEach(unsub => unsub());
+            ['matkul', 'jadwal', 'tugas', 'target', 'ujian'].forEach(colName => {
+                const q = collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, colName);
+                const unsub = onSnapshot(q, (snapshot) => { store[colName] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); renderUI(); });
+                listeners.push(unsub);
+            });
+        }
+
+        window.navigate = (view) => { activeTab = view; renderUI(); };
+
+        function renderUI() {
+            const container = document.getElementById('content-area');
+            if (!container) return;
+            document.querySelectorAll('aside button').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('text-gray-500'); });
+            const activeNav = document.getElementById('nav-' + activeTab);
+            if(activeNav) activeNav.classList.add('active-nav');
+
+            document.querySelectorAll('nav.lg\\:hidden button').forEach(btn => {
+               btn.classList.remove('text-purple-600', 'bg-purple-100', 'dark:bg-slate-800');
+               btn.classList.add('text-gray-400');
+            });
+            const activeMob = document.getElementById('m-nav-' + activeTab);
+            if(activeMob) activeMob.classList.add('text-purple-600', 'bg-purple-100', 'dark:bg-slate-800');
+
+            updateDynamicDropdowns();
+            container.innerHTML = ''; 
             
-            const [students, setStudents] = useState(INITIAL_STUDENTS);
-            const [attendanceData, setAttendanceData] = useState([]);
-            const [assignmentData, setAssignmentData] = useState([]);
-            const [schedule, setSchedule] = useState({ attendance: {}, assignments: {} });
-            
-            const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-            const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-            const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-            const [isTaskInputModalOpen, setIsTaskInputModalOpen] = useState(false);
-            
-            const [newStudent, setNewStudent] = useState({ nama: '', nim: '' });
-            const [editingData, setEditingData] = useState(null);
-            const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+            if (activeTab === 'dashboard') renderDashboard(container);
+            else if (activeTab === 'matkul') renderMatkul(container);
+            else if (activeTab === 'jadwal') renderJadwal(container);
+            else if (activeTab === 'tugas') renderTugas(container);
+            else if (activeTab === 'target') renderTarget(container);
+            else if (activeTab === 'ujian') renderUjian(container);
+            lucide.createIcons();
+        }
 
-            const [activePertemuan, setActivePertemuan] = useState(1);
-            const [activeTugasDropdown, setActiveTugasDropdown] = useState(1);
-            const [lectureMode, setLectureMode] = useState('offline');
-            const [sessionDate, setSessionDate] = useState(new Date().toISOString().split('T')[0]);
-            const [taskDate, setTaskDate] = useState(new Date().toISOString().split('T')[0]);
-            
-            const [manualAttendance, setManualAttendance] = useState({});
-            const [manualAssignments, setManualAssignments] = useState({});
+        function renderDashboard(el) {
+            const activeTugas = getSemesterData('tugas');
+            const activeMatkul = getSemesterData('matkul');
+            const activeUjian = getSemesterData('ujian');
+            const activeTarget = getSemesterData('target');
+            const activeJadwal = getSemesterData('jadwal');
+            const totalTugas = activeTugas.length;
+            const selesai = activeTugas.filter(t => t.status).length;
+            const urgent = activeTugas.filter(t => !t.status).map(t => ({...t, days: calculateDaysLeft(t.deadline)})).sort((a,b)=>a.days-b.days);
+            const targetDone = activeTarget.filter(t => t.selesai).length;
+            const targetProgress = activeTarget.length ? Math.round((targetDone / activeTarget.length) * 100) : 0;
+            const daysArr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const todayName = daysArr[new Date().getDay()];
+            const todayClasses = activeJadwal.filter(j => j.hari === todayName);
 
-            const LOGO_URL = "https://res.cloudinary.com/dfbkph06k/image/upload/v1773041131/ChatGPT_Image_Mar_9_2026_02_24_03_PM_nm9b7b.png";
-            const BG_LIGHT = "https://res.cloudinary.com/dfbkph06k/image/upload/v1773040282/ChatGPT_Image_Mar_9_2026_02_09_09_PM_nec4ra.png";
-            const BG_DARK = "https://res.cloudinary.com/dfbkph06k/image/upload/v1773040339/ChatGPT_Image_Mar_9_2026_02_11_41_PM_jjwdzg.png";
+            el.innerHTML = `
+                <div class="animate-fade text-left">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-blue-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Mata Kuliah</p>
+                           <p class="text-2xl md:text-3xl font-black">${activeMatkul.length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-green-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Tugas Selesai</p>
+                           <p class="text-2xl md:text-3xl font-black">${selesai}<span class="text-sm font-medium text-gray-400">/${totalTugas}</span></p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-orange-500">
+                           <p class="text-[10px] font-bold uppercase text-gray-400">Ujian Mendatang</p>
+                           <p class="text-2xl md:text-3xl font-black">${activeUjian.filter(u => calculateDaysLeft(u.tanggal) >= 0).length}</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-3xl border-l-4 border-l-purple-500 bg-purple-50/50 dark:bg-purple-900/10">
+                           <p class="text-[10px] font-bold uppercase text-purple-500">Target Semester</p>
+                           <p class="text-2xl md:text-3xl font-black text-purple-700 dark:text-purple-300">${targetProgress}%</p>
+                        </div>
+                    </div>
 
-            useEffect(() => {
-                if (isDarkMode) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }, [isDarkMode]);
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col items-center justify-center min-h-[280px]">
+                            <h3 class="font-black mb-2 text-xs self-start uppercase text-gray-400">Progress Tugas</h3>
+                            <div class="relative w-full flex-1 flex justify-center items-center">
+                                ${totalTugas > 0 ? `<div style="width: 140px; height: 140px;"><canvas id="tugasChart"></canvas></div>` : `<p class="text-xs text-gray-400">Belum ada tugas</p>`}
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2.5rem] flex flex-col min-h-[280px]">
+                            <h3 class="font-black mb-2 text-xs uppercase text-gray-400">Beban Tugas</h3>
+                            <div class="flex-1 relative"><canvas id="bebanChart"></canvas></div>
+                        </div>
+                        <div class="glass-card p-6 rounded-[2.5rem] min-h-[280px] overflow-hidden">
+                            <h3 class="font-black mb-4 text-xs uppercase text-gray-400 flex justify-between">Agenda Hari Ini <span class="text-purple-500">${todayName}</span></h3>
+                            <div class="space-y-3 overflow-y-auto scrollbar-hide max-h-[200px]">
+                                ${todayClasses.length > 0 ? todayClasses.map(j => `<div class="p-3 bg-white/40 dark:bg-slate-700/50 rounded-2xl border-l-4 border-l-purple-500 text-xs"><p class="font-bold">${j.matkul}</p><p class="text-[10px] text-gray-500">${j.waktu}</p></div>`).join('') : `<p class="text-xs text-gray-400 py-10 text-center uppercase font-bold">Libur</p>`}
+                            </div>
+                        </div>
+                    </div>
 
-            const filteredStudents = useMemo(() => {
-                return students.filter(s => (s.nama || "").toLowerCase().includes(searchTerm.toLowerCase()) || (s.nim || "").includes(searchTerm));
-            }, [searchTerm, students]);
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <h3 class="font-black mb-6 text-sm uppercase text-gray-400">Tugas Mendesak (Countdown)</h3>
+                        <div class="space-y-3">
+                            ${urgent.length > 0 ? urgent.slice(0,5).map(t => `
+                                <div class="p-4 bg-white/40 dark:bg-slate-700/50 rounded-2xl flex justify-between items-center transition-all hover:bg-white/60">
+                                    <div class="text-left text-gray-800 dark:text-white"><p class="font-black text-sm">${t.nama}</p><p class="text-[10px] text-purple-500 font-bold uppercase tracking-widest">${t.matkul}</p></div>
+                                    <div class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-xl text-[10px] font-black">${t.days <= 0 ? 'SEKARANG' : t.days + ' Hari Lagi'}</div>
+                                </div>
+                            `).join('') : '<p class="text-center text-gray-400 py-6 text-xs italic">Semua tugas aman! 🎉</p>'}
+                        </div>
+                    </div>
+                </div>`;
 
-            const sizeClasses = useMemo(() => {
-                switch(viewSize) {
-                    case 'small': return 'text-[11px]';
-                    case 'large': return 'text-[15px]';
-                    default: return 'text-[13px]';
-                }
-            }, [viewSize]);
-
-            const spacingClasses = useMemo(() => {
-                switch(viewSize) {
-                    case 'small': return 'p-2 py-1';
-                    case 'large': return 'p-5 py-4';
-                    default: return 'p-4 py-3';
-                }
-            }, [viewSize]);
-
-            // --- DRAG & DROP LOGIC ---
-            const handleDragStart = (index) => setDraggedItemIndex(index);
-            const handleDragOver = (e) => e.preventDefault();
-            const handleDrop = (index) => {
-                if (draggedItemIndex === null || draggedItemIndex === index) return;
-                const newStudents = [...students];
-                const draggedItem = newStudents[draggedItemIndex];
-                newStudents.splice(draggedItemIndex, 1);
-                newStudents.splice(index, 0, draggedItem);
-                setStudents(newStudents);
-                setDraggedItemIndex(null);
-            };
-
-            // --- DATA HANDLERS ---
-            const handleAddStudent = () => {
-                if (newStudent.nama && newStudent.nim) {
-                    setStudents([...students, newStudent]);
-                    setNewStudent({ nama: '', nim: '' });
-                    setIsAddModalOpen(false);
-                }
-            };
-
-            const handleDeleteStudent = (nim) => {
-                if (confirm("Hapus data mahasiswa ini?")) {
-                    setStudents(prev => prev.filter(s => s.nim !== nim));
-                    setAttendanceData(prev => prev.filter(a => a.nim !== nim));
-                    setAssignmentData(prev => prev.filter(a => a.nim !== nim));
-                }
-            };
-
-            const shuffleStudents = () => setStudents([...students].sort(() => Math.random() - 0.5));
-
-            const openEditModal = (student) => {
-                setEditingData({ originalNim: student.nim, nama: student.nama, nim: student.nim });
-                setIsEditModalOpen(true);
-            };
-
-            const handleSaveEdit = () => {
-                setStudents(prev => prev.map(s => s.nim === editingData.originalNim ? { nama: editingData.nama, nim: editingData.nim } : s));
-                setAttendanceData(prev => prev.map(a => a.nim === editingData.originalNim ? { ...a, nim: editingData.nim } : a));
-                setAssignmentData(prev => prev.map(a => a.nim === editingData.originalNim ? { ...a, nim: editingData.nim } : a));
-                setIsEditModalOpen(false);
-            };
-
-            const updateAttendance = (nim, id, type, status) => {
-                setAttendanceData(prev => {
-                    const other = prev.filter(a => !(a.nim === nim && a.id === id && a.type === type));
-                    return status ? [...other, { nim, id, type, status }] : other;
-                });
-            };
-
-            const updateAssignment = (nim, id, type, status) => {
-                setAssignmentData(prev => {
-                    const other = prev.filter(a => !(a.nim === nim && a.id === id && a.type === type));
-                    return status === 'Selesai' ? [...other, { nim, id, type, status: 'Selesai' }] : other;
-                });
-            };
-
-            const saveManualAttendance = () => {
-                const type = (activePertemuan === 99) ? 'uts' : (activePertemuan === 100) ? 'uas' : 'pertemuan';
-                const newRecords = Object.entries(manualAttendance).map(([nim, status]) => ({ nim, id: activePertemuan, type, status }));
-                setAttendanceData(prev => [...prev.filter(a => !(a.type === type && a.id === activePertemuan)), ...newRecords]);
-                const keyType = (activePertemuan === 99) ? 'uts' : (activePertemuan === 100) ? 'uas' : `pertemuan-${activePertemuan}`;
-                setSchedule(prev => ({ ...prev, attendance: { ...prev.attendance, [keyType]: { date: sessionDate, mode: lectureMode } } }));
-                setIsInputModalOpen(false);
-            };
-
-            const saveManualAssignments = () => {
-                const type = (activeTugasDropdown === 99) ? 'uts' : (activeTugasDropdown === 100) ? 'uas' : 'tugas';
-                const newRecords = Object.entries(manualAssignments).filter(([_, status]) => status === 'Selesai').map(([nim, status]) => ({ nim, id: activeTugasDropdown, type, status }));
-                setAssignmentData(prev => [...prev.filter(a => !(a.type === type && a.id === activeTugasDropdown)), ...newRecords]);
-                const keyType = (activeTugasDropdown === 99) ? 'uts' : (activeTugasDropdown === 100) ? 'uas' : `tugas-${activeTugasDropdown}`;
-                setSchedule(prev => ({ ...prev, assignments: { ...prev.assignments, [keyType]: { date: taskDate } } }));
-                setIsTaskInputModalOpen(false);
-            };
-
-            const handleAutoSync = async () => {
-                setIsSyncing(true);
-                setTimeout(() => {
-                    const newAttendance = [...attendanceData];
-                    students.forEach(s => {
-                        if (parseInt(s.nim.slice(-1)) % 2 !== 0) {
-                            const type = (activePertemuan === 99) ? 'uts' : (activePertemuan === 100) ? 'uas' : 'pertemuan';
-                            if (!newAttendance.some(a => a.nim === s.nim && a.id === activePertemuan && a.type === type)) {
-                                newAttendance.push({ nim: s.nim, id: activePertemuan, type, status: 'Hadir' });
-                            }
-                        }
+            if(totalTugas > 0) {
+                setTimeout(()=> {
+                    const ctx = document.getElementById('tugasChart');
+                    if (dashboardChartInstance) dashboardChartInstance.destroy();
+                    dashboardChartInstance = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: { labels: ['Selesai', 'Belum'], datasets: [{ data: [selesai, totalTugas - selesai], backgroundColor: ['#10B981', '#F43F5E'], borderColor: isDarkMode ? '#1e293b' : '#ffffff', borderWidth: 2 }] },
+                        options: { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } }
                     });
-                    setAttendanceData(newAttendance);
-                    const keyType = (activePertemuan === 99) ? 'uts' : (activePertemuan === 100) ? 'uas' : `pertemuan-${activePertemuan}`;
-                    setSchedule(prev => ({ ...prev, attendance: { ...prev.attendance, [keyType]: { date: sessionDate, mode: 'online' } } }));
-                    setIsSyncing(false);
-                    setIsInputModalOpen(false);
-                }, 1200);
-            };
+                }, 50);
+            }
+            setTimeout(() => {
+               const ctxBeban = document.getElementById('bebanChart'); if (!ctxBeban) return;
+               new Chart(ctxBeban, {
+                   type: 'bar', data: { labels: ['Mgg Ini', 'Mgg Depan', 'Lainnya'], datasets: [{ data: [activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) <= 7).length, activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) > 7 && calculateDaysLeft(t.deadline) <= 14).length, activeTugas.filter(t => !t.status && calculateDaysLeft(t.deadline) > 14).length], backgroundColor: '#3B82F6', borderRadius: 10 }] },
+                   options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: isDarkMode ? '#fff' : '#000' } }, x: { ticks: { color: isDarkMode ? '#fff' : '#000' } } } }
+               });
+            }, 50);
+        }
 
-            const handleExport = async () => {
-                let exportData = students.map(student => {
-                    const row = { "Nama Mahasiswa": student.nama, "NIM": student.nim };
-                    if (activeTab === 'absensi') {
-                        for (let i = 1; i <= 14; i++) {
-                            const sched = schedule.attendance[`pertemuan-${i}`];
-                            const record = attendanceData.find(a => a.nim === student.nim && a.id === i && a.type === 'pertemuan');
-                            row[`P${i}${sched?.date ? ` (${sched.date})` : ""}`] = record ? record.status : "-";
-                        }
-                    } else {
-                        for (let i = 1; i <= 6; i++) {
-                            const sched = schedule.assignments[`tugas-${i}`];
-                            const record = assignmentData.find(a => a.nim === student.nim && a.id === i && a.type === 'tugas');
-                            row[`Tugas ${i}${sched?.date ? ` (${sched.date})` : ""}`] = record ? "Selesai" : "-";
-                        }
-                    }
-                    return row;
-                });
-                const ws = XLSX.utils.json_to_sheet(exportData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Data");
-                XLSX.writeFile(wb, `Rekap_Keuangan_Bisnis.xlsx`);
-            };
+        function renderMatkul(el) {
+            const data = getSemesterData('matkul');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black">Mata Kuliah</h2><button onclick="window.openModal('matkul')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg active:scale-95 transition-all">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">${data.map(m => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-start text-left text-gray-800 dark:text-white relative overflow-hidden transition-all hover:scale-105"><div><h4 class="font-black">${m.nama}</h4><p class="text-xs text-gray-500 mt-1">${m.dosen}</p></div><div class="flex gap-2"><button onclick="window.editItem('matkul', '${m.id}')" class="text-purple-400 hover:text-purple-600"><i data-lucide="edit-2" size="18"></i></button><button onclick="window.deleteItem('matkul', '${m.id}')" class="text-red-300 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button></div></div>`).join('')}</div>`;
+        }
 
-            return (
-                <div 
-                    className={`min-h-screen transition-all duration-500 bg-fixed bg-cover bg-center view-transition ${isDarkMode ? 'dark text-white' : 'text-slate-900'} ${sizeClasses}`}
-                    style={{ backgroundImage: `url(${isDarkMode ? BG_DARK : BG_LIGHT})` }}
-                >
-                    <div className={`${isDarkMode ? 'bg-slate-950/80' : 'bg-white/10'} min-h-screen transition-colors duration-300`}>
-                    
-                    <header className={`sticky top-0 z-40 border-b transition-all duration-300 ${isDarkMode ? 'bg-slate-900/90 border-white/10 backdrop-blur-md' : 'bg-white/90 border-slate-200 backdrop-blur-md'}`}>
-                        <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
-                            <div className="flex items-center space-x-6">
-                                <img src={LOGO_URL} alt="Logo" className="w-20 h-20 object-contain bg-white p-1 rounded-2xl shadow-xl" />
-                                <div>
-                                    <h1 className="font-black text-2xl tracking-tight leading-none uppercase">Keuangan Bisnis</h1>
-                                    <p className={`text-[10px] mt-1 uppercase tracking-[0.2em] font-black ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>Digital Dashboard System</p>
-                                </div>
-                            </div>
-                            <nav className="hidden md:flex items-center space-x-4">
-                                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                                    {['small', 'medium', 'large'].map(sz => (
-                                        <button key={sz} onClick={() => setViewSize(sz)} className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${viewSize === sz ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500'}`}>{sz[0].toUpperCase()}</button>
-                                    ))}
-                                </div>
-                                <div className="flex items-center space-x-2 border-l border-slate-200 dark:border-slate-700 pl-4">
-                                    <button onClick={() => setActiveTab('dashboard')} className={`px-4 py-2 rounded-lg flex items-center gap-2 font-bold transition-all ${activeTab === 'dashboard' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}><Icon name="chart" /> Beranda</button>
-                                    <button onClick={() => setActiveTab('absensi')} className={`px-4 py-2 rounded-lg flex items-center gap-2 font-bold transition-all ${activeTab === 'absensi' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}><Icon name="calendar" /> Absensi</button>
-                                    <button onClick={() => setActiveTab('tugas')} className={`px-4 py-2 rounded-lg flex items-center gap-2 font-bold transition-all ${activeTab === 'tugas' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}><Icon name="file" /> Tugas</button>
-                                    <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2.5 rounded-full transition-all ${isDarkMode ? 'bg-amber-400 text-slate-900 shadow-lg shadow-amber-500/20' : 'bg-slate-800 text-white shadow-lg'}`}>{isDarkMode ? <Icon name="sun" /> : <Icon name="moon" />}</button>
-                                </div>
-                            </nav>
-                        </div>
-                    </header>
-
-                    <main className="max-w-7xl mx-auto px-4 py-8">
-                        {activeTab === 'dashboard' && (
-                            <div className="space-y-6 animate-in fade-in transition-all duration-500">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <StatCard title="Mahasiswa" value={students.length} icon="users" isDark={isDarkMode} />
-                                    <StatCard title="Metode" value={lectureMode.toUpperCase()} icon="check" isDark={isDarkMode} />
-                                    <StatCard title="Tugas" value={assignmentData.length} icon="file" isDark={isDarkMode} />
-                                    <StatCard title="Sesi" value={`P${activePertemuan}`} icon="clock" isDark={isDarkMode} />
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                    <div className="lg:col-span-2 space-y-6">
-                                        <div className={`p-8 rounded-[2.5rem] border shadow-2xl transition-all ${isDarkMode ? 'bg-slate-900/90 border-white/10 text-white' : 'bg-white/80 border-white/40 text-slate-800'}`}>
-                                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                                                <h3 className="font-black text-xl flex items-center gap-3 uppercase text-blue-600 dark:text-blue-400"><Icon name="settings" /> Dashboard Kendali</h3>
-                                                <div className="flex gap-2">
-                                                    <button onClick={shuffleStudents} className="px-4 py-2 bg-amber-500 text-white rounded-xl text-[10px] font-black uppercase hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20"><Icon name="shuffle" className="w-3 h-3 inline mr-1"/> Acak</button>
-                                                    <button onClick={() => setIsAddModalOpen(true)} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"><Icon name="plus" className="w-3 h-3 inline mr-1"/> Tambah</button>
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className={`space-y-4 p-6 rounded-[2rem] border ${isDarkMode ? 'bg-slate-800 border-white/5' : 'bg-blue-50/50 border-blue-100'}`}>
-                                                    <p className="text-[10px] font-black uppercase opacity-60">Sesi Kehadiran</p>
-                                                    <select value={activePertemuan} onChange={(e) => setActivePertemuan(parseInt(e.target.value))} className={`w-full p-3 rounded-xl border font-bold text-sm bg-white dark:bg-slate-900 dark:border-white/10 dark:text-white`}>
-                                                        {[...Array(14)].map((_, i) => <option key={i} value={i+1}>Pertemuan {i+1}</option>)}
-                                                        <option value="99">UTS</option><option value="100">UAS</option>
-                                                    </select>
-                                                    <input type="date" value={sessionDate} onChange={(e) => setSessionDate(e.target.value)} className={`w-full p-3 rounded-xl border font-bold text-sm bg-white dark:bg-slate-900 dark:border-white/10 dark:text-white`} />
-                                                    <div className="flex gap-2 text-white">
-                                                        <button onClick={() => { setLectureMode('online'); setIsInputModalOpen(true); }} className="flex-1 py-3 bg-blue-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Online</button>
-                                                        <button onClick={() => { setLectureMode('offline'); setIsInputModalOpen(true); }} className="flex-1 py-3 bg-emerald-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Offline</button>
-                                                    </div>
-                                                </div>
-                                                <div className={`space-y-4 p-6 rounded-[2rem] border ${isDarkMode ? 'bg-slate-800 border-white/5' : 'bg-indigo-50/50 border-indigo-100'}`}>
-                                                    <p className="text-[10px] font-black uppercase opacity-60">Slot Pengumpulan Tugas</p>
-                                                    <select value={activeTugasDropdown} onChange={(e) => setActiveTugasDropdown(parseInt(e.target.value))} className={`w-full p-3 rounded-xl border font-bold text-sm bg-white dark:bg-slate-900 dark:border-white/10 dark:text-white`}>
-                                                        {[...Array(6)].map((_, i) => <option key={i} value={i+1}>Tugas {i+1}</option>)}
-                                                        <option value="99">Proyek UTS</option><option value="100">Proyek UAS</option>
-                                                    </select>
-                                                    <input type="date" value={taskDate} onChange={(e) => setTaskDate(e.target.value)} className={`w-full p-3 rounded-xl border font-bold text-sm bg-white dark:bg-slate-900 dark:border-white/10 dark:text-white`} />
-                                                    <div className="flex gap-2 text-white">
-                                                        <button onClick={() => { const key = activeTugasDropdown === 99 ? 'uts' : activeTugasDropdown === 100 ? 'uas' : `tugas-${activeTugasDropdown}`; setSchedule({...schedule, assignments: {...schedule.assignments, [key]: { date: taskDate }}})}} className="flex-1 py-3 bg-indigo-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Simpan</button>
-                                                        <button onClick={() => { const type = activeTugasDropdown === 99 ? 'uts' : activeTugasDropdown === 100 ? 'uas' : 'tugas'; const initial = {}; students.forEach(s => { initial[s.nim] = assignmentData.some(a => a.nim === s.nim && a.id === activeTugasDropdown && a.type === type) ? 'Selesai' : ''; }); setManualAssignments(initial); setIsTaskInputModalOpen(true); }} className="flex-1 py-3 bg-violet-600 rounded-xl text-[10px] font-black uppercase shadow-lg">Input Tugas</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={`p-8 rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-blue-950 text-white shadow-2xl border border-white/10 relative overflow-hidden h-fit`}>
-                                        <div className="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl" />
-                                        <h3 className="font-black text-xl mb-6 uppercase tracking-tighter flex items-center gap-2 relative z-10"><Icon name="pin" className="text-blue-400" /> Status Live</h3>
-                                        <div className="space-y-4 relative z-10">
-                                            <QuickActionIcon icon="pin" label="Mode" value={lectureMode.toUpperCase()} />
-                                            <QuickActionIcon icon="clock" label="Terakhir" value={new Date().toLocaleTimeString()} />
-                                            <QuickActionIcon icon="check" label="Data" value="Aktif" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* TABLES */}
-                        {(activeTab === 'absensi' || activeTab === 'tugas') && (
-                            <div className="space-y-4 animate-in slide-in-from-bottom duration-500 transition-all">
-                                <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-6 rounded-[2.5rem] border transition-all ${isDarkMode ? 'bg-slate-900/90 border-white/10 text-white' : 'bg-white border-slate-200 shadow-xl'}`}>
-                                    <div className="flex items-center gap-4">
-                                        <h2 className="font-black text-2xl uppercase tracking-tighter">{activeTab === 'absensi' ? 'Rekap Kehadiran' : 'Progres Tugas'}</h2>
-                                        <button onClick={handleExport} className="px-6 py-3 rounded-2xl text-xs font-black bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg active:scale-95 transition-all flex items-center gap-2"><Icon name="download" className="w-4 h-4" /> EXPORT</button>
-                                    </div>
-                                    <div className="relative group">
-                                        <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-                                        <input type="text" placeholder="Cari Mahasiswa..." className={`pl-12 pr-6 py-3 rounded-2xl text-sm w-full lg:w-80 outline-none font-bold transition-all ${isDarkMode ? 'bg-slate-800 border-white/5 text-white' : 'bg-slate-50 border-slate-200 shadow-inner'}`} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                                    </div>
-                                </div>
-
-                                <div className={`rounded-[2.5rem] border overflow-hidden shadow-2xl transition-all ${isDarkMode ? 'bg-slate-900/90 border-white/10' : 'bg-white border-slate-200'}`}>
-                                    <div className="overflow-x-auto custom-scrollbar">
-                                        <table className="w-full text-sm text-left border-collapse">
-                                            <thead className={`text-[10px] font-black uppercase tracking-[0.2em] border-b ${isDarkMode ? 'bg-slate-800/50 text-slate-400 border-white/5' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
-                                                <tr>
-                                                    <th className={`${spacingClasses} sticky left-0 z-30 backdrop-blur-xl border-r dark:border-white/10`}>Urut</th>
-                                                    <th className={`${spacingClasses} sticky left-16 z-20 backdrop-blur-xl border-r dark:border-white/10 min-w-[240px]`}>Mahasiswa</th>
-                                                    {activeTab === 'absensi' ? (
-                                                        <Fragment>
-                                                            {[...Array(14)].map((_, i) => {
-                                                                const sched = schedule.attendance[`pertemuan-${i+1}`];
-                                                                return (
-                                                                    <th key={i} className="px-3 py-8 text-center min-w-[100px] border-l dark:border-white/10">
-                                                                        <div className="font-black">P{i+1}</div>
-                                                                        <div className="text-[7px] font-bold opacity-60 italic">{sched?.date ? sched.date.split('-').reverse().join('/') : 'TBA'}</div>
-                                                                        <div className={`text-[7px] font-black px-1.5 rounded-full mt-1 ${sched?.mode === 'online' ? 'bg-blue-100 text-blue-600' : sched?.mode === 'offline' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 opacity-40'}`}>{sched?.mode ? sched.mode.toUpperCase() : 'BELUM'}</div>
-                                                                    </th>
-                                                                );
-                                                            })}
-                                                            <th className="px-4 py-8 text-center min-w-[100px] bg-blue-500/10 text-blue-600 border-l dark:border-white/10 font-black uppercase">UTS</th>
-                                                            <th className="px-4 py-8 text-center min-w-[100px] bg-blue-500/10 text-blue-600 border-l dark:border-white/10 font-black uppercase">UAS</th>
-                                                        </Fragment>
-                                                    ) : (
-                                                        <Fragment>
-                                                            {[...Array(6)].map((_, i) => {
-                                                                const sched = schedule.assignments[`tugas-${i+1}`];
-                                                                return (
-                                                                    <th key={i} className="px-4 py-8 text-center min-w-[110px] border-l dark:border-white/10">
-                                                                        <div className="font-black">T{i+1}</div>
-                                                                        <div className="text-[7px] font-bold opacity-60 uppercase">{sched?.date ? sched.date : 'TBA'}</div>
-                                                                    </th>
-                                                                );
-                                                            })}
-                                                            <th className="px-4 py-8 text-center min-w-[110px] bg-indigo-500/10 text-indigo-600 border-l uppercase font-black">Proyek UTS</th>
-                                                            <th className="px-4 py-8 text-center min-w-[110px] bg-indigo-500/10 text-indigo-600 border-l uppercase font-black">Proyek UAS</th>
-                                                        </Fragment>
-                                                    )}
-                                                    <th className="px-8 py-8 text-center border-l dark:border-white/10 bg-slate-50/50 dark:bg-slate-800/50 font-black uppercase">Opsi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className={`divide-y transition-all ${isDarkMode ? 'divide-white/5' : 'divide-slate-100'}`}>
-                                                {filteredStudents.map((student, idx) => {
-                                                    const originalIndex = students.findIndex(s => s.nim === student.nim);
-                                                    return (
-                                                        <tr 
-                                                            key={student.nim} 
-                                                            draggable
-                                                            onDragStart={() => handleDragStart(originalIndex)}
-                                                            onDragOver={handleDragOver}
-                                                            onDrop={() => handleDrop(originalIndex)}
-                                                            className={`group transition-all cursor-move ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-white/50'}`}
-                                                        >
-                                                            <td className={`${spacingClasses} sticky left-0 z-30 text-center backdrop-blur-xl border-r dark:border-white/10 ${isDarkMode ? 'bg-slate-900/90 text-slate-500' : 'bg-slate-50/95 text-slate-400'}`}>
-                                                                <div className="flex flex-col items-center gap-1 text-slate-300 group-hover:text-blue-500 transition-colors"><Icon name="grip" className="w-4 h-4" /><span className="text-[9px] font-black">{idx + 1}</span></div>
-                                                            </td>
-                                                            <td className={`${spacingClasses} sticky left-16 z-20 backdrop-blur-xl border-r dark:border-white/10 ${isDarkMode ? 'bg-slate-900/90 text-white' : 'bg-white/95 text-slate-800 shadow-[2px_0_10px_rgba(0,0,0,0.02)]'}`}>
-                                                                <div className="truncate max-w-[220px] text-xs font-black uppercase tracking-tight group-hover:text-blue-600 transition-colors">{student.nama}</div>
-                                                                <div className="text-[9px] font-mono opacity-30 font-black tracking-widest uppercase mt-0.5">{student.nim}</div>
-                                                            </td>
-                                                            {activeTab === 'absensi' ? (
-                                                                <Fragment>
-                                                                    {[...Array(14)].map((_, i) => {
-                                                                        const rec = attendanceData.find(a => a.nim === student.nim && a.id === i+1 && a.type === 'pertemuan');
-                                                                        return (
-                                                                            <td key={i} className="px-3 py-4 border-l dark:border-white/10 text-center">
-                                                                                <select 
-                                                                                    className={`text-[9px] font-black p-2 rounded-xl border-none text-center cursor-pointer transition-all ${!rec?.status ? (isDarkMode ? 'bg-slate-800 text-slate-600 opacity-30' : 'bg-slate-100 text-slate-400 opacity-20') : rec.status === 'Hadir' ? 'bg-emerald-500 text-white shadow-lg' : rec.status === 'Izin' ? 'bg-amber-500 text-white shadow-lg' : 'bg-rose-500 text-white'}`}
-                                                                                    value={rec?.status || ""}
-                                                                                    onChange={(e) => updateAttendance(student.nim, i+1, 'pertemuan', e.target.value)}
-                                                                                >
-                                                                                    <option value="">−</option>
-                                                                                    <option value="Hadir">H</option><option value="Izin">I</option><option value="Alpa">A</option>
-                                                                                </select>
-                                                                            </td>
-                                                                        );
-                                                                    })}
-                                                                    <td className="px-3 py-4 bg-blue-500/5 border-l dark:border-white/10 text-center"><select className={`text-[9px] font-black p-2 rounded-xl w-full text-center border-none ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-white shadow-sm'}`} value={attendanceData.find(a => a.nim === student.nim && a.type === 'uts')?.status || ""} onChange={(e) => updateAttendance(student.nim, 99, 'uts', e.target.value)}><option value="">−</option><option value="Hadir">H</option><option value="Izin">I</option><option value="Alpa">A</option></select></td>
-                                                                    <td className="px-3 py-4 bg-blue-500/5 border-l dark:border-white/10 text-center"><select className={`text-[9px] font-black p-2 rounded-xl w-full text-center border-none ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-white shadow-sm'}`} value={attendanceData.find(a => a.nim === student.nim && a.type === 'uas')?.status || ""} onChange={(e) => updateAttendance(student.nim, 100, 'uas', e.target.value)}><option value="">−</option><option value="Hadir">H</option><option value="Izin">I</option><option value="Alpa">A</option></select></td>
-                                                                </Fragment>
-                                                            ) : (
-                                                                <Fragment>
-                                                                    {[...Array(6)].map((_, i) => {
-                                                                        const rec = assignmentData.find(a => a.nim === student.nim && a.id === i+1 && a.type === 'tugas');
-                                                                        return (
-                                                                            <td key={i} className="px-3 py-4 border-l dark:border-white/10 text-center">
-                                                                                <select className={`text-[8px] font-black p-2 rounded-xl border-none text-center transition-all ${rec ? 'bg-indigo-600 text-white shadow-lg' : (isDarkMode ? 'bg-slate-800 text-slate-600 opacity-30' : 'bg-slate-100 text-slate-400')}`} value={rec ? "Selesai" : ""} onChange={(e) => updateAssignment(student.nim, i+1, 'tugas', e.target.value)}><option value="">−</option><option value="Selesai">SELESAI</option></select>
-                                                                            </td>
-                                                                        );
-                                                                    })}
-                                                                    <td className="px-3 py-4 bg-indigo-500/5 border-l dark:border-white/10 text-center"><select className={`text-[8px] font-black p-2 rounded-xl border-none text-center transition-all ${assignmentData.some(a => a.nim === student.nim && a.type === 'uts') ? 'bg-indigo-800 text-white shadow-lg' : (isDarkMode ? 'bg-slate-800 text-slate-600' : 'bg-white opacity-40 shadow-sm')}`} value={assignmentData.some(a => a.nim === student.nim && a.type === 'uts') ? "Selesai" : ""} onChange={(e) => updateAssignment(student.nim, 99, 'uts', e.target.value)}><option value="">−</option><option value="Selesai">SELESAI</option></select></td>
-                                                                    <td className="px-3 py-4 bg-indigo-500/5 border-l dark:border-white/10 text-center"><select className={`text-[8px] font-black p-2 rounded-xl border-none text-center transition-all ${assignmentData.some(a => a.nim === student.nim && a.type === 'uas') ? 'bg-indigo-800 text-white shadow-lg' : (isDarkMode ? 'bg-slate-800 text-slate-600' : 'bg-white opacity-40 shadow-sm')}`} value={assignmentData.some(a => a.nim === student.nim && a.type === 'uas') ? "Selesai" : ""} onChange={(e) => updateAssignment(student.nim, 100, 'uas', e.target.value)}><option value="">−</option><option value="Selesai">SELESAI</option></select></td>
-                                                                </Fragment>
-                                                            )}
-                                                            <td className="px-8 py-4 text-center border-l dark:border-white/10 bg-slate-50/20 dark:bg-slate-800/20">
-                                                                <div className="flex gap-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                    <button onClick={() => openEditModal(student)} className={`p-2 rounded-xl transition-all border dark:border-white/10 ${isDarkMode ? 'bg-slate-800 text-blue-400 hover:bg-blue-600 hover:text-white' : 'bg-white hover:bg-blue-600 hover:text-white text-slate-400'}`}><Icon name="edit" className="w-4 h-4" /></button>
-                                                                    <button onClick={() => handleDeleteStudent(student.nim)} className={`p-2 rounded-xl transition-all border dark:border-white/10 ${isDarkMode ? 'bg-slate-800 text-rose-500 hover:bg-rose-500 hover:text-white' : 'bg-white border-rose-50 hover:bg-rose-500 hover:text-white text-rose-400'}`}><Icon name="trash" className="w-4 h-4" /></button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </main>
-
-                    {/* MODALS */}
-                    {isAddModalOpen && <Modal title="Mahasiswa Baru" isDark={isDarkMode} onClose={() => setIsAddModalOpen(false)} icon={<Icon name="plus" />}>
-                        <div className="space-y-4 p-8">
-                            <div className="space-y-1"><label className="text-[10px] font-black uppercase opacity-50 px-1">Nama Mahasiswa</label>
-                            <input type="text" className={`w-full px-6 py-4 rounded-2xl border font-bold ${isDarkMode ? 'bg-slate-800 border-white/10 text-white' : 'bg-slate-50 border-slate-200'}`} value={newStudent.nama} onChange={e => setNewStudent({...newStudent, nama: e.target.value})} /></div>
-                            <div className="space-y-1"><label className="text-[10px] font-black uppercase opacity-50 px-1">Nomor Induk (NIM)</label>
-                            <input type="text" className={`w-full px-6 py-4 rounded-2xl border font-bold ${isDarkMode ? 'bg-slate-800 border-white/10 text-white' : 'bg-slate-50 border-slate-200'}`} value={newStudent.nim} onChange={e => setNewStudent({...newStudent, nim: e.target.value})} /></div>
-                            <button onClick={handleAddStudent} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl transition-all active:scale-95">Tambahkan Data</button>
-                        </div>
-                    </Modal>}
-
-                    {isEditModalOpen && <Modal title="Edit Profil" isDark={isDarkMode} onClose={() => setIsEditModalOpen(false)} icon={<Icon name="edit" />}>
-                        <div className="space-y-4 p-8">
-                            <div className="space-y-1"><label className="text-[10px] font-black uppercase opacity-50 px-1">Nama Lengkap</label>
-                            <input type="text" className={`w-full px-6 py-4 rounded-2xl border font-bold ${isDarkMode ? 'bg-slate-800 border-white/10 text-white' : 'bg-white border-slate-200'}`} value={editingData.nama} onChange={e => setEditingData({...editingData, nama: e.target.value})} /></div>
-                            <div className="space-y-1"><label className="text-[10px] font-black uppercase opacity-50 px-1">Nomor Induk</label>
-                            <input type="text" className={`w-full px-6 py-4 rounded-2xl border font-bold ${isDarkMode ? 'bg-slate-800 border-white/10 text-white' : 'bg-white border-slate-200'}`} value={editingData.nim} onChange={e => setEditingData({...editingData, nim: e.target.value})} /></div>
-                            <button onClick={handleSaveEdit} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl">Simpan Perubahan</button>
-                        </div>
-                    </Modal>}
-
-                    {isInputModalOpen && <Modal title={`Rekap Masal P${activePertemuan}`} isDark={isDarkMode} onClose={() => setIsInputModalOpen(false)} icon={<Icon name="check" />}>
-                        <div className="p-8 space-y-6">
-                            {lectureMode === 'online' ? (
-                                <div className="text-center space-y-5">
-                                    <div className={`p-6 rounded-3xl font-mono text-xs break-all ${isDarkMode ? 'bg-blue-900/20 text-blue-300' : 'bg-blue-50 text-blue-600'}`}>{SESSION_LINKS[activePertemuan]}</div>
-                                    <div className="flex flex-col gap-3">
-                                        <a href={SESSION_LINKS[activePertemuan]} target="_blank" className="py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs shadow-lg shadow-blue-500/20">Buka Formulir</a>
-                                        <button onClick={handleAutoSync} disabled={isSyncing} className={`py-4 border-2 border-blue-600 text-blue-600 rounded-2xl font-black uppercase text-xs transition-all ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                                            {isSyncing ? <span className="flex items-center justify-center gap-2"><Icon name="sync" className="animate-spin w-4 h-4"/> Memproses...</span> : 'Sinkronkan NIM'}
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="space-y-5 text-slate-800 dark:text-white">
-                                    <button onClick={() => { let m={}; students.forEach(s=>m[s.nim]='Hadir'); setManualAttendance(m); }} className="w-full py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase">Set Semua Hadir</button>
-                                    <div className="max-h-[40vh] overflow-y-auto custom-scrollbar space-y-2 pr-2">
-                                        {students.map(s => (
-                                            <div key={s.nim} className={`flex justify-between items-center p-3 border rounded-xl shadow-sm ${isDarkMode ? 'bg-slate-800 border-white/5' : 'bg-white'}`}>
-                                                <span className="text-[10px] font-black uppercase truncate max-w-[140px]">{s.nama}</span>
-                                                <div className="flex gap-1.5">{['Hadir', 'Izin', 'Alpa'].map(st => (
-                                                    <button key={st} onClick={() => setManualAttendance({...manualAttendance, [s.nim]: st})} className={`w-9 h-9 rounded-xl text-[10px] font-black border transition-all ${manualAttendance[s.nim] === st ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-slate-50 dark:bg-slate-700 dark:border-white/5 text-slate-400'}`}>{st[0]}</button>
-                                                ))}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button onClick={saveManualAttendance} className="w-full py-5 bg-blue-600 text-white rounded-[1.5rem] font-black uppercase text-xs shadow-xl active:scale-95 transition-all">Simpan Rekapitulasi</button>
-                                </div>
-                            )}
-                        </div>
-                    </Modal>}
-
-                    {isTaskInputModalOpen && <Modal title="Input Tugas Masal" isDark={isDarkMode} onClose={() => setIsTaskInputModalOpen(false)} icon={<Icon name="file" />}>
-                        <div className="p-8 space-y-5 text-slate-800 dark:text-white">
-                            <button onClick={() => { const all = {}; students.forEach(s => all[s.nim] = 'Selesai'); setManualAssignments(all); }} className="w-full py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase shadow-lg">Tandai Semua Selesai</button>
-                            <div className="max-h-[40vh] overflow-y-auto custom-scrollbar space-y-2 pr-2">
-                                {students.map(s => (
-                                    <div key={s.nim} className={`flex justify-between items-center p-3 border rounded-xl shadow-sm ${isDarkMode ? 'bg-slate-800 border-white/5' : 'bg-white'}`}>
-                                        <span className="text-[10px] font-black uppercase truncate max-w-[140px]">{s.nama}</span>
-                                        <button onClick={() => setManualAssignments({...manualAssignments, [s.nim]: manualAssignments[s.nim] === 'Selesai' ? '' : 'Selesai'})} className={`px-5 py-2.5 rounded-xl text-[9px] font-black transition-all ${manualAssignments[s.nim] === 'Selesai' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-100 dark:bg-slate-700 dark:border-white/5 text-slate-400'}`}>{manualAssignments[s.nim] === 'Selesai' ? 'SELESAI' : 'BELUM'}</button>
-                                    </div>
-                                ))}
-                            </div>
-                            <button onClick={saveManualAssignments} className="w-full py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black uppercase text-xs shadow-xl transition-all">Simpan Pengumpulan</button>
-                        </div>
-                    </Modal>}
-
-                    <footer className={`py-12 text-center border-t text-[10px] uppercase font-black transition-all duration-300 ${isDarkMode ? 'border-white/5 text-slate-600' : 'text-slate-400 border-slate-100'}`}>Digital Admin Dashboard • v6.5 • Google Form Integrated</footer>
+        function renderJadwal(el) {
+            const data = getSemesterData('jadwal'); const hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black text-left">Jadwal Kuliah</h2><button onclick="window.openModal('jadwal')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg active:scale-95 transition-all">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">${hari.map(h => `<div class="space-y-4 text-gray-800 dark:text-white"><h3 class="font-black border-b pb-2 dark:border-slate-700 text-purple-600 uppercase text-xs font-black tracking-widest">${h}</h3>${data.filter(j => j.hari === h).map(j => `
+                <div class="glass-card p-4 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md transition-shadow text-left">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div>
+                    <div class="flex justify-between items-start mb-1">
+                        <h5 class="font-bold text-sm leading-tight">${j.matkul}</h5>
+                        <div class="flex gap-1.5"><button onclick="window.editItem('jadwal', '${j.id}')" class="text-purple-300 hover:text-purple-500"><i data-lucide="edit-2" size="14"></i></button><button onclick="window.deleteItem('jadwal', '${j.id}')" class="text-red-200 hover:text-red-500 flex-shrink-0"><i data-lucide="trash-2" size="14"></i></button></div>
                     </div>
-                </div>
-            );
+                    <p class="text-[11px] text-purple-600 dark:text-purple-400 font-bold mb-2 truncate">${j.dosen || 'Tanpa Dosen'}</p>
+                    <div class="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
+                        <span class="flex items-center gap-1"><i data-lucide="clock" size="10"></i> ${j.waktu}</span>
+                        <span class="flex items-center gap-1"><i data-lucide="map-pin" size="10"></i> ${j.ruang || '-'}</span>
+                        <span class="flex items-center gap-1"><i data-lucide="book" size="10"></i> ${j.sks || '0'} SKS</span>
+                    </div>
+                </div>`).join('') || '<p class="text-[10px] text-gray-300 italic font-medium">Libur</p>'}</div>`).join('')}</div>`;
+        }
+
+        function renderTugas(el) {
+            const data = getSemesterData('tugas');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Daftar Tugas</h2><button onclick="window.openModal('tugas')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg active:scale-95 transition-all text-left">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex flex-col justify-between h-full text-gray-800 dark:text-white"><div class="flex justify-between items-start mb-4"><span class="text-[9px] font-black uppercase text-purple-500 bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded tracking-widest">${t.matkul}</span><div class="flex gap-2"><button onclick="window.toggleStatus('tugas', '${t.id}', ${t.status})" class="text-gray-300 hover:text-green-500 transition-colors"><i data-lucide="${t.status?'check-square':'square'}" size="20"></i></button><button onclick="window.editItem('tugas', '${t.id}')" class="text-purple-300 hover:text-purple-500"><i data-lucide="edit-2" size="18"></i></button><button onclick="window.deleteItem('tugas', '${t.id}')" class="text-gray-200 hover:text-red-500 transition-colors"><i data-lucide="trash-2" size="18"></i></button></div></div><p class="font-bold text-gray-800 dark:text-white ${t.status?'line-through opacity-50':''} leading-snug">${t.nama}</p><p class="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">${t.deadline}</p></div>`).join('')}</div>`;
+        }
+
+        function renderTarget(el) {
+            const data = getSemesterData('target');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black text-left">Target Semester</h2><button onclick="window.openModal('target')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg active:scale-95 transition-all">Tambah</button></div>
+            <div class="space-y-4 text-left">${data.map(t => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-gray-800 dark:text-white text-left"><p class="font-bold text-gray-700 dark:text-white ${t.selesai?'line-through opacity-50':''} text-left">${t.teks}</p><div class="flex gap-4"><button onclick="window.toggleStatus('target', '${t.id}', ${t.selesai})" class="text-green-500"><i data-lucide="${t.selesai?'check-circle-2':'circle'}" class="${t.selesai?'':'text-gray-300'}"></i></button><button onclick="window.editItem('target', '${t.id}')" class="text-purple-300"><i data-lucide="edit-2" size="18"></i></button><button onclick="window.deleteItem('target', '${t.id}')" class="text-gray-200 transition-colors hover:text-red-500 text-left"><i data-lucide="trash-2" size="18"></i></button></div></div>`).join('')}</div>`;
+        }
+
+        function renderUjian(el) {
+            const data = getSemesterData('ujian');
+            el.innerHTML = `<div class="flex justify-between items-center mb-6 text-left text-gray-800 dark:text-white"><h2 class="text-2xl font-black">Ujian & Nilai</h2><button onclick="window.openModal('ujian')" class="bg-gray-900 dark:bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-bold uppercase shadow-lg active:scale-95 transition-all text-left">Tambah</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.map(u => `<div class="glass-card p-6 rounded-[2rem] flex justify-between items-center text-left text-gray-800 dark:text-white text-left"><div><span class="text-[10px] font-black bg-orange-100 dark:bg-orange-900/30 text-orange-600 px-2 py-0.5 rounded tracking-widest">${u.jenis}</span><h4 class="font-black mt-2 text-gray-800 dark:text-white leading-tight">${u.matkul}</h4><p class="text-[10px] text-gray-500 mt-1 uppercase">${u.tanggal} • ${u.waktu}</p></div><div class="flex items-center gap-4">${u.nilai?`<span class="text-3xl font-black text-green-500">${u.nilai}</span>`:`<button onclick="window.openModalNilai('${u.id}', '${u.matkul}')" class="text-[10px] font-black bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 p-2 rounded-lg uppercase transition-colors hover:bg-purple-200 text-left">Nilai</button>`}<button onclick="window.editItem('ujian', '${u.id}')" class="text-purple-300"><i data-lucide="edit-2" size="18"></i></button><button onclick="window.deleteItem('ujian', '${u.id}')" class="text-gray-300 hover:text-red-500 transition-colors text-left"><i data-lucide="trash-2" size="16"></i></button></div></div>`).join('')}</div>`;
+        }
+
+        function calculateDaysLeft(dateStr) { if (!dateStr) return 999; const t = new Date(dateStr); const today = new Date(); today.setHours(0,0,0,0); t.setHours(0,0,0,0); return Math.ceil((t - today) / (1000 * 60 * 60 * 24)); }
+
+        // EXPOSE KE WINDOW
+        window.openModal = (id) => { 
+            editingId = null;
+            const titles = { matkul: 'Mata Kuliah Baru', jadwal: 'Jadwal Baru', tugas: 'Tugas Baru', target: 'Target Baru', ujian: 'Jadwal Ujian Baru' };
+            const titleEl = document.getElementById(`modal-${id}-title`);
+            if(titleEl) titleEl.innerText = titles[id];
+            if(id === 'matkul') { document.getElementById('in-m-nama').value = ''; document.getElementById('in-m-sks').value = ''; document.getElementById('in-m-dosen').value = ''; }
+            if(id === 'jadwal') { document.getElementById('in-j-ruang').value = ''; document.getElementById('in-j-sks').value = ''; document.getElementById('in-j-dosen').value = ''; }
+            if(id === 'tugas') { document.getElementById('in-t-nama').value = ''; }
+            if(id === 'target') { document.getElementById('in-tg-teks').value = ''; }
+            document.getElementById('modal-overlay').classList.remove('hidden'); 
+            document.querySelectorAll('#modal-content-wrapper > div').forEach(m => m.classList.add('hidden')); 
+            document.getElementById('modal-' + id).classList.remove('hidden'); 
+            updateDynamicDropdowns();
         };
-
-        const StatCard = ({ title, value, icon, isDark }) => (
-            <div className={`p-6 rounded-[2.5rem] border shadow-lg transition-all transform hover:-translate-y-1 ${isDark ? 'bg-slate-900/90 border-white/10 text-white shadow-black/20' : 'bg-white border-slate-200 text-slate-800 shadow-slate-200/50'}`}>
-                <div className="flex justify-between items-start">
-                    <div><p className="text-[10px] font-black uppercase opacity-40 mb-1 tracking-widest">{title}</p><h4 className="text-2xl font-black uppercase tracking-tighter">{value}</h4></div>
-                    <div className="p-4 bg-blue-600/10 text-blue-500 rounded-[1.5rem]"><Icon name={icon} className="w-6 h-6" strokeWidth={2.5}/></div>
-                </div>
-            </div>
-        );
-
-        const QuickActionIcon = ({ icon, label, value }) => (
-            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10 transition-all hover:bg-white/10 cursor-default group">
-                <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><Icon name={icon} /></div>
-                <div><p className="text-[10px] font-bold opacity-40 uppercase tracking-widest">{label}</p><p className="text-sm font-black uppercase tracking-tight">{value}</p></div>
-            </div>
-        );
-
-        const Modal = ({ title, icon, children, onClose, isDark }) => (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-300">
-                <div className={`w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl border flex flex-col max-h-[90vh] transition-all duration-300 ${isDark ? 'bg-slate-900 border-white/10 text-white' : 'bg-white border-slate-100 text-slate-800'}`}>
-                    <div className={`p-8 border-b flex items-center justify-between shrink-0 ${isDark ? 'border-white/5' : 'border-slate-50'}`}>
-                        <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
-                            <div className="p-2 bg-blue-600/10 rounded-lg">{icon}</div>
-                            <h3 className="font-black text-xl uppercase tracking-tighter">{title}</h3>
-                        </div>
-                        <button onClick={onClose} className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-all"><Icon name="x" className="w-4 h-4"/></button>
-                    </div>
-                    {children}
-                </div>
-            </div>
-        );
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        window.closeModal = () => { document.getElementById('modal-overlay').classList.add('hidden'); editingId = null; };
+        window.openModalNilai = (id, label) => { document.getElementById('in-n-id').value = id; document.getElementById('nilai-matkul-label').innerText = label; window.openModal('nilai'); };
+        
+        window.saveJadwal = async () => { 
+            const matkul = document.getElementById('in-j-matkul').value; 
+            const hM = document.getElementById('in-j-mulai-h').value; const mM = document.getElementById('in-j-mulai-m').value;
+            const hS = document.getElementById('in-j-selesai-h').value; const mS = document.getElementById('in-j-selesai-m').value;
+            const payload = { matkul, sks: document.getElementById('in-j-sks').value, dosen: document.getElementById('in-j-dosen').value, hari: document.getElementById('in-j-hari').value, waktu: `${hM}:${mM} - ${hS}:${mS}`, ruang: document.getElementById('in-j-ruang').value, semester: currentSemester, updatedAt: serverTimestamp() };
+            if(!matkul || !hM || !hS) { alert("Lengkapi data!"); return; }
+            if(editingId) await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal', editingId), payload);
+            else await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'jadwal'), { ...payload, createdAt: serverTimestamp() });
+            window.closeModal();
+        };
+        window.saveMatkul = async () => { 
+            const n = document.getElementById('in-m-nama').value; const d = document.getElementById('in-m-dosen').value; const s = document.getElementById('in-m-sks').value;
+            if(!n || !d) { alert("Lengkapi!"); return; } 
+            const payload = { nama: n, sks: s, dosen: d, semester: currentSemester };
+            if(editingId) await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul', editingId), payload);
+            else await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'matkul'), payload);
+            window.closeModal(); 
+        };
+        window.saveTugas = async () => { const n = document.getElementById('in-t-nama').value; const m = document.getElementById('in-t-matkul').value; if(!n || !m) { alert("Lengkapi!"); return; } const payload = { nama: n, matkul: m, deadline: document.getElementById('in-t-deadline').value, semester: currentSemester }; if(editingId) await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas', editingId), payload); else await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'tugas'), { ...payload, status: false }); window.closeModal(); };
+        window.saveTarget = async () => { const t = document.getElementById('in-tg-teks').value; if(!t) return; const payload = { teks: t, semester: currentSemester }; if(editingId) await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target', editingId), payload); else await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'target'), { ...payload, selesai: false }); window.closeModal(); };
+        window.saveUjian = async () => { const m = document.getElementById('in-u-matkul').value; if(!m) return; const payload = { matkul: m, jenis: document.getElementById('in-u-jenis').value, tanggal: document.getElementById('in-u-tanggal').value, waktu: `${document.getElementById('in-u-waktu-h').value}:${document.getElementById('in-u-waktu-m').value}`, semester: currentSemester }; if(editingId) await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', editingId), payload); else await addDoc(collection(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian'), { ...payload, nilai: null }); window.closeModal(); };
+        window.saveNilai = async () => { const id = document.getElementById('in-n-id').value; const v = document.getElementById('in-n-nilai').value; if(!v) return; await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, 'ujian', id), { nilai: v }); window.closeModal(); };
+        window.toggleStatus = async (col, docId, s) => { await updateDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId), { [col==='tugas'?'status':'selesai']: !s }); };
+        window.deleteItem = async (col, docId) => { if(confirm('Hapus item ini?')) await deleteDoc(doc(db, 'artifacts', APP_ID_ROOT, 'users', currentUserId, col, docId)); };
+        window.logout = async () => { await signOut(auth); window.location.reload(); };
+        window.navigate = navigate;
     </script>
 </body>
 </html>
